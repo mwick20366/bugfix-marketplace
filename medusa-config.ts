@@ -28,6 +28,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/developer",
     },
+    {
+      resolve: "./src/modules/bug",
+    },
     // Configure the Auth Module to include the emailpass provider
     {
       resolve: "@medusajs/medusa/auth",
