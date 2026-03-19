@@ -6,8 +6,8 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { setAuthAppMetadataStep } from "@medusajs/medusa/core-flows"
-import ClientModuleService from "../modules/client/service"
-import { CLIENT_MODULE } from "../modules/client"
+import { BUGTRACKER_MODULE } from "../modules/bugtracker"
+import BugTrackerModuleService from "../modules/bugtracker/service"
 
 type CreateClientStepInput = {
   contactFirstName: string
@@ -19,14 +19,19 @@ type CreateClientStepInput = {
 const createClientStep = createStep(
   "create-client-step",
   async (input: CreateClientStepInput, { container }) => {
-    const clientModuleService: ClientModuleService = container.resolve(CLIENT_MODULE)
-    const client = await clientModuleService.createClients(input)
+    const bugTrackerModuleService: BugTrackerModuleService =
+      container.resolve(BUGTRACKER_MODULE)
+
+    const client = await bugTrackerModuleService.createClients(input)
+
     return new StepResponse(client, client.id)
   },
   async (id, { container }) => {
     if (!id) return
-    const clientModuleService: ClientModuleService = container.resolve(CLIENT_MODULE)
-    await clientModuleService.deleteClients(id)
+    const bugTrackerModuleService: BugTrackerModuleService =
+      container.resolve(BUGTRACKER_MODULE)
+
+    await bugTrackerModuleService.deleteClients(id)
   }
 )
 

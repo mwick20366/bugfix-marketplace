@@ -23,13 +23,7 @@ module.exports = defineConfig({
   modules: [
     // Register your custom modules
     {
-      resolve: "./src/modules/client",
-    },
-    {
-      resolve: "./src/modules/developer",
-    },
-    {
-      resolve: "./src/modules/bug",
+      resolve: "./src/modules/bugtracker",
     },
     // Configure the Auth Module to include the emailpass provider
     {

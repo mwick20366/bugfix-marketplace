@@ -1,5 +1,5 @@
 import { model } from "@medusajs/framework/utils";
-import Bug from "../../bug/models/bug";
+import Bug from "./bug";
 
 const Client = model.define("client", {
   id: model.id().primaryKey(),
