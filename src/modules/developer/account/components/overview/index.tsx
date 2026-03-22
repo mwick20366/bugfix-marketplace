@@ -4,30 +4,30 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
-import { Client } from "@lib/data/client"
+import { Developer } from "@lib/data/developer"
 
 type OverviewProps = {
-  client: Client | null
+  developer: Developer | null
   // customer: HttpTypes.StoreCustomer | null
   // orders: HttpTypes.StoreOrder[] | null
 }
 
-const Overview = ({ client }: OverviewProps) => {
+const Overview = ({ developer }: OverviewProps) => {
   return (
     <div data-testid="overview-page-wrapper">
       <div className="hidden small:block">
         <div className="text-xl-semi flex justify-between items-center mb-4">
-          <span data-testid="welcome-message" data-value={client?.firstName}>
-            Hello! {client?.firstName || "Client"}!
+          <span data-testid="welcome-message" data-value={developer?.firstName}>
+            Hello! {developer?.firstName ? developer.firstName : "there"}!
           </span>
           <span className="text-small-regular text-ui-fg-base">
             Signed in as:{" "}
             <span
               className="font-semibold"
               data-testid="customer-email"
-              data-value={client?.email}
+              data-value={developer?.email}
             >
-              {client?.email}
+              {developer?.email}
             </span>
           </span>
         </div>

@@ -39,7 +39,7 @@ export default async function Nav() {
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
                 className="hover:text-ui-fg-base"
-                href="/account/clients"
+                href="/client/account"
                 data-testid="nav-account-link"
               >
                 For Clients
@@ -48,7 +48,7 @@ export default async function Nav() {
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
                 className="hover:text-ui-fg-base"
-                href="/account/developers"
+                href="/developer/account"
                 data-testid="nav-account-link"
               >
                 For Developers

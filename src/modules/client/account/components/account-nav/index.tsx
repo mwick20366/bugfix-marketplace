@@ -11,11 +11,12 @@ import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 import { signout } from "@lib/data/customer"
+import { Client } from "@lib/data/client"
 
 const AccountNav = ({
-  customer,
+  client,
 }: {
-  customer: HttpTypes.StoreCustomer | null
+  client: Client | null
 }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
@@ -41,26 +42,26 @@ const AccountNav = ({
         ) : (
           <>
             <div className="text-xl-semi mb-4 px-8">
-              Hello! {customer?.first_name}
+              Hello! {client?.firstName || "there"}!
             </div>
             <div className="text-base-regular">
               <ul>
                 <li>
                   <LocalizedClientLink
-                    href="/account/profile"
+                    href="/account/my-bugs"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
                     data-testid="profile-link"
                   >
                     <>
                       <div className="flex items-center gap-x-2">
                         <User size={20} />
-                        <span>Profile</span>
+                        <span>My Bugs</span>
                       </div>
                       <ChevronDown className="transform -rotate-90" />
                     </>
                   </LocalizedClientLink>
                 </li>
-                <li>
+                {/* <li>
                   <LocalizedClientLink
                     href="/account/addresses"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
@@ -74,8 +75,8 @@ const AccountNav = ({
                       <ChevronDown className="transform -rotate-90" />
                     </>
                   </LocalizedClientLink>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <LocalizedClientLink
                     href="/account/orders"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
@@ -87,7 +88,7 @@ const AccountNav = ({
                     </div>
                     <ChevronDown className="transform -rotate-90" />
                   </LocalizedClientLink>
-                </li>
+                </li> */}
                 <li>
                   <button
                     type="button"
@@ -125,14 +126,14 @@ const AccountNav = ({
               </li>
               <li>
                 <AccountNavLink
-                  href="/account/profile"
+                  href="/client/account/my-bugs"
                   route={route!}
                   data-testid="profile-link"
                 >
-                  Profile
+                  My Bugs
                 </AccountNavLink>
               </li>
-              <li>
+              {/* <li>
                 <AccountNavLink
                   href="/account/addresses"
                   route={route!}
@@ -149,14 +150,14 @@ const AccountNav = ({
                 >
                   Orders
                 </AccountNavLink>
-              </li>
+              </li> */}
               <li className="text-grey-700">
                 <button
                   type="button"
                   onClick={handleLogout}
                   data-testid="logout-button"
                 >
-                  Log out!
+                  Log out
                 </button>
               </li>
             </ul>

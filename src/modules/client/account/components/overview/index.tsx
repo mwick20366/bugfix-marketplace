@@ -8,8 +8,6 @@ import { Client } from "@lib/data/client"
 
 type OverviewProps = {
   client: Client | null
-  // customer: HttpTypes.StoreCustomer | null
-  // orders: HttpTypes.StoreOrder[] | null
 }
 
 const Overview = ({ client }: OverviewProps) => {
@@ -18,7 +16,7 @@ const Overview = ({ client }: OverviewProps) => {
       <div className="hidden small:block">
         <div className="text-xl-semi flex justify-between items-center mb-4">
           <span data-testid="welcome-message" data-value={client?.firstName}>
-            Hello! {client?.firstName || "Client"}!
+            Hello {client?.firstName || "Client"}!
           </span>
           <span className="text-small-regular text-ui-fg-base">
             Signed in as:{" "}

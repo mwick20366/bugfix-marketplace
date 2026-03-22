@@ -9,19 +9,18 @@ import User from "@modules/common/icons/user"
 import MapPin from "@modules/common/icons/map-pin"
 import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { HttpTypes } from "@medusajs/types"
-import { signout } from "@lib/data/customer"
+import { Developer, signoutDeveloper } from "@lib/data/developer"
 
 const AccountNav = ({
-  customer,
+  developer,
 }: {
-  customer: HttpTypes.StoreCustomer | null
+  developer: Developer | null
 }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
 
   const handleLogout = async () => {
-    await signout(countryCode)
+    await signoutDeveloper(countryCode)
   }
 
   return (
@@ -41,7 +40,7 @@ const AccountNav = ({
         ) : (
           <>
             <div className="text-xl-semi mb-4 px-8">
-              Hello! {customer?.first_name}
+              Hello! {developer?.firstName}
             </div>
             <div className="text-base-regular">
               <ul>
@@ -97,7 +96,7 @@ const AccountNav = ({
                   >
                     <div className="flex items-center gap-x-2">
                       <ArrowRightOnRectangle />
-                      <span>Log out!</span>
+                      <span>Log out</span>
                     </div>
                     <ChevronDown className="transform -rotate-90" />
                   </button>
@@ -156,7 +155,7 @@ const AccountNav = ({
                   onClick={handleLogout}
                   data-testid="logout-button"
                 >
-                  Log out!
+                  Log out
                 </button>
               </li>
             </ul>

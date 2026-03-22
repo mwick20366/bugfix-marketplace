@@ -13,6 +13,7 @@ export type Locale = {
  * Returns null if the endpoint returns 404 (locales not configured).
  */
 export const listLocales = async (): Promise<Locale[] | null> => {
+  return null;
   const next = {
     ...(await getCacheOptions("locales")),
   }

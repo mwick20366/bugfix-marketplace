@@ -6,16 +6,14 @@ import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { signup } from "@lib/data/customer"
+import { signupDeveloper } from "@lib/data/developer"
 
 type Props = {
-  memberType: "client" | "developer"
   setCurrentView: (view: LOGIN_VIEW) => void
 }
 
-const Register = ({ memberType, setCurrentView }: Props) => {
-
-  const [message, formAction] = useActionState(signup, null)
+const Register = ({ setCurrentView }: Props) => {
+  const [message, formAction] = useActionState(signupDeveloper, null)
 
   return (
     <div
@@ -23,10 +21,10 @@ const Register = ({ memberType, setCurrentView }: Props) => {
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6">
-        Become a BugZapper Customer!
+        Become a BugZapper Member!
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        Create your BugZapper Customer account.
+        Create your BugZapper Developer profile, and earn money zapping bugs.
       </p>
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
@@ -52,17 +50,6 @@ const Register = ({ memberType, setCurrentView }: Props) => {
             autoComplete="email"
             data-testid="email-input"
           />
-          {
-            memberType === "client" && (
-              <Input
-                label="Company name"
-                name="company"
-                required
-                autoComplete="organization"
-                data-testid="company-input"
-              />
-            )
-          }
           <Input
             label="Password"
             name="password"

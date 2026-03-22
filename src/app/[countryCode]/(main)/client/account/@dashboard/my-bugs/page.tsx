@@ -1,0 +1,37 @@
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
+
+import ClientBugs from "@modules/bugs/components/client-bugs"
+
+import { getRegion } from "@lib/data/regions"
+import { retrieveClient } from "@lib/data/client"
+
+export const metadata: Metadata = {
+  title: "My Bugs",
+  description: "View your bugs, update their status, or add new bugs to your account.",
+}
+
+export default async function MyBugs(props: {
+  params: Promise<{ countryCode: string }>
+}) {
+  const params = await props.params
+  const { countryCode } = params
+  const client = await retrieveClient()
+  const region = await getRegion(countryCode)
+
+  if (!client || !region) {
+    notFound()
+  }
+
+  return (
+    <div className="w-full" data-testid="addresses-page-wrapper">
+      <div className="mb-8 flex flex-col gap-y-4">
+        <h1 className="text-2xl-semi">My Bugs</h1>
+        <p className="text-base-regular">
+          View, update, or add new bugs. You can manage your bugs and track their status here.
+        </p>
+      </div>
+      <ClientBugs client={client} />
+    </div>
+  )
+}
