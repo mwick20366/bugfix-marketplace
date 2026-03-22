@@ -6,10 +6,10 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { setAuthAppMetadataStep } from "@medusajs/medusa/core-flows"
-import { BUGTRACKER_MODULE } from "../modules/bugtracker"
-import BugTrackerModuleService from "../modules/bugtracker/service"
+import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
+import BugTrackerModuleService from "../../../modules/bugtracker/service"
 
-type CreateDeveloperStepInput = {
+export type CreateDeveloperStepInput = {
   firstName: string
   lastName: string
   email: string

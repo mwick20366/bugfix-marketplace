@@ -1,17 +1,18 @@
 // src/api/client/route.ts
 import type { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
-import createClientWorkflow from "../../workflows/create-client"
+import { createClientWorkflow, CreateClientWorkflowInput } from "../../workflows/client"
+import { CreateClientStepInput } from "../../workflows/client/steps/create-client"
 
-type RequestBody = {
-  contactFirstName: string
-  contactLastName: string
-  companyName: string
-  email: string
-}
+// type RequestBody = {
+//   contactFirstName: string
+//   contactLastName: string
+//   companyName: string
+//   email: string
+// }
 
 export async function POST(
-  req: AuthenticatedMedusaRequest<RequestBody>,
+  req: AuthenticatedMedusaRequest<CreateClientWorkflowInput>,
   res: MedusaResponse
 ) {
   if (req.auth_context.actor_id) {
@@ -23,7 +24,7 @@ export async function POST(
 
   const { result } = await createClientWorkflow(req.scope).run({
     input: {
-      client: req.body,
+      ...req.body,
       authIdentityId: req.auth_context.auth_identity_id,
     },
   })

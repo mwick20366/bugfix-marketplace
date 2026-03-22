@@ -4,10 +4,10 @@ import Client from "./models/client"
 import Developer from "./models/developer"
 import Bug from "./models/bug"
 
-class ClientModuleService extends MedusaService({
+class BugTrackerModuleService extends MedusaService({
   Client,
   Developer,
   Bug,
 }) {}
 
-export default ClientModuleService
+export default BugTrackerModuleService

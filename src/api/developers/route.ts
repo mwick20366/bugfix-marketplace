@@ -1,7 +1,7 @@
 // src/api/developer/route.ts
 import type { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
-import createDeveloperWorkflow from "../../workflows/create-developer"
+import createDeveloperWorkflow from "../../workflows/developer/steps/create-developer"
 
 type RequestBody = {
   firstName: string

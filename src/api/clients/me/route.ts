@@ -1,10 +1,8 @@
-// src/api/developer/me/route.ts
+// src/api/client/me/route.ts
 import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
-import { ConsoleSpanExporter } from "@medusajs/framework/opentelemetry/sdk-trace-node"
 
 export async function GET(
   req: AuthenticatedMedusaRequest,
@@ -15,6 +13,7 @@ export async function GET(
 
   const { data: [client] } = await query.graph({
     entity: "client",
+    ...req.queryConfig,
     fields: ["*"],
     filters: {
       id: clientId,
@@ -23,6 +22,5 @@ export async function GET(
     throwIfKeyNotFound: true,
   })
 
-  console.log("Client found:", client)
   res.json({ client })
 }
