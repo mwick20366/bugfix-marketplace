@@ -15,15 +15,13 @@ export type CreateBugStepInput = {
 export const createBugStep = createStep(
   "create-bug",
   async (data: CreateBugStepInput, { container }) => {
-    console.log('creating bug step', data);
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     const bug = await service.createBugs(data)
     return new StepResponse(bug, bug.id)
   },
   async (bugId, { container }) => {
-    console.log('creat bug failed')
     if (!bugId) return
-    console.log('deleting bug step', bugId);
+
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     await service.deleteBugs(bugId)
   }

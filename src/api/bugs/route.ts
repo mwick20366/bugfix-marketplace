@@ -13,7 +13,7 @@ export const GET = async (
 ) => {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
 
-  const { q } = req.validatedQuery as { q?: string }
+  const { q, status } = req.validatedQuery as { q?: string, status?: string }
 
   const {
     data: bugs,
@@ -28,6 +28,9 @@ export const GET = async (
           { description: { $ilike: `%${q}%` } },
           { techStack: { $ilike: `%${q}%` } },
         ],
+      }),
+      ...(status && {
+        status: { $ilike: status }
       }),
     },
   })

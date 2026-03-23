@@ -4,6 +4,7 @@ import { createFindParams } from "@medusajs/medusa/api/utils/validators"
 export const GetBugsSchema = createFindParams().merge(
   z.object({
     q: z.string().optional(),
+    status: z.string().optional(),
   })
 )
 
