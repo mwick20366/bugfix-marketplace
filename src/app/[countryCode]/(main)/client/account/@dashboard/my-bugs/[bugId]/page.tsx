@@ -5,7 +5,7 @@ import StoreTemplate from "@modules/store/templates"
 import { Bug } from "@medusajs/icons"
 import BugForm from "@modules/bugs/components/form"
 import { retrieveClient } from "@lib/data/client"
-import { retrieveBug } from "@lib/data/bug"
+import { retrieveBug } from "@lib/data/bugs"
 import { notFound } from "next/navigation"
 
 export const metadata: Metadata = {

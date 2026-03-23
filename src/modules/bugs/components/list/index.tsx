@@ -1,9 +1,7 @@
 "use client"
 
-import { Bug } from "@lib/data/bug"
-import { Client } from "@lib/data/client"
+import { Bug } from "@lib/data/bugs"
 import repeat from "@lib/util/repeat"
-import { HttpTypes } from "@medusajs/types"
 import { Table, clx } from "@medusajs/ui"
 
 import Item from "../../components/item"
@@ -11,12 +9,13 @@ import SkeletonLineItem from "@modules/skeletons/components/skeleton-line-item"
 
 type BugsListTemplateProps = {
   bugs: Bug[],
-  onEdit: (id: string) => void
+  actionButtons?: React.ReactNode
+  // onEdit: (id: string) => void
 }
 
-const BugsListTemplate = ({ bugs, onEdit }: BugsListTemplateProps) => {
+const BugsListTemplate = ({ bugs, actionButtons }: BugsListTemplateProps) => {
   // const items = client.items
-  const hasOverflow = bugs && bugs.length > 4
+  const hasOverflow = bugs && bugs.length > 12
 
   return (
     <div
@@ -28,17 +27,18 @@ const BugsListTemplate = ({ bugs, onEdit }: BugsListTemplateProps) => {
       <Table>
         <Table.Header className="border-t-0">
           <Table.Row className="text-ui-fg-subtle txt-medium-plus">
-            <Table.HeaderCell className="!pl-0">Title</Table.HeaderCell>
+            <Table.HeaderCell className="pr-6">Title</Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
             <Table.HeaderCell>Tech Stack</Table.HeaderCell>
-            <Table.HeaderCell className="!pr-0 text-right">
+            <Table.HeaderCell className="pr-6 text-right">
               Bounty
             </Table.HeaderCell>
+            {actionButtons && (
             <Table.HeaderCell>
               Actions
-            </Table.HeaderCell>
+            </Table.HeaderCell>)}
           </Table.Row>
-        </Table.Header>        
+        </Table.Header>
         <Table.Body data-testid="items-table">
           {bugs
             ? bugs
@@ -50,12 +50,12 @@ const BugsListTemplate = ({ bugs, onEdit }: BugsListTemplateProps) => {
                     <Item
                       key={bug.id}
                       item={bug}
-                      onEdit={(id: string) => onEdit(id)}
+                      actionButtons={actionButtons}
                       // onDelete={(id: string) => }
                     />
                   )
                 })
-            : repeat(5).map((i) => {
+            : repeat(12).map((i) => {
                 return <SkeletonLineItem key={i} />
               })}
         </Table.Body>

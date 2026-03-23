@@ -14,15 +14,16 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
 import { useState } from "react"
-import { Bug } from "@lib/data/bug"
+import { Bug } from "@lib/data/bugs"
 
 type ItemProps = {
   item: Bug
-  onEdit: (id: string) => void
+  actionButtons?: React.ReactNode
+  // onEdit: (id: string) => void
   // onDelete: (id: string) => {}
 }
 
-const Item = ({ item, onEdit }: ItemProps) => {
+const Item = ({ item, actionButtons }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -59,7 +60,7 @@ const Item = ({ item, onEdit }: ItemProps) => {
           />
         </LocalizedClientLink>
       </Table.Cell> */}
-      <Table.Cell className="text-left">
+      <Table.Cell className="pl-6">
         <Text
           className="txt-medium-plus text-ui-fg-base"
           data-testid="product-title"
@@ -83,7 +84,7 @@ const Item = ({ item, onEdit }: ItemProps) => {
           {item.techStack}
         </Text>
       </Table.Cell>
-      <Table.Cell className="text-right">
+      <Table.Cell className="pr-6 text-right">
         <Text
           className="txt-medium-plus text-ui-fg-base"
           data-testid="product-description"
@@ -91,16 +92,11 @@ const Item = ({ item, onEdit }: ItemProps) => {
           ${item.bounty}
         </Text>
       </Table.Cell>
-      <Table.Cell>
-        <EditButton
-          id={item.id}
-          onEdit={onEdit}
-        />
-        <DeleteButton
-          id={item.id}
-        />
-      </Table.Cell>        
-      {/* TODO: Add status, priority, and other relevant fields for the bug */}
+      {actionButtons && (
+        <Table.Cell className="pl-6">
+          {actionButtons}
+        </Table.Cell>
+      )}
     </Table.Row>
   )
 }

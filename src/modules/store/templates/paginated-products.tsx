@@ -55,6 +55,8 @@ export default async function PaginatedProducts({
     return null
   }
 
+  console.log('page from paginated-products', page);
+  
   let {
     response: { products, count },
   } = await listProductsWithSort({

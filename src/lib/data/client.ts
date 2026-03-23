@@ -32,11 +32,11 @@ export const retrieveClient =
     }
 
     const next = {
-      ...(await getCacheOptions("customers")),
+      ...(await getCacheOptions("clients")),
     }
 
-    return await sdk.client
-      .fetch<{ client: Client }>(`/client/me`, {
+    return sdk.client
+      .fetch<{ client: Client }>(`/clients/me`, {
         method: "GET",
         // query: {
         //   fields: "*orders",

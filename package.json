@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "@medusajs/icons": "latest",
     "@medusajs/js-sdk": "latest",
     "@medusajs/ui": "latest",
@@ -31,6 +32,7 @@
     "react-dom": "19.0.4",
     "server-only": "^0.0.1",
     "tailwindcss-radix": "^2.8.0",
+    "use-debounce": "^10.1.0",
     "webpack": "^5"
   },
   "devDependencies": {

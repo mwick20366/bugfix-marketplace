@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react"
-import { retrieveClientBugs } from "@lib/data/bug"
+import { retrieveClientBugs } from "@lib/data/bugs"
 import BugsListTemplate from "../list"
-import { Bug } from "@lib/data/bug"
+import { Bug } from "@lib/data/bugs"
 import { Button } from "@medusajs/ui"
 import { useRouter } from "next/navigation" 
 import { Client } from "@lib/data/client"
@@ -31,21 +31,23 @@ const ClientBugs: React.FC<ClientBugsProps> = ({ client }) => {
 
   return (
     <div>
-      <Button
-        variant="primary"
-        onClick={() => {
-          router.push(`/client/account/my-bugs/new`)
-        }}
-      >
-        Add New Bug
-      </Button>
+      <div className="pb-6">
+        <Button
+          variant="primary"
+          onClick={() => {
+            router.push(`/client/account/my-bugs/new`)
+          }}
+        >
+          Add New Bug
+        </Button>        
+      </div>
       {bugs.length === 0 ? (
         <p>You have no bugs posted.</p>
       ) : (
         <BugsListTemplate
-          client={client} 
+          // client={client} 
           bugs={bugs}
-          onEdit={handleEdit}
+          // onEdit={handleEdit}
         />
       )}
     </div>

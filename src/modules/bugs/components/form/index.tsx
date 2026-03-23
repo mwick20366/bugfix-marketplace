@@ -7,7 +7,7 @@ import NativeSelect from "@modules/common/components/native-select"
 
 // import AccountInfo from "../account-info"
 import { HttpTypes } from "@medusajs/types"
-import { addClientBug, updateClientBug, Bug } from "@lib/data/bug"
+import { addClientBug, updateClientBug, Bug } from "@lib/data/bugs"
 import { Client, retrieveClient } from "@lib/data/client"
 import BugInfo from "../bug-info"
 

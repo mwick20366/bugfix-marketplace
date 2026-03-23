@@ -53,8 +53,17 @@ export default async function Nav() {
               >
                 For Developers
               </LocalizedClientLink>
-            </div>            
-            <Suspense
+            </div>    
+            <div className="hidden small:flex items-center gap-x-6 h-full">
+              <LocalizedClientLink
+                className="hover:text-ui-fg-base"
+                href="/marketplace/bugs"
+                data-testid="nav-account-link"
+              >
+                Marketplace
+              </LocalizedClientLink>
+            </div>
+            {/* <Suspense
               fallback={
                 <LocalizedClientLink
                   className="hover:text-ui-fg-base flex gap-2"
@@ -66,7 +75,7 @@ export default async function Nav() {
               }
             >
               <CartButton />
-            </Suspense>
+            </Suspense> */}
           </div>
         </nav>
       </header>

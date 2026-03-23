@@ -35,11 +35,11 @@ export const retrieveDeveloper =
     }
 
     const next = {
-      ...(await getCacheOptions("customers")),
+      ...(await getCacheOptions("developers")),
     }
 
     return await sdk.client
-      .fetch<{ developer: Developer }>(`/developer/me`, {
+      .fetch<{ developer: Developer }>(`/developers/me`, {
         method: "GET",
         // query: {
         //   fields: "*orders",
@@ -102,8 +102,8 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
 
     await setAuthToken(loginToken as string)
 
-    const customerCacheTag = await getCacheTag("customers")
-    revalidateTag(customerCacheTag)
+    const developerCacheTag = await getCacheTag("developers")
+    revalidateTag(developerCacheTag)
 
     // await transferCart()
 
@@ -122,8 +122,8 @@ export async function loginDeveloper(_currentState: unknown, formData: FormData)
       .login("developer", "emailpass", { email, password })
       .then(async (token) => {
         await setAuthToken(token as string)
-        const customerCacheTag = await getCacheTag("customers")
-        revalidateTag(customerCacheTag)
+        const developerCacheTag = await getCacheTag("developers")
+        revalidateTag(developerCacheTag)
       })
   } catch (error: any) {
     return error.toString()
@@ -141,8 +141,8 @@ export async function signoutDeveloper(countryCode: string) {
 
   await removeAuthToken()
 
-  const customerCacheTag = await getCacheTag("customers")
-  revalidateTag(customerCacheTag)
+  const developerCacheTag = await getCacheTag("developers")
+  revalidateTag(developerCacheTag)
 
   // await removeCartId()
 

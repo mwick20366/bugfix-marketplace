@@ -17,9 +17,8 @@ export default async function MyBugs(props: {
   const params = await props.params
   const { countryCode } = params
   const client = await retrieveClient()
-  const region = await getRegion(countryCode)
 
-  if (!client || !region) {
+  if (!client) {
     notFound()
   }
 
