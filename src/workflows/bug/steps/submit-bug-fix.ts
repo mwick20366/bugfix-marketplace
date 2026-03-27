@@ -17,9 +17,10 @@ type CompensationInput = {
 export const submitBugFixStep = createStep(
   "submit-bug-fix",
   async (data: SubmitBugFixStepInput, { container }) => {
+    console.log("Submitting bug fix with data:", data)
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     const submission = await service.createSubmissions({
-      id: data.bug_id,
+      bug_id: data.bug_id,
       developer_id: data.developer_id,
       status: "awaiting client review",
       notes: data.notes,

@@ -30,7 +30,7 @@ export async function GET(
 
 // POST /bugs/:id — update a bug
 export async function POST(
-    req: MedusaRequest<UpdateBugWorkflowInput>,
+    req: AuthenticatedMedusaRequest<UpdateBugWorkflowInput>,
     res: MedusaResponse
 ) {
   const { result } = await updateBugWorkflow(req.scope).run({

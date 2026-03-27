@@ -12,7 +12,6 @@ const Bug = model.define("bug", {
   status: model.text().nullable(),
   client: model.belongsTo(() => Client, { mappedBy: "bugs" }),
   developer: model.belongsTo(() => Developer, { mappedBy: "bugs" }).nullable(),
-
 });
 
 export default Bug;

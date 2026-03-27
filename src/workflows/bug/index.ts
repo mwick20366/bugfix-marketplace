@@ -6,16 +6,20 @@ import { createBugStep, CreateBugStepInput } from "./steps/create-bug"
 import { updateBugStep, UpdateBugStepInput } from "./steps/update-bug"
 import { deleteBugStep, DeleteBugStepInput } from "./steps/delete-bug"
 import { claimBugStep } from "./steps/claim-bug"
-import { submitBugFixStep } from "./steps/submit-bug-fix"
+import { submitBugFixStep, SubmitBugFixStepInput } from "./steps/submit-bug-fix"
 
 // --- Types ---
 
 export type CreateBugWorkflowInput = {
-    bug: CreateBugStepInput
+  bug: CreateBugStepInput
 }
 
 export type UpdateBugWorkflowInput = {
-    bug: UpdateBugStepInput
+  bug: UpdateBugStepInput
+}
+
+export type SubmitBugFixWorkflowInput = {
+  submission: SubmitBugFixStepInput,
 }
 
 export type DeleteBugWorkflowInput = {
@@ -58,13 +62,9 @@ export const claimBugWorkflow = createWorkflow(
 
 export const submitBugFixWorkflow = createWorkflow(
   "submit-bug-fix",
-  (input: {
-    bug_id: string;
-    developer_id: string;
-    notes: string;
-    fileUrl: string }) =>
+  (input: SubmitBugFixWorkflowInput) =>
   {
-    const bug = submitBugFixStep(input)
+    const bug = submitBugFixStep(input.submission)
     return new WorkflowResponse(bug)
   }
 )

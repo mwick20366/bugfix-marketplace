@@ -1,13 +1,13 @@
 import type { AuthenticatedMedusaRequest, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "@medusajs/framework/zod"
-import { PostCreateBugSchema } from "./validators"
+// import { PostCreateBugSchema } from "./validators"
 import { createBugWorkflow } from "../../workflows/bug"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import developer from "../../modules/bugtracker/models/developer"
 
-type CreateBugBody = z.infer<typeof PostCreateBugSchema>
+// type CreateSubmissionBody = z.infer<typeof PostCreateSubmissionSchema>
 
-// GET /bugs
+// GET /submissions
 export const GET = async (
   req: AuthenticatedMedusaRequest,
   res: MedusaResponse
@@ -32,12 +32,6 @@ export const GET = async (
   let developerId: string | undefined = developer_id
   let clientId: string | undefined = client_id
 
-  console.log("Authenticated user ID:", currentUserId)
-  console.log("Authenticated user type:", req.auth_context?.actor_type)
-  console.log("Is admin:", isAdmin)
-
-  console.log("Final developer ID before:", developerId)
-
   if (!isAdmin) {
     if (developerId && req.auth_context?.actor_type === "developer") {
       developerId = currentUserId
@@ -46,24 +40,21 @@ export const GET = async (
     }
   }
 
-  console.log("Final developer ID filter:", developerId)
-  console.log("Final client ID filter:", clientId)
-
   const {
-    data: bugs,
+    data: submissions,
     metadata: { count, take, skip } = {},
   } = await query.graph({
-    entity: "bug",
+    entity: "submission",
     ...req.queryConfig,
     // @ts-ignore
     filters: {
-      ...(q && {
-        $or: [
-          { title: { $ilike: `%${q}%` } },
-          { description: { $ilike: `%${q}%` } },
-          { techStack: { $ilike: `%${q}%` } },
-        ],
-      }),
+      // ...(q && {
+      //   $or: [
+      //     { title: { $ilike: `%${q}%` } },
+      //     { description: { $ilike: `%${q}%` } },
+      //     { techStack: { $ilike: `%${q}%` } },
+      //   ],
+      // }),
       ...(status && {
         status: { $ilike: status }
       }),
@@ -81,21 +72,21 @@ export const GET = async (
     },
   })
 
-  res.json({ bugs, count, limit: take, offset: skip })
+  res.json({ submissions, count, limit: take, offset: skip })
 }
 
-// POST /bugs
-export const POST = async (
-  req: AuthenticatedMedusaRequest<CreateBugBody>,
-  res: MedusaResponse
-) => {
-  console.log('validated body', req.validatedBody);
+// POST /submissions
+// export const POST = async (
+//   req: AuthenticatedMedusaRequest<CreateSubmissionBody>,
+//   res: MedusaResponse
+// ) => {
+//   console.log('validated body', req.validatedBody);
 
-  const { result } = await createBugWorkflow(req.scope).run({
-    input: {
-        bug: req.validatedBody
-    }
-  })
+//   const { result } = await createBugWorkflow(req.scope).run({
+//     input: {
+//         bug: req.validatedBody
+//     }
+//   })
 
-  res.json({ bug: result })
-}
+//   res.json({ bug: result })
+// }

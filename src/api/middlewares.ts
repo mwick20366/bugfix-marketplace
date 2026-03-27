@@ -1,9 +1,9 @@
 // src/api/middlewares.ts
 import { z } from "@medusajs/framework/zod"
 import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAndTransformQuery, } from "@medusajs/framework/http"
-import { GetBugsSchema, PostCreateBugSchema } from "./bugs/validators"
+import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
-
+import { GetSubmissionsSchema } from "./submissions/validators"
 
 export default defineMiddlewares({
   routes: [
@@ -56,6 +56,7 @@ export default defineMiddlewares({
       matcher: "/bugs",
       methods: ["GET"],
       middlewares: [
+        authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
         validateAndTransformQuery(GetBugsSchema, {
           isList: true,
           defaults: [
@@ -65,14 +66,39 @@ export default defineMiddlewares({
             "techStack",
             "bounty",
             "status",
-            "developer_id",
             "created_at",
             "updated_at",
+            "developer.*", // retrieves all fields of linked developer record
             "client.id",
             "client.companyName",
             "client.email",
             "client.contactFirstName",
             "client.contactLastName",
+          ],
+          defaultLimit: 15,
+        }),
+      ],
+    },
+    {
+      matcher: "/submissions",
+      methods: ["GET"],
+      middlewares: [
+        authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
+        validateAndTransformQuery(GetSubmissionsSchema, {
+          isList: true,
+          defaults: [
+            "id",
+            "notes",
+            "fileUrl",
+            "status",
+            // "bug_id",
+            // "developer_id",
+            "created_at",
+            "updated_at",
+            "bug.*",
+            "bug.developer.*", // retrieves all fields of linked developer record for the bug
+            "bug.client.*",
+            // "developer.*", // retrieves all fields of linked developer record
           ],
           defaultLimit: 15,
         }),
@@ -103,6 +129,15 @@ export default defineMiddlewares({
         authenticate("developer", ["session", "bearer"]),
       ],
     },
+    // Only developers can submit a fix for a bug
+    {
+      matcher: "/bugs/:id/submit-fix",
+      methods: ["POST"],
+      middlewares: [
+        authenticate("developer", ["session", "bearer"]),
+        validateAndTransformBody(SubmitBugFixSchema),
+      ],
+    },    
     {
       matcher: "/bugs/clients/:clientId",
       methods: ["GET"],
