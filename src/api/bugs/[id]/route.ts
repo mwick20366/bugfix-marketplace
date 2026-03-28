@@ -24,7 +24,6 @@ export async function GET(
     throwIfKeyNotFound: true,
   })
 
-  console.log("Bug found:", bug)
   res.json({ bug })
 }
 

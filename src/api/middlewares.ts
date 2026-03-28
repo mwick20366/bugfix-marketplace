@@ -43,6 +43,24 @@ export default defineMiddlewares({
         }),
       ],
     },
+    {
+      matcher: "/developers/me",
+      methods: ["GET"],
+      middlewares: [
+      authenticate("developer", ["session", "bearer"]),
+      validateAndTransformQuery(createFindParams(), {
+        defaults: [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "bugs.*", // retrieves all fields of linked bug records
+          "submissions.*", // retrieves all fields of linked submission records
+        ],
+        isList: false,
+      }),
+      ],
+    },    
     // Protect authenticated routes
     {
       matcher: "/clients/*",
@@ -91,14 +109,11 @@ export default defineMiddlewares({
             "notes",
             "fileUrl",
             "status",
-            // "bug_id",
-            // "developer_id",
             "created_at",
             "updated_at",
             "bug.*",
             "bug.developer.*", // retrieves all fields of linked developer record for the bug
             "bug.client.*",
-            // "developer.*", // retrieves all fields of linked developer record
           ],
           defaultLimit: 15,
         }),
@@ -134,10 +149,10 @@ export default defineMiddlewares({
       matcher: "/bugs/:id/submit-fix",
       methods: ["POST"],
       middlewares: [
-        authenticate("developer", ["session", "bearer"]),
+        authenticate(["developer"], ["session", "bearer"]),
         validateAndTransformBody(SubmitBugFixSchema),
       ],
-    },    
+    },
     {
       matcher: "/bugs/clients/:clientId",
       methods: ["GET"],

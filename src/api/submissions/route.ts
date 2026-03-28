@@ -4,8 +4,10 @@ import { z } from "@medusajs/framework/zod"
 import { createBugWorkflow } from "../../workflows/bug"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import developer from "../../modules/bugtracker/models/developer"
+import { PostCreateSubmissionSchema } from "./validators"
+import { createSubmissionWorkflow } from "../../workflows/submission"
 
-// type CreateSubmissionBody = z.infer<typeof PostCreateSubmissionSchema>
+type CreateSubmissionBody = z.infer<typeof PostCreateSubmissionSchema>
 
 // GET /submissions
 export const GET = async (
@@ -72,21 +74,8 @@ export const GET = async (
     },
   })
 
+  console.log("Fetched submissions:", submissions)
+  console.log("Count:", count, "Take:", take, "Skip:", skip)
+  
   res.json({ submissions, count, limit: take, offset: skip })
 }
-
-// POST /submissions
-// export const POST = async (
-//   req: AuthenticatedMedusaRequest<CreateSubmissionBody>,
-//   res: MedusaResponse
-// ) => {
-//   console.log('validated body', req.validatedBody);
-
-//   const { result } = await createBugWorkflow(req.scope).run({
-//     input: {
-//         bug: req.validatedBody
-//     }
-//   })
-
-//   res.json({ bug: result })
-// }

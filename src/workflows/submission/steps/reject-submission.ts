@@ -2,11 +2,9 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
 import BugTrackerModuleService from "../../../modules/bugtracker/service"
 
-export type SubmitBugFixStepInput = {
+export type RejectSubmissionStepInput = {
   bug_id: string
   developer_id: string
-  notes: string
-  fileUrl: string
 }
 
 type CompensationInput = {
@@ -14,21 +12,19 @@ type CompensationInput = {
   bugId: string
 }
 
-export const submitBugFixStep = createStep(
-  "submit-bug-fix",
-  async (data: SubmitBugFixStepInput, { container }) => {
+export const rejectSubmissionStep = createStep(
+  "reject-submission",
+  async (data: RejectSubmissionStepInput, { container }) => {
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
-    const submission = await service.createSubmissions({
+    const submission = await service.updateSubmissions({
       bug_id: data.bug_id,
       developer_id: data.developer_id,
-      status: "awaiting client review",
-      notes: data.notes,
-      fileUrl: data.fileUrl,
+      status: "client rejected",
     })
 
     await service.updateBugs({
       id: data.bug_id,
-      status: "fix submitted",
+      status: "client rejected",
     });
 
     return new StepResponse(submission, {
@@ -40,17 +36,20 @@ export const submitBugFixStep = createStep(
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     // Undo in reverse order:
 
-    // 1. Revert the bug's status back to "claimed"
+    // 1. Revert the bug's status back to "fix submitted"
     if (bugId) {
       await service.updateBugs({
         id: bugId,
-        status: "claimed",
+        status: "fix submitted",
       })
     }
 
-    // 2. Delete the created submission
+    // 2. Revert the submission's status back to "awaiting client review"
     if (submissionId) {
-      await service.deleteSubmissions(submissionId)
+      await service.updateSubmissions({
+        id: submissionId,
+        status: "awaiting client review",
+      })
     }
   }
 )

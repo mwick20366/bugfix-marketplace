@@ -14,9 +14,6 @@ export async function POST(
   const currentUserId = req.auth_context?.actor_id
   const bugId = req.params.id
 
-  console.log("bugId:", bugId)
-  console.log("request body:", req.body)
-  
   // Fetch the bug to check who claimed it
   // @ts-ignore
   const { data: [bug] } = await query.graph({
@@ -32,8 +29,6 @@ export async function POST(
       "You are not authorized to submit a fix for this bug"
     )
   }
-
-  console.log("Bug found for fix submission:", bug)
 
   // Ensure the bug has a status of 'claimed'
   if (bug.status !== "claimed") {

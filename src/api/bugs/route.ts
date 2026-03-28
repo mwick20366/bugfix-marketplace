@@ -32,12 +32,6 @@ export const GET = async (
   let developerId: string | undefined = developer_id
   let clientId: string | undefined = client_id
 
-  console.log("Authenticated user ID:", currentUserId)
-  console.log("Authenticated user type:", req.auth_context?.actor_type)
-  console.log("Is admin:", isAdmin)
-
-  console.log("Final developer ID before:", developerId)
-
   if (!isAdmin) {
     if (developerId && req.auth_context?.actor_type === "developer") {
       developerId = currentUserId
@@ -45,9 +39,6 @@ export const GET = async (
       clientId = currentUserId
     }
   }
-
-  console.log("Final developer ID filter:", developerId)
-  console.log("Final client ID filter:", clientId)
 
   const {
     data: bugs,
@@ -89,8 +80,6 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<CreateBugBody>,
   res: MedusaResponse
 ) => {
-  console.log('validated body', req.validatedBody);
-
   const { result } = await createBugWorkflow(req.scope).run({
     input: {
         bug: req.validatedBody

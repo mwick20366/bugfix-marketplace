@@ -15,7 +15,7 @@ export async function GET(
 
   const { data: [developer] } = await query.graph({
     entity: "developer",
-    fields: ["*"],
+    fields: ["*", "bugs.*", "submissions.*"],
     filters: {
       id: developerId,
     },
@@ -23,6 +23,5 @@ export async function GET(
     throwIfKeyNotFound: true,
   })
 
-  console.log("Developer found:", developer)
   res.json({ developer })
 }

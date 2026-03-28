@@ -13,8 +13,6 @@ export async function POST(
   req: AuthenticatedMedusaRequest<RequestBody>,
   res: MedusaResponse
 ) {
-  console.log("POST /developer called with body:", req.body);
-  
   if (req.auth_context.actor_id) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,
