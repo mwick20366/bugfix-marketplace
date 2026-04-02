@@ -4,8 +4,8 @@ import Submission from "./submission";
 
 const Developer = model.define("developer", {
   id: model.id().primaryKey(),
-  firstName: model.text(),
-  lastName: model.text(),
+  first_name: model.text(),
+  last_name: model.text(),
   email: model.text(),
   bugs: model.hasMany(() => Bug, {
     mappedBy: "developer",

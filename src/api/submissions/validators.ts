@@ -13,8 +13,16 @@ export const GetSubmissionsSchema = createFindParams().merge(
 
 export const PostCreateSubmissionSchema = z.object({
   notes: z.string().optional(),
-  fileUrl: z.string().optional(),
+  file_url: z.string().optional(),
   status: z.string().optional(),
   bug_id: z.string(),
   developer_id: z.string().optional(),
+})
+
+export const PostApproveSubmissionSchema = z.object({
+  client_notes: z.string().optional(),
+})
+
+export const PostRejectSubmissionSchema = z.object({
+  client_notes: z.string().optional(),
 })

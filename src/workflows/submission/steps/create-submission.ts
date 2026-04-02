@@ -6,7 +6,7 @@ import BugTrackerModuleService from "../../../modules/bugtracker/service"
 export type CreateSubmissionStepInput = {
   bug_id: string
   developer_id: string
-  fileUrl: string
+  file_url: string
   notes: string
 }
 

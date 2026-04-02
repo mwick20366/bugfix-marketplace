@@ -44,7 +44,7 @@ export async function POST(
         bug_id: req.params.id,
         developer_id: req.auth_context.actor_id,
         notes: req.body.submission.notes,
-        fileUrl: req.body.submission.fileUrl,
+        file_url: req.body.submission.file_url,
       },
     },
   })

@@ -6,8 +6,8 @@ export type UpdateBugStepInput = {
   id: string
   title?: string
   description?: string
-  techStack?: string
-  repoLink?: string
+  tech_stack?: string
+  repo_link?: string
   bounty?: number
   developer_id?: string
   status?: string

@@ -52,7 +52,7 @@ export const GET = async (
         $or: [
           { title: { $ilike: `%${q}%` } },
           { description: { $ilike: `%${q}%` } },
-          { techStack: { $ilike: `%${q}%` } },
+          { tech_stack: { $ilike: `%${q}%` } },
         ],
       }),
       ...(status && {
@@ -82,7 +82,7 @@ export const POST = async (
 ) => {
   const { result } = await createBugWorkflow(req.scope).run({
     input: {
-        bug: req.validatedBody
+      bug: req.validatedBody
     }
   })
 

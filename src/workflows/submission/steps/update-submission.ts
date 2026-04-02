@@ -7,7 +7,7 @@ export type UpdateSubmissionStepInput = {
   id: string
   bug_id?: string
   developer_id?: string
-  fileUrl?: string
+  file_url?: string
   notes?: string
 }
 

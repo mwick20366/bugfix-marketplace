@@ -14,8 +14,8 @@ export const GetBugsSchema = createFindParams().merge(
 export const PostCreateBugSchema = z.object({
   title: z.string(),
   description: z.string(),
-  techStack: z.string(),
-  repoLink: z.string(),
+  tech_stack: z.string(),
+  repo_link: z.string(),
   bounty: z.number(),
   client_id: z.string(),
 })
@@ -23,6 +23,6 @@ export const PostCreateBugSchema = z.object({
 export const SubmitBugFixSchema = z.object({
   submission: z.object({
     notes: z.string().optional(),
-    fileUrl: z.string().optional(),
+    file_url: z.string().optional(),
   }),
 })

@@ -9,7 +9,7 @@ class BugTrackerModuleService extends MedusaService({
   Client,
   Developer,
   Bug,
-  Submission
+  Submission,
 }) {}
 
 export default BugTrackerModuleService

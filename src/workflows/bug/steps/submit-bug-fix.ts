@@ -6,7 +6,7 @@ export type SubmitBugFixStepInput = {
   bug_id: string
   developer_id: string
   notes: string
-  fileUrl: string
+  file_url: string
 }
 
 type CompensationInput = {
@@ -23,7 +23,7 @@ export const submitBugFixStep = createStep(
       developer_id: data.developer_id,
       status: "awaiting client review",
       notes: data.notes,
-      fileUrl: data.fileUrl,
+      file_url: data.file_url,
     })
 
     await service.updateBugs({

@@ -6,8 +6,8 @@ import BugTrackerModuleService from "../../../modules/bugtracker/service"
 export type CreateBugStepInput = {
   title: string
   description: string
-  techStack: string
-  repoLink: string
+  tech_stack: string
+  repo_link: string
   bounty: number
   client_id: string
 }
@@ -16,7 +16,10 @@ export const createBugStep = createStep(
   "create-bug",
   async (data: CreateBugStepInput, { container }) => {
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
-    const bug = await service.createBugs(data)
+    const bug = await service.createBugs({
+      ...data,
+      status: "open",
+    })
     return new StepResponse(bug, bug.id)
   },
   async (bugId, { container }) => {

@@ -13,7 +13,12 @@ export async function GET(
 
   const { data: [client] } = await query.graph({
     entity: "client",
-    ...req.queryConfig,
+    fields: [
+          "*",
+          "bugs.*",
+          "bugs.developer.*",
+          "bugs.submissions.*",
+        ],
     filters: {
       id: clientId,
     },

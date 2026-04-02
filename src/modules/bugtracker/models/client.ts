@@ -1,15 +1,16 @@
 import { model } from "@medusajs/framework/utils";
 import Bug from "./bug";
+import Submission from "./submission";
 
 const Client = model.define("client", {
   id: model.id().primaryKey(),
-  contactFirstName: model.text(),
-  contactLastName: model.text(),
-  companyName: model.text(),
+  contact_first_name: model.text(),
+  contact_last_name: model.text(),
+  company_name: model.text(),
   email: model.text(),
   bugs: model.hasMany(() => Bug, {
     mappedBy: "client",
-  })
+  }),
 });
 
 export default Client;

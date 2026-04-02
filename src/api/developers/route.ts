@@ -4,8 +4,8 @@ import { MedusaError } from "@medusajs/framework/utils"
 import createDeveloperWorkflow from "../../workflows/developer/steps/create-developer"
 
 type RequestBody = {
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   email: string
 }
 

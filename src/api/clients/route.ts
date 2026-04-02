@@ -5,9 +5,9 @@ import { createClientWorkflow, CreateClientWorkflowInput } from "../../workflows
 import { CreateClientStepInput } from "../../workflows/client/steps/create-client"
 
 // type RequestBody = {
-//   contactFirstName: string
-//   contactLastName: string
-//   companyName: string
+//   contact_first_name: string
+//   contact_last_name: string
+//   company_name: string
 //   email: string
 // }
 

@@ -1,13 +1,5 @@
 import type { AuthenticatedMedusaRequest, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { z } from "@medusajs/framework/zod"
-// import { PostCreateBugSchema } from "./validators"
-import { createBugWorkflow } from "../../workflows/bug"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import developer from "../../modules/bugtracker/models/developer"
-import { PostCreateSubmissionSchema } from "./validators"
-import { createSubmissionWorkflow } from "../../workflows/submission"
-
-type CreateSubmissionBody = z.infer<typeof PostCreateSubmissionSchema>
 
 // GET /submissions
 export const GET = async (
@@ -19,28 +11,37 @@ export const GET = async (
   const {
     q,
     status,
-    developer_id,
-    client_id,
   } = req.validatedQuery as {
     q?: string,
     status?: string,
-    developer_id?: string,
-    client_id?: string
   }
 
   const isAdmin = req.auth_context?.actor_type === "user"
   const currentUserId = req.auth_context?.actor_id
+  const currentUserType = req.auth_context?.actor_type
 
-  let developerId: string | undefined = developer_id
-  let clientId: string | undefined = client_id
+  let developerId: string | undefined
+  let clientId: string | undefined
 
   if (!isAdmin) {
-    if (developerId && req.auth_context?.actor_type === "developer") {
+    if (currentUserType === "developer") {
       developerId = currentUserId
-    } else if (clientId && req.auth_context?.actor_type === "client") {
+    } else if (currentUserType === "client") {
       clientId = currentUserId
     }
   }
+
+  // console.log("Authenticated user:", {
+  //   actorId: req.auth_context?.actor_id,
+  //   actorType: req.auth_context?.actor_type,
+  // })
+
+  console.log("Querying submissions with filters:", {
+    q,
+    status,
+    developerId,
+    clientId,
+  })
 
   const {
     data: submissions,
@@ -54,7 +55,7 @@ export const GET = async (
       //   $or: [
       //     { title: { $ilike: `%${q}%` } },
       //     { description: { $ilike: `%${q}%` } },
-      //     { techStack: { $ilike: `%${q}%` } },
+      //     { tech_stack: { $ilike: `%${q}%` } },
       //   ],
       // }),
       ...(status && {
@@ -67,15 +68,20 @@ export const GET = async (
       }
     ),
       ...(clientId && {
-        client: {
-          id: clientId
+        bug: {
+          client: {
+            id: clientId
+          }
         }
+        // client: {
+        //   id: clientId
+        // }
       }),
     },
   })
 
-  console.log("Fetched submissions:", submissions)
-  console.log("Count:", count, "Take:", take, "Skip:", skip)
+  // console.log("Fetched submissions:", submissions)
+  // console.log("Count:", count, "Take:", take, "Skip:", skip)
   
   res.json({ submissions, count, limit: take, offset: skip })
 }

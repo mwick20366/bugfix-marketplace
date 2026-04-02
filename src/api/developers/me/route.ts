@@ -3,8 +3,6 @@ import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
-import { ConsoleSpanExporter } from "@medusajs/framework/opentelemetry/sdk-trace-node"
 
 export async function GET(
   req: AuthenticatedMedusaRequest,

@@ -4,6 +4,7 @@ import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAnd
 import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
 import { GetSubmissionsSchema } from "./submissions/validators"
+import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
 
 export default defineMiddlewares({
   routes: [
@@ -25,15 +26,16 @@ export default defineMiddlewares({
         defaults: [
           "id",
           "email",
-          "companyName",
-          "contactFirstName",
-          "contactLastName",
+          "company_name",
+          "contact_first_name",
+          "contact_last_name",
           "bugs.*", // retrieves all fields of linked bug records
+          "submissions.*", // retrieves all fields of linked submission records
         ],
         isList: false,
       }),
     ],
-  },    
+  },
     {
       matcher: "/developers",
       method: "POST",
@@ -52,8 +54,8 @@ export default defineMiddlewares({
         defaults: [
           "id",
           "email",
-          "firstName",
-          "lastName",
+          "first_name",
+          "last_name",
           "bugs.*", // retrieves all fields of linked bug records
           "submissions.*", // retrieves all fields of linked submission records
         ],
@@ -81,17 +83,17 @@ export default defineMiddlewares({
             "id",
             "title",
             "description",
-            "techStack",
+            "tech_stack",
             "bounty",
             "status",
             "created_at",
             "updated_at",
             "developer.*", // retrieves all fields of linked developer record
             "client.id",
-            "client.companyName",
+            "client.company_name",
             "client.email",
-            "client.contactFirstName",
-            "client.contactLastName",
+            "client.contact_first_name",
+            "client.contact_last_name",
           ],
           defaultLimit: 15,
         }),
@@ -107,16 +109,41 @@ export default defineMiddlewares({
           defaults: [
             "id",
             "notes",
-            "fileUrl",
+            "file_url",
             "status",
             "created_at",
             "updated_at",
+            "client_notes",
             "bug.*",
             "bug.developer.*", // retrieves all fields of linked developer record for the bug
             "bug.client.*",
           ],
           defaultLimit: 15,
         }),
+      ],
+    },
+    {
+      matcher: "/submissions",
+      methods: ["POST"],
+      middlewares: [
+      authenticate("client", ["session", "bearer"]),
+      validateAndTransformBody(PostCreateSubmissionSchema),
+      ],
+    },
+    {
+      matcher: "/submissions/:id/approve",
+      methods: ["POST"],
+      middlewares: [
+        authenticate(["client"], ["session", "bearer"]),
+        validateAndTransformBody(PostApproveSubmissionSchema),
+      ],
+    },
+    {
+      matcher: "/submissions/:id/reject",
+      methods: ["POST"],
+      middlewares: [
+        authenticate(["client"], ["session", "bearer"]),
+        validateAndTransformBody(PostRejectSubmissionSchema),
       ],
     },
     // Only clients can create bugs

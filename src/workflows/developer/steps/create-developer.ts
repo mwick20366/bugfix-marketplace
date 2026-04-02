@@ -10,8 +10,8 @@ import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
 import BugTrackerModuleService from "../../../modules/bugtracker/service"
 
 export type CreateDeveloperStepInput = {
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   email: string
 }
 

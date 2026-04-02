@@ -2,23 +2,27 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
 import BugTrackerModuleService from "../../../modules/bugtracker/service"
 
-export type ClaimBugStepInput = {
+export type UnClaimBugStepInput = {
   bug_id: string
   developer_id: string
 }
 
-export const claimBugStep = createStep(
-  "claim-bug",
-  async (data: ClaimBugStepInput, { container }) => {
+export const unClaimBugStep = createStep(
+  "unclaim-bug",
+  async (data: UnClaimBugStepInput, { container }) => {
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
 
+    // Only the original developer can unclaim the bug
     const originalBug = await service.retrieveBug(data.bug_id)
+    
+    if (originalBug.developer_id !== data.developer_id) {
+      throw new Error("Only the original developer can unclaim the bug")
+    }
 
     const bug = await service.updateBugs({
       id: data.bug_id,
-      developer_id: data.developer_id,
-      status: "claimed",
-      claimed_at: new Date(),
+      developer_id: null,
+      status: "open",
     })
 
     return new StepResponse(bug, originalBug)
@@ -30,7 +34,6 @@ export const claimBugStep = createStep(
       id: originalBug.id,
       developer_id: originalBug.developer_id,
       status: originalBug.status,
-      claimed_at: originalBug.claimed_at,
     })
   }
 )

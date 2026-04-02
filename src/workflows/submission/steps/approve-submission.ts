@@ -3,8 +3,8 @@ import { BUGTRACKER_MODULE } from "../../../modules/bugtracker"
 import BugTrackerModuleService from "../../../modules/bugtracker/service"
 
 export type ApproveSubmissionStepInput = {
-  submissionId: string,
-  clientNotes?: string
+  submissionId: string
+  client_notes?: string
 }
 
 type CompensationInput = {
@@ -22,7 +22,7 @@ export const approveSubmissionStep = createStep(
     const submission = await service.updateSubmissions({
       id: data.submissionId,
       status: "client approved",
-      //client_notes: data.clientNotes,
+      client_notes: data.client_notes,
     })
 
     await service.updateBugs({
