@@ -20,6 +20,7 @@ import  { BugDetailsModal } from "@modules/developer/components/bug-details-moda
 import { useDeveloperMe } from "@lib/hooks/use-developer-me"
 import { useUnclaimBug } from "@lib/hooks/use-unclaim-bug"
 import SubmitFixModal from "../submit-fix-modal"
+import { bountyColumn, convertDateToRelative, developerStatusColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
@@ -27,136 +28,76 @@ const createColumns = (
   onSubmitFix: (bug: Bug) => void,
   onUnclaimBug: (bug: Bug) => void
 ) => [
-  columnHelper.accessor("title", {
-    header: "Title",
-    enableSorting: true,
-    sortLabel: "Title",
-    sortAscLabel: "A-Z",
-    sortDescLabel: "Z-A",
-  }),
-  columnHelper.accessor("updated_at", {
+  titleColumn,
+  columnHelper.accessor("claimed_at", {
       header: "Claimed",
       enableSorting: true,
       sortLabel: "Claimed",
       sortAscLabel: "Oldest first",
       sortDescLabel: "Newest first",
-      cell: ({ getValue }) => {
-        const date = new Date(getValue())
-        const now = new Date()
-        const diffMs = now.getTime() - date.getTime()
-        const diffSeconds = Math.floor(diffMs / 1000)
-        const diffMinutes = Math.floor(diffSeconds / 60)
-        const diffHours = Math.floor(diffMinutes / 60)
-        const diffDays = Math.floor(diffHours / 24)
-        const diffWeeks = Math.floor(diffDays / 7)
-
-        if (diffWeeks > 0) return `${diffWeeks} week${diffWeeks > 1 ? "s" : ""} ago`
-        if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`
-        if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
-        if (diffMinutes > 0) return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`
-        return "Just now"
+      cell: ({ row }) => {
+        const date = row.original.claimed_at || row.original.updated_at
+        // const date = getValue() as string
+        return convertDateToRelative(date)
       },
     }),
-  columnHelper.accessor("bounty", {
-    header: "Bounty",
-    enableSorting: true,
-    sortLabel: "Bounty",
-    sortAscLabel: "Low to High",
-    sortDescLabel: "High to Low",
-    cell: ({ getValue }) => {
-      const bounty = getValue()
+  bountyColumn,
+  developerStatusColumn,
+  columnHelper.display({
+    id: "actions",
+    header: "",
+    cell: ({ row }) => {
+      
+      const bug = row.original
+      const canSubmitFix = bug.status === "claimed"
+      const canUnclaim = bug.status === "claimed"
 
-      if (bounty == null) {
-          return <div className="flex h-full w-full items-center justify-end"><span className="text-ui-fg-muted">-</span></div>
-        }
-        return (
-          <div className="flex h-full w-full items-center justify-end text-right">
-            {convertToLocale({
-              amount: bounty,
-              locale: "en-US",
-              currency_code: "usd",
-            })}
-          </div>
-        )
-    }
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    enableSorting: true,
-    sortLabel: "Status",
-    sortAscLabel: "A-Z",
-    sortDescLabel: "Z-A",
-    cell: ({ getValue }) => {
-      const status = getValue() as string
-      let color = "gray"
-      if (status === "open") color = "green"
-      else if (status === "claimed") color = "yellow"
-      else if (status === "closed") color = "red"
+      const unclaimButton = (
+        <IconButton
+          size="small"
+          variant="transparent"
+          onClick={() => canUnclaim && onUnclaimBug(bug)}
+          disabled={!canUnclaim}
+        >
+          <ArrowUturnLeft />
+        </IconButton>
+      )
+
+      const submitButton = (
+        <IconButton
+          size="small"
+          variant="transparent"
+          onClick={() => canSubmitFix && onSubmitFix(bug)}
+          disabled={!canSubmitFix}
+        >
+          <PaperPlane />
+        </IconButton>
+      )
+
       return (
-        <div className={`flex h-full w-full items-center justify-start gap-2 text-sm font-medium text-${color}-600`}>
-          <span
-            className={`inline-block h-2 w-2 rounded-full bg-${color}-600`}
-          ></span>
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+        <div className="flex items-center gap-x-2" onClick={(e) => e.stopPropagation()}>
+          {canSubmitFix ? (
+            <Tooltip content="Submit a fix for this bug">
+              {submitButton}
+            </Tooltip>
+          ) : (
+            <Tooltip content="You can only submit a fix for claimed bugs">
+              {submitButton}
+            </Tooltip>
+          )}
+          {canUnclaim ? (
+            <Tooltip content="Unclaim this bug">
+              {unclaimButton}
+            </Tooltip>
+          ) : (
+            <Tooltip content="You can only unclaim claimed bugs">
+              {unclaimButton}
+            </Tooltip>
+          )}
         </div>
       )
     },
   }),
-    columnHelper.display({
-      id: "actions",
-      header: "",
-      cell: ({ row }) => {
-        
-        const bug = row.original
-        const canSubmitFix = bug.status === "claimed"
-        const canUnclaim = bug.status === "claimed"
-
-        const unclaimButton = (
-          <IconButton
-            size="small"
-            variant="transparent"
-            onClick={() => canUnclaim && onUnclaimBug(bug)}
-            disabled={!canUnclaim}
-          >
-            <ArrowUturnLeft />
-          </IconButton>
-        )
-  
-        const submitButton = (
-          <IconButton
-            size="small"
-            variant="transparent"
-            onClick={() => canSubmitFix && onSubmitFix(bug)}
-            disabled={!canSubmitFix}
-          >
-            <PaperPlane />
-          </IconButton>
-        )
-
-        return (
-          <div className="flex items-center gap-x-2" onClick={(e) => e.stopPropagation()}>
-            {canSubmitFix ? (
-              <Tooltip content="Submit a fix for this bug">
-                {submitButton}
-              </Tooltip>
-            ) : (
-              <Tooltip content="You can only submit a fix for claimed bugs">
-                {submitButton}
-              </Tooltip>
-            )}
-            {canUnclaim ? (
-              <Tooltip content="Unclaim this bug">
-                {unclaimButton}
-              </Tooltip>
-            ) : (
-              <Tooltip content="You can only unclaim claimed bugs">
-                {unclaimButton}
-              </Tooltip>
-            )}
-          </div>
-        )
-      },
-    }),
 ]
 
 const BUG_LIMIT = 15

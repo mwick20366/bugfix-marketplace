@@ -19,20 +19,23 @@ import { cli } from "webpack"
 import { SortOptions } from "@modules/marketplace/components/refinement-list/sort-bugs"
 import { sortBugs } from "@lib/util/sort-bugs"
 import { Client } from "./client"
+import { Submission } from "./submissions"
 
 export type Bug = {
     original: Bug
     id: string,
     title: string,
     description: string,
-    techStack: string,
-    repoLink: string,
+    tech_stack: string,
+    repo_link: string,
     bounty: number,
     status: string,
     created_at: string,
     updated_at: string,
+    claimed_at?: string,
     developer?: Developer
     client?: Client
+    submissions?: Submission[]
 }
 
 export const retrieveBug =
@@ -199,26 +202,23 @@ export const retrieveDeveloperBugs =
 export const createBug = async ({
   title,
   description,
-  techStack,
-  repoLink,
+  tech_stack,
+  repo_link,
   bounty,
   clientId,
 }: {
   title: string
   description: string
-  techStack: string
-  repoLink: string
+  tech_stack: string
+  repo_link: string
   bounty: number
   clientId: string
 }): Promise<any> => {
-
-  console.log('Adding bug with form data:', { title, description, techStack, repoLink, bounty, clientId })
-
   const bug = {
     title,
     description,
-    techStack,
-    repoLink,
+    tech_stack,
+    repo_link,
     bounty,
     client_id: clientId,
   }
@@ -227,46 +227,40 @@ export const createBug = async ({
     ...(await getAuthHeaders()),
   }
 
-  return await sdk.client.fetch(`/bugs`, {
+  const result = await sdk.client.fetch(`/bugs`, {
     method: "POST",
     body: bug,
     headers,
     })
-    .then(async () => {
-      const cacheTag = await getCacheTag("bugs")
-      revalidateTag(cacheTag)
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+
+  const cacheTag = await getCacheTag("bugs")
+  revalidateTag(cacheTag)
+  
+  return result    
 }
 
 export const updateBug = async ({
   title,
   description,
-  techStack,
-  repoLink,
+  tech_stack,
+  repo_link,
   bounty,
-  clientId,
   bugId,
 }: {
   title: string
   description: string
-  techStack: string
-  repoLink: string
+  tech_stack: string
+  repo_link: string
   bounty: number
-  clientId: string
   bugId: string
 }): Promise<any> => {
 
   const bug = {
     title,
     description,
-    techStack,
-    repoLink,
+    tech_stack,
+    repo_link,
     bounty,
-    client_id: clientId,
     id: bugId,
   }
 
@@ -274,19 +268,16 @@ export const updateBug = async ({
     ...(await getAuthHeaders()),
   }
 
-  return await sdk.client.fetch(`/bugs/${bugId}`, {
+  const result = await sdk.client.fetch(`/bugs/${bugId}`, {
     method: "POST",
     body: bug,
     headers,
     })
-    .then(async () => {
-      const cacheTag = await getCacheTag("bugs")
-      revalidateTag(cacheTag)
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+
+  const cacheTag = await getCacheTag("bugs")
+  revalidateTag(cacheTag)
+
+  return result
 }
 
 export const claimBug = async (
@@ -299,57 +290,45 @@ export const claimBug = async (
     ...(await getAuthHeaders()),
   }
 
-  return await sdk.client.fetch(`/bugs/${bugId}/claim`, {
+  const result = await sdk.client.fetch(`/bugs/${bugId}/claim`, {
     method: "POST",
     // body: { developer_id: developerId },
     headers,
   })
-    .then(async () => {
-      const bugsCacheTag = await getCacheTag("bugs")
-      revalidateTag(bugsCacheTag)
 
-      const developerCacheTag = await getCacheTag("developers")
-      revalidateTag(developerCacheTag)
+  const bugsCacheTag = await getCacheTag("bugs")
+  revalidateTag(bugsCacheTag)
 
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+  const developerCacheTag = await getCacheTag("developers")
+  revalidateTag(developerCacheTag)
+
+  return result
 }
 
 export const unclaimBug = async (
   bugId: string,
-  // developerId: string,
 ): Promise<any> => {
-  // const bugId = formData.get("bugId") as string
-  // const developerId = formData.get("developerId") as string
   const headers = {
     ...(await getAuthHeaders()),
   }
 
-  return await sdk.client.fetch(`/bugs/${bugId}/unclaim`, {
+  const result = await sdk.client.fetch(`/bugs/${bugId}/unclaim`, {
     method: "POST",
-    // body: { developer_id: developerId },
     headers,
   })
-    .then(async () => {
-      const bugsCacheTag = await getCacheTag("bugs")
-      revalidateTag(bugsCacheTag)
 
-      const developerCacheTag = await getCacheTag("developers")
-      revalidateTag(developerCacheTag)
+  const bugsCacheTag = await getCacheTag("bugs")
+  revalidateTag(bugsCacheTag)
 
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+  const developerCacheTag = await getCacheTag("developers")
+  revalidateTag(developerCacheTag)
+
+  return result
 }
 
 export const submitFix = async (
   notes: string,
-  fileUrl: string,
+  file_url: string,
   bugId: string,
 ): Promise<any> => {
   // const bugId = formData.get("bugId") as string
@@ -358,29 +337,25 @@ export const submitFix = async (
     ...(await getAuthHeaders()),
   }
 
-  return await sdk.client.fetch(`/bugs/${bugId}/submit-fix`, {
+  const result = await sdk.client.fetch(`/bugs/${bugId}/submit-fix`, {
     method: "POST",
     body: {
       submission: {
         notes,
-        fileUrl,
+        file_url,
       },
     },
     headers,
   })
-    .then(async () => {
-      const bugCacheTag = await getCacheTag("bugs")
-      revalidateTag(bugCacheTag)
 
-      const submissionCacheTag = await getCacheTag("submissions")
-      revalidateTag(submissionCacheTag)
-      
-      const developerCacheTag = await getCacheTag("developers")
-      revalidateTag(developerCacheTag)
+  const bugCacheTag = await getCacheTag("bugs")
+  revalidateTag(bugCacheTag)
 
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+  const submissionCacheTag = await getCacheTag("submissions")
+  revalidateTag(submissionCacheTag)
+  
+  const developerCacheTag = await getCacheTag("developers")
+  revalidateTag(developerCacheTag)
+
+  return result
 }

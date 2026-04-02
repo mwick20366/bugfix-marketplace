@@ -36,18 +36,18 @@ export default function SubmissionDetailsModal({
         </div>
         <div className="flex flex-col gap-y-2">
           <Label>File URL</Label>
-          <a href={submission?.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-            {submission?.fileUrl}
+          <a href={submission?.file_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+            {submission?.file_url}
           </a>
         </div>
         <div className="flex flex-col gap-y-2">
           <Label>Status</Label>
           <MedusaText>{submission?.status}</MedusaText>
         </div>
-        {submission?.clientNotes && (
+        {submission?.client_notes && (
           <div className="flex flex-col gap-y-2">
             <Label>Client Notes</Label>
-            <MedusaText>{submission.clientNotes}</MedusaText>
+            <MedusaText>{submission.client_notes}</MedusaText>
           </div>
         )}        
       </Modal.Body>

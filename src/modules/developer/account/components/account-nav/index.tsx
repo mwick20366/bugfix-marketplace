@@ -39,7 +39,7 @@ const AccountNav = () => {
         ) : (
           <>
             <div className="text-xl-semi mb-4 px-8">
-              Hello! {developer?.firstName}
+              Hello! {developer?.first_name}
             </div>
             <div className="text-base-regular">
               <ul>

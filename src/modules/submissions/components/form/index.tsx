@@ -73,8 +73,8 @@ const SubmitFixForm: React.FC<SubmitFixProps> = ({
           />
           <Input
             label="File URL"
-            name="fileUrl"
-            defaultValue={submission?.fileUrl || undefined}
+            name="file_url"
+            defaultValue={submission?.file_url || undefined}
             // required
             data-testid="submission-file-url-input"
           />

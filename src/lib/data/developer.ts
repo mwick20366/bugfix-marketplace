@@ -54,7 +54,7 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
   
   const developerForm = {
     email: formData.get("email") as string,
-    firstName: formData.get("first_name") as string,
+    first_name: formData.get("first_name") as string,
     lastName: formData.get("last_name") as string,
   }
 

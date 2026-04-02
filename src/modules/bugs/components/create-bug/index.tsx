@@ -3,7 +3,7 @@ import { FormProvider, Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { createBugSchema, CreateBugSchema } from "./validators"
 import Modal from "@modules/common/components/modal"
-import { Button, Label, toast } from "@medusajs/ui"
+import { Button, Label, Textarea, toast } from "@medusajs/ui"
 import Input from "@modules/common/components/input"
 import { useCreateBug } from "@lib/hooks/use-create-bug"
 import { Client } from "@lib/data/client"
@@ -24,8 +24,8 @@ export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
     defaultValues: {
         title: "",
         description: "",
-        repoLink: "",
-        techStack: "",
+        repo_link: "",
+        tech_stack: "",
         bounty: 0
     },
   })
@@ -74,14 +74,14 @@ export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
                 name="description"
                 render={({ field, fieldState: { error } }) => (
                   <div className="flex flex-col gap-y-2">
-                    <Input label={"Description"} {...field} />
+                    <Textarea placeholder="Description" {...field} rows={5} />
                     {error && <span className="text-red-500 text-sm">{error.message}</span>}
                   </div>
                 )}
               />
               <Controller
                 control={form.control}
-                name="techStack"
+                name="tech_stack"
                 render={({ field, fieldState: { error } }) => (
                   <div className="flex flex-col gap-y-2">
                     <Input label={"Tech Stack"} {...field} />
@@ -91,7 +91,7 @@ export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
               />
               <Controller
                 control={form.control}
-                name="repoLink"
+                name="repo_link"
                 render={({ field, fieldState: { error } }) => (
                   <div className="flex flex-col gap-y-2">
                     <Input label={"Repository Link"} {...field} />

@@ -41,23 +41,23 @@ export const BugDetailsModal = ({
             <Label size="small" weight="plus">Description</Label>
             <MedusaText>{bug.description}</MedusaText>
           </div>
-          {bug.repoLink && (
+          {bug.repo_link && (
             <div>
               <Label size="small" weight="plus">Repository URL</Label>
               <a
-                href={bug.repoLink}
+                href={bug.repo_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 underline text-sm"
               >
-                {bug.repoLink}
+                {bug.repo_link}
               </a>
             </div>
           )}
-          {bug.techStack && (
+          {bug.tech_stack && (
             <div>
               <Label size="small" weight="plus">Tech Stack</Label>
-              <MedusaText>{bug.techStack}</MedusaText>
+              <MedusaText>{bug.tech_stack}</MedusaText>
             </div>
           )}
           <div>

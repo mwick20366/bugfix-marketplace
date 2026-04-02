@@ -25,13 +25,16 @@ const Modal = ({
       <FocusModal.Content
         style={{ margin: "auto" }}
         className={clx(
-          "flex flex-col justify-start w-full transform text-left align-middle transition-all max-h-[75vh] h-fit",
+          "flex flex-col justify-start w-full transform text-left align-middle transition-all max-h-[75vh] h-fit z-[60]",
           {
             "max-w-md": size === "small",
             "max-w-xl": size === "medium",
             "max-w-3xl": size === "large",
           }
         )}
+        overlayProps={{
+          className: clx("z-[60] !transition-none !animate-none"),
+        }}
       >
         <ModalProvider close={close}>{children}</ModalProvider>
       </FocusModal.Content>      

@@ -6,8 +6,8 @@ import { Client } from "./client"
 export type Member = {
   id: string
   email: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
 }
 
 export const retrieveMember =

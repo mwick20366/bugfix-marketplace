@@ -1,35 +1,26 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
-import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
   getCacheOptions,
   getCacheTag,
-  getCartId,
-  removeAuthToken,
-  removeCartId,
-  setAuthToken,
 } from "./cookies"
-import { Developer } from "./developer"
-import { cli } from "webpack"
 import { SortOptions } from "@modules/marketplace/components/refinement-list/sort-bugs"
-import { sortBugs } from "@lib/util/sort-bugs"
 import { Bug } from "./bugs"
 
 export type Submission = {
     original: Submission
     id: string,
     notes: string,
-    fileUrl: string,
+    file_url: string,
     bug?: Bug,
     status: string,
     created_at: string,
     updated_at: string,
-    clientNotes?: string,
+    client_notes?: string,
 }
 
 export const retrieveSubmission =
@@ -49,9 +40,6 @@ export const retrieveSubmission =
     return await sdk.client
       .fetch<{ submission: Submission }>(`/submissions/${id}`, {
         method: "GET",
-        // query: {
-        //   fields: "*orders",
-        // },
         headers,
         next,
         cache: "force-cache",
@@ -74,7 +62,7 @@ export const listSubmissions = async ({
   }
 
   const next = {
-    ...(await getCacheOptions("submissions")),
+    ...(await getCacheOptions("my-submissions")),
   }
 
   return sdk.client
@@ -91,9 +79,6 @@ export const listSubmissions = async ({
       }
     )
     .then(({ submissions, count }) => {
-      console.log("Fetched submissions:", submissions)
-      console.log("Fetched submissions count:", count)
-      
       return {
         response: {
           submissions,
@@ -118,7 +103,7 @@ export const listDeveloperSubmissions = async ({
   }
 
   const next = {
-    ...(await getCacheOptions("submissions")),
+    ...(await getCacheOptions("developer-submissions")),
   }
 
   return sdk.client
@@ -147,58 +132,87 @@ export const listDeveloperSubmissions = async ({
 
 export const createSubmission = async (
   notes: string,
-  fileUrl: string,
+  file_url: string,
   bugId: string,
-): Promise<{ success: boolean; error: string | null }> => {
+): Promise<any> => {
   const headers = {
     ...(await getAuthHeaders()),
   }
 
   const next = {
-    ...(await getCacheOptions("submissions")),
+    ...(await getCacheOptions("my-submissions")),
   }
 
-  return sdk.client.fetch(`/submissions`, {
+  const result = await sdk.client.fetch(`/submissions`, {
     method: "POST",
     body: JSON.stringify({
       notes,
-      file_url: fileUrl,
+      file_url: file_url,
       bug_id: bugId,
     }),
     headers,
     next,
     cache: "force-cache",
   })
-    .then(async () => {
-      const cacheTag = await getCacheTag("submissions")
-      revalidateTag(cacheTag)
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+
+  const cacheTag = await getCacheTag("my-submissions")
+  revalidateTag(cacheTag)
+
+  return result
 }
 
 export const approveSubmission = async (
   submissionId: string,
-  clientNotes: string,
-  // developerId: string,
+  client_notes?: string,
 ): Promise<any> => {
-  const headers = {
-    ...(await getAuthHeaders()),
+  const headers = { ...(await getAuthHeaders()) }
+
+  const submission = {
+    client_notes,
   }
 
-  return await sdk.client.fetch(`/submissions/${submissionId}/approve`, {
+  // Let the SDK's FetchError propagate naturally
+  const result = await sdk.client.fetch<{
+    submission: Submission,
+    clientSecret: string
+    paymentSession: any
+  }>(`/submissions/${submissionId}/approve`, {
     method: "POST",
-    body: JSON.stringify({ clientNotes: clientNotes }),
+    body: submission,
     headers,
   })
-    .then(async () => {
-      const cacheTag = await getCacheTag("submissions")
-      revalidateTag(cacheTag)
-      return { success: true, error: null }
-    })
-    .catch((err) => {
-      return { success: false, error: err.toString() }
-    })
+
+  const developerCacheTag = await getCacheTag("developer-submissions")
+  revalidateTag(developerCacheTag)
+
+  const cacheTag = await getCacheTag("my-submissions")
+  revalidateTag(cacheTag)
+
+  return result
+}
+
+export const rejectSubmission = async (
+  submissionId: string,
+  client_notes?: string,
+): Promise<any> => {
+  const headers = { ...(await getAuthHeaders()) }
+
+  // Let the SDK's FetchError propagate naturally
+  const submission = {
+    client_notes,
+  }
+
+  const result = await sdk.client.fetch(`/submissions/${submissionId}/reject`, {
+    method: "POST",
+    body: submission,
+    headers,
+  })
+
+  const developerCacheTag = await getCacheTag("developer-submissions")
+  revalidateTag(developerCacheTag)
+
+  const cacheTag = await getCacheTag("my-submissions")
+  revalidateTag(cacheTag)
+
+  return result
 }

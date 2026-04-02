@@ -7,8 +7,8 @@ export const useSubmitFix = (bugId: string, options?: UseMutationOptions<any, an
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ notes, fileUrl }: { notes: string; fileUrl: string }) =>
-      submitFix(notes, fileUrl, bugId),
+    mutationFn: ({ notes, file_url }: { notes: string; file_url: string }) =>
+      submitFix(notes, file_url, bugId),
     onSuccess: (data: any, variables: any, context: any, meta: any) => {
       options?.onSuccess?.(data, variables, context, meta)
     },

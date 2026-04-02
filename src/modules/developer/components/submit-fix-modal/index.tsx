@@ -33,7 +33,7 @@ export default function SubmitFixModal({
     mode: "onChange",
     defaultValues: {
         notes: "",
-        fileUrl: "",
+        file_url: "",
     },
   })
 
@@ -57,21 +57,6 @@ export default function SubmitFixModal({
     submitFix(data)
   })
 
-  // const handleSubmit = () => {
-  //   const { notes, fileUrl } = form.getValues()
-
-  //   submitFix({ notes, fileUrl }, {
-  //     onSuccess: () => {
-  //       toast.success("Fix submitted successfully")
-  //       onFixSubmitted?.()
-  //       onClose()
-  //     },
-  //     onError: (error) => {
-  //       toast.error(`Failed to submit fix: ${error.message}`)
-  //     },
-  //   })
-  // }
-
   return (
     <Modal isOpen={isOpen} close={onClose}>
       <Modal.Title>Submit Bug Fix</Modal.Title>
@@ -93,7 +78,7 @@ export default function SubmitFixModal({
             />
             <Controller
               control={form.control}
-              name="fileUrl"
+              name="file_url"
               render={({ field, fieldState: { error } }) => (
                 <div className="flex flex-col gap-y-2">
                   <Input label={"File URL"} {...field} />

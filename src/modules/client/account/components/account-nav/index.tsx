@@ -6,24 +6,21 @@ import { useParams, usePathname } from "next/navigation"
 
 import ChevronDown from "@modules/common/icons/chevron-down"
 import User from "@modules/common/icons/user"
-import MapPin from "@modules/common/icons/map-pin"
-import Package from "@modules/common/icons/package"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { HttpTypes } from "@medusajs/types"
 import { signout } from "@lib/data/customer"
-import { Client } from "@lib/data/client"
+import { useClientMe } from "@lib/hooks/use-client-me"
 
-const AccountNav = ({
-  client,
-}: {
-  client: Client | null
-}) => {
+const AccountNav = () => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
 
   const handleLogout = async () => {
     await signout(countryCode)
   }
+
+  const { client } = useClientMe()
+
+  const developerSubmissions = client?.bugs?.flatMap((bug) => bug.submissions) || []
 
   return (
     <div>
@@ -42,7 +39,7 @@ const AccountNav = ({
         ) : (
           <>
             <div className="text-xl-semi mb-4 px-8">
-              Hello! {client?.firstName || "there"}!
+              Hello {client?.first_name || "there"}!
             </div>
             <div className="text-base-regular">
               <ul>
@@ -55,40 +52,27 @@ const AccountNav = ({
                     <>
                       <div className="flex items-center gap-x-2">
                         <User size={20} />
-                        <span>My Bugs</span>
+                        <span>My Bugs ({client?.bugs?.length || 0})</span>
                       </div>
                       <ChevronDown className="transform -rotate-90" />
                     </>
                   </LocalizedClientLink>
                 </li>
-                {/* <li>
+                <li>
                   <LocalizedClientLink
-                    href="/account/addresses"
+                    href="/account/developer-submissions"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                    data-testid="addresses-link"
+                    data-testid="profile-link"
                   >
                     <>
                       <div className="flex items-center gap-x-2">
-                        <MapPin size={20} />
-                        <span>Addresses</span>
+                        <User size={20} />
+                        <span>Developer Submissions ({developerSubmissions.length})</span>
                       </div>
                       <ChevronDown className="transform -rotate-90" />
                     </>
                   </LocalizedClientLink>
-                </li> */}
-                {/* <li>
-                  <LocalizedClientLink
-                    href="/account/orders"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                    data-testid="orders-link"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <Package size={20} />
-                      <span>Orders</span>
-                    </div>
-                    <ChevronDown className="transform -rotate-90" />
-                  </LocalizedClientLink>
-                </li> */}
+                </li>                
                 <li>
                   <button
                     type="button"
@@ -130,27 +114,18 @@ const AccountNav = ({
                   route={route!}
                   data-testid="profile-link"
                 >
-                  My Bugs
-                </AccountNavLink>
-              </li>
-              {/* <li>
-                <AccountNavLink
-                  href="/account/addresses"
-                  route={route!}
-                  data-testid="addresses-link"
-                >
-                  Addresses
+                  My Bugs ({client?.bugs?.length || 0 })
                 </AccountNavLink>
               </li>
               <li>
                 <AccountNavLink
-                  href="/account/orders"
+                  href="/client/account/developer-submissions"
                   route={route!}
-                  data-testid="orders-link"
+                  data-testid="profile-link"
                 >
-                  Orders
+                  Developer Submissions ({developerSubmissions?.length || 0 })
                 </AccountNavLink>
-              </li> */}
+              </li>              
               <li className="text-grey-700">
                 <button
                   type="button"

@@ -1,9 +1,7 @@
 "use client"
 
-import { Bug } from "@lib/data/bugs"
 import {
   DataTable,
-  createDataTableColumnHelper,
   useDataTable,
   DataTablePaginationState,
   DataTableSortingState,
@@ -11,78 +9,18 @@ import {
   DataTableColumnDef,
 } from "@medusajs/ui"
 
-import { convertToLocale } from "@lib/util/money"
 import { Submission } from "@lib/data/submissions"
-
-const columnHelper = createDataTableColumnHelper<Submission>()
+import { descriptionColumn, notesColumn, developerStatusColumn, submittedColumn, titleColumn } from "./columns"
+import { fileColumn } from "./columns"
 
 const defaultColumns = [
-  columnHelper.accessor("bug.title", {
-    header: "Bug",
-    enableSorting: true,
-    sortLabel: "Bug",
-    sortAscLabel: "A-Z",
-    sortDescLabel: "Z-A",
-  }),
-  columnHelper.accessor("bug.description", {
-    header: "Bug Description",
-    enableSorting: false,
-  }),
-  columnHelper.accessor("notes", {
-    header: "Notes",
-    enableSorting: false,
-  }),
-  columnHelper.accessor("fileUrl", {
-    header: "File",
-    enableSorting: false,
-  }),  
-  columnHelper.accessor("created_at", {
-      header: "Submitted",
-      enableSorting: true,
-      sortLabel: "Submitted",
-      sortAscLabel: "Oldest first",
-      sortDescLabel: "Newest first",
-      cell: ({ getValue }) => {
-        const date = new Date(getValue())
-        const now = new Date()
-        const diffMs = now.getTime() - date.getTime()
-        const diffSeconds = Math.floor(diffMs / 1000)
-        const diffMinutes = Math.floor(diffSeconds / 60)
-        const diffHours = Math.floor(diffMinutes / 60)
-        const diffDays = Math.floor(diffHours / 24)
-        const diffWeeks = Math.floor(diffDays / 7)
-
-        if (diffWeeks > 0) return `${diffWeeks} week${diffWeeks > 1 ? "s" : ""} ago`
-        if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`
-        if (diffHours > 0) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
-        if (diffMinutes > 0) return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`
-        return "Just now"
-      },
-    }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    enableSorting: true,
-    sortLabel: "Status",
-    sortAscLabel: "A-Z",
-    sortDescLabel: "Z-A",
-    cell: ({ getValue }) => {
-      const status = getValue() as string
-      let color = "gray"
-      if (status === "open") color = "green"
-      else if (status === "claimed") color = "yellow"
-      else if (status === "closed") color = "red"
-      return (
-        <div className={`flex h-full w-full items-center justify-start gap-2 text-sm font-medium text-${color}-600`}>
-          <span
-            className={`inline-block h-2 w-2 rounded-full bg-${color}-600`}
-          ></span>
-          {status.charAt(0).toUpperCase() + status.slice(1)}
-        </div>
-      )
-    },
-  })
+  titleColumn,
+  descriptionColumn,
+  notesColumn,
+  fileColumn,
+  submittedColumn,
+  developerStatusColumn
 ]
-
 
 type SubmissionsListTemplateProps = {
   submissions: Submission[]
