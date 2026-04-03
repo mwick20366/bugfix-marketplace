@@ -5,6 +5,7 @@ import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/v
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
 import { GetSubmissionsSchema } from "./submissions/validators"
 import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
+import { PostCaptureSubmissionSchema } from "./submissions/[id]/finalize-approval/route"
 
 export default defineMiddlewares({
   routes: [
@@ -17,25 +18,25 @@ export default defineMiddlewares({
         }),
       ],
     },
-  {
-    matcher: "/clients/me",
-    methods: ["GET"],
-    middlewares: [
-      authenticate("client", ["session", "bearer"]),
-      validateAndTransformQuery(createFindParams(), {
-        defaults: [
-          "id",
-          "email",
-          "company_name",
-          "contact_first_name",
-          "contact_last_name",
-          "bugs.*", // retrieves all fields of linked bug records
-          "submissions.*", // retrieves all fields of linked submission records
-        ],
-        isList: false,
-      }),
-    ],
-  },
+    {
+      matcher: "/clients/me",
+      methods: ["GET"],
+      middlewares: [
+        authenticate("client", ["session", "bearer"]),
+        validateAndTransformQuery(createFindParams(), {
+          defaults: [
+            "id",
+            "email",
+            "company_name",
+            "contact_first_name",
+            "contact_last_name",
+            "bugs.*", // retrieves all fields of linked bug records
+            "submissions.*", // retrieves all fields of linked submission records
+          ],
+          isList: false,
+        }),
+      ],
+    },
     {
       matcher: "/developers",
       method: "POST",
@@ -131,13 +132,21 @@ export default defineMiddlewares({
       ],
     },
     {
-      matcher: "/submissions/:id/approve",
+      matcher: "/submissions/:id/initiate-approval",
       methods: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
         validateAndTransformBody(PostApproveSubmissionSchema),
       ],
     },
+    {
+      matcher: "/submissions/:id/finalize-approval",
+      methods: ["POST"],
+      middlewares: [
+        authenticate(["client"], ["session", "bearer"]),
+        validateAndTransformBody(PostCaptureSubmissionSchema),
+      ],
+    },    
     {
       matcher: "/submissions/:id/reject",
       methods: ["POST"],

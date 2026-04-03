@@ -4,7 +4,7 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { MedusaError, ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
-import { approveSubmissionWorkflow, ApproveSubmissionWorkflowInput } from "../../../../workflows/submission"
+import { ApproveSubmissionWorkflowInput } from "../../../../workflows/submission"
 import { createPaymentSessionsWorkflow } from "@medusajs/medusa/core-flows"
 
 export const POST = async (
@@ -61,14 +61,14 @@ export const POST = async (
     })
 
   // Execute approve workflow
-  const { result } = await approveSubmissionWorkflow(req.scope).run({
-    input: {
-      submission: { ...req.validatedBody, submissionId },
-    },
-  })
+  // const { result } = await approveSubmissionWorkflow(req.scope).run({
+  //   input: {
+  //     submission: { ...req.validatedBody, submissionId },
+  //   },
+  // })
 
   res.json({
-    submission: result,
+    // submission: result,
     clientSecret: paymentSession.data.client_secret,
     paymentSession,
   })
