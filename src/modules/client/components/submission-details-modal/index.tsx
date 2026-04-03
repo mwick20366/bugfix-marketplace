@@ -8,9 +8,8 @@ import { useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ApproveRejectSubmissionSchema, approveRejectSubmissionSchema } from "./validators";
 import { useQueryClient } from "@tanstack/react-query";
-import { useApproveSubmission } from "@lib/hooks/use-approve-submission";
+import { useApproveSubmission } from "@lib/hooks/use-finalize-submission-approval";
 import { useRejectSubmission } from "@lib/hooks/use-reject-submission";
-import { initiateApprovalPayment } from "@lib/data/payment";
 
 interface SubmissionDetailsModalProps {
   isOpen: boolean;
@@ -38,12 +37,6 @@ export default function SubmissionDetailsModal({
   const [showForm, setShowForm] = useState(false)
 
   const queryClient = useQueryClient();
-
-  // let mutateFn = useApproveSubmission;
-
-  // if (isRejecting) {
-  //   mutateFn = useRejectSubmission;
-  // }
 
   const { mutate: approve, isPending: approveIsPending } = useApproveSubmission(submission?.id, {
     onSuccess: ({ submission, clientSecret, paymentSession }) => {

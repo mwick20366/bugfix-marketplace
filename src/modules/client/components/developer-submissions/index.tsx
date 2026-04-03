@@ -1,4 +1,5 @@
 "use client"
+import React from "react"
 import {
   Submission,
   listSubmissions
@@ -49,9 +50,6 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
 
   const queryParams = {
     limit: SUBMISSION_LIMIT,
-    // client_id: client.id,
-    // clientId: client.id,
-    // status: "claimed",
   }
 
   const sortingParams = {

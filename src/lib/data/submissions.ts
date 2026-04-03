@@ -12,15 +12,15 @@ import { SortOptions } from "@modules/marketplace/components/refinement-list/sor
 import { Bug } from "./bugs"
 
 export type Submission = {
-    original: Submission
-    id: string,
-    notes: string,
-    file_url: string,
-    bug?: Bug,
-    status: string,
-    created_at: string,
-    updated_at: string,
-    client_notes?: string,
+  original: Submission
+  id: string,
+  notes: string,
+  file_url: string,
+  bug?: Bug,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  client_notes?: string,
 }
 
 export const retrieveSubmission =
@@ -161,9 +161,28 @@ export const createSubmission = async (
   return result
 }
 
-export const approveSubmission = async (
+export const initiateSubmissionApproval = async (
+  submissionId: string,
+): Promise<any> => {
+  const headers = { ...(await getAuthHeaders()) }
+
+  // Let the SDK's FetchError propagate naturally
+  const result = await sdk.client.fetch<{
+    submission: Submission,
+    clientSecret: string
+    paymentSession: any
+  }>(`/submissions/${submissionId}/initiate-approval`, {
+    method: "POST",
+    headers,
+  })
+
+  return result
+}
+
+export const finalizeSubmissionApproval = async (
   submissionId: string,
   client_notes?: string,
+  paymentId?: string
 ): Promise<any> => {
   const headers = { ...(await getAuthHeaders()) }
 
@@ -174,11 +193,13 @@ export const approveSubmission = async (
   // Let the SDK's FetchError propagate naturally
   const result = await sdk.client.fetch<{
     submission: Submission,
-    clientSecret: string
-    paymentSession: any
-  }>(`/submissions/${submissionId}/approve`, {
+    paymentId: string
+  }>(`/submissions/${submissionId}/finalize-approval`, {
     method: "POST",
-    body: submission,
+    body: {
+      client_notes,
+      payment_id: paymentId,
+    },
     headers,
   })
 
@@ -190,6 +211,30 @@ export const approveSubmission = async (
 
   return result
 }
+
+// export const captureSubmission = async (
+//   submissionId: string,
+//   paymentId: string,
+//   client_notes?: string,
+// ): Promise<any> => {
+//   const headers = { ...(await getAuthHeaders()) }
+
+//   const submission = {
+//     payment_id: paymentId,
+//     client_notes,
+//   }
+
+//   // Let the SDK's FetchError propagate naturally
+//   const result = await sdk.client.fetch<{
+//     submission: Submission,
+//   }>(`/submissions/${submissionId}/capture`, {
+//     method: "POST",
+//     body: {
+//       payment_id: paymentId,
+//       client_notes,
+//     },
+//     headers,
+//   })
 
 export const rejectSubmission = async (
   submissionId: string,

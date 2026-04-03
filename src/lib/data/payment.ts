@@ -16,6 +16,7 @@ export type SavedPaymentMethod = {
   }
 }
 
+// TODO: fetch calls should be done from /src/lib/data/payment.ts and not from the component directly. We can export functions like getSavedPaymentMethods, initiateApprovalPayment, captureAndApprove from this file and use them in the component. This way we keep all payment related logic in one place and the component code cleaner.
 export const getSavedPaymentMethods = async (accountHolderId: string) => {
   const headers = {
     ...(await getAuthHeaders()),
@@ -43,9 +44,7 @@ export const initiateApprovalPayment = async (
   }
 
   const body = {
-    //submission: {
-      client_notes: notes,
-    // }
+    client_notes: notes,
   }
 
   return sdk.client.fetch<{
@@ -55,6 +54,20 @@ export const initiateApprovalPayment = async (
   }>(`/submissions/${submissionId}/approve`, {
     method: "POST",
     body,
+    headers,
+  })
+}
+
+export const captureAndApprove = async (
+  submissionId: string,
+  paymentId: string,
+  clientNotes?: string
+) => {
+  const headers = { ...(await getAuthHeaders()) }
+
+  return sdk.client.fetch(`/store/submissions/${submissionId}/capture`, {
+    method: "POST",
+    body: { payment_id: paymentId, client_notes: clientNotes },
     headers,
   })
 }
