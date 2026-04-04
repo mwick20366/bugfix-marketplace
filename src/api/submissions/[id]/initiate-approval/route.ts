@@ -60,15 +60,7 @@ export const POST = async (
       },
     })
 
-  // Execute approve workflow
-  // const { result } = await approveSubmissionWorkflow(req.scope).run({
-  //   input: {
-  //     submission: { ...req.validatedBody, submissionId },
-  //   },
-  // })
-
   res.json({
-    // submission: result,
     clientSecret: paymentSession.data.client_secret,
     paymentSession,
   })

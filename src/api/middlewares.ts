@@ -6,6 +6,7 @@ import { createFindParams } from "@medusajs/medusa/api/utils/validators"
 import { GetSubmissionsSchema } from "./submissions/validators"
 import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
 import { PostCaptureSubmissionSchema } from "./submissions/[id]/finalize-approval/route"
+import { PostDeveloperReviewSchema } from "./developer-reviews/route"
 
 export default defineMiddlewares({
   routes: [
@@ -59,6 +60,7 @@ export default defineMiddlewares({
           "last_name",
           "bugs.*", // retrieves all fields of linked bug records
           "submissions.*", // retrieves all fields of linked submission records
+          "reviews.*", // retrieves all fields of linked developer review records
         ],
         isList: false,
       }),
@@ -195,6 +197,14 @@ export default defineMiddlewares({
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer", "api-key"]),
       ],
-    },    
+    },
+    {
+      methods: ["POST"],
+      matcher: "/developer-reviews",
+      middlewares: [
+        authenticate(["client", "user"], ["session", "bearer"]),
+        validateAndTransformBody(PostDeveloperReviewSchema),
+      ],
+    },
   ],
 })

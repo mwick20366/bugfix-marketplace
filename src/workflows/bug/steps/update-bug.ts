@@ -27,8 +27,8 @@ export const updateBugStep = createStep(
   async (originalBug, { container }) => {
     if (!originalBug) return
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
-    const { client, developer, ...bugData } = originalBug
-    await service.createBugs({
+    const { client, developer, submissions, claimed_at, ...bugData } = originalBug
+    await service.updateBugs({
       ...bugData,
       client: client?.id,
       developer: developer?.id,

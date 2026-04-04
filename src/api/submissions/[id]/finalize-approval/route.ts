@@ -1,15 +1,16 @@
-// src/api/store/submissions/[id]/capture/route.ts
+// src/api/store/submissions/[id]/finalize-approval/route.ts
 import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { z } from "@medusajs/framework/zod"
-import { MedusaError } from "@medusajs/framework/utils"
+import { MedusaError, Modules } from "@medusajs/framework/utils"
 import { approveSubmissionWorkflow } from "../../../../workflows/submission"
 import { capturePaymentWorkflow } from "@medusajs/medusa/core-flows"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
 export const PostCaptureSubmissionSchema = z.object({
-  payment_id: z.string(),
+  payment_collection_id: z.string(),
   client_notes: z.string().optional(),
 })
 
@@ -21,7 +22,8 @@ export const POST = async (
   const submissionId = req.params.id
 
   // 1. Retrieve the submission and its associated bug (to get the bounty amount)
-  // @ts-ignore
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+
   const { data: [submission] } = await query.graph({
     entity: "submission",
     fields: ["id", "status", "notes", "file_url", "bug.*", "bug.client.*"],
@@ -45,32 +47,41 @@ export const POST = async (
   //   )
   // }
 
-  // const paymentModuleService = req.scope.resolve(Modules.PAYMENT)
-  
-  // 2. Create a PaymentCollection for the bounty amount
-  // const paymentCollection = await paymentModuleService.createPaymentCollections({
-  //   currency_code: "usd", // use your actual currency
-  //   amount: submission.bug.bounty ?? 0,
-  // })
+  const { payment_collection_id, client_notes } = req.validatedBody
 
-  // // 3. Create a PaymentSession (this calls Stripe and returns a client_secret)
-  // const { result: paymentSession } = await createPaymentSessionsWorkflow(req.scope)
-  //   .run({
-  //     input: {
-  //       payment_collection_id: paymentCollection.id,
-  //       provider_id: "pp_stripe_stripe",
-  //       data: {
-  //         setup_future_usage: "off_session", // allows saving the card
-  //       },
-  //     },
-  //   })
+  const { data: [paymentCollection] } = await query.graph({
+    entity: "payment_collection",
+    fields: ["payments.*", "payment_sessions.*"],
+    filters: { id: payment_collection_id },
+  })
 
-  const { payment_id, client_notes } = req.validatedBody
+  const paymentSession = paymentCollection.payment_sessions?.[0]
+
+  if (!paymentSession) {
+    throw new MedusaError(
+      MedusaError.Types.NOT_FOUND,
+      "No payment session found for this payment collection"
+    )
+  }
+
+  const paymentModuleService = req.scope.resolve(Modules.PAYMENT)
+
+  const payment = await paymentModuleService.authorizePaymentSession(
+    paymentSession.id,
+    {}
+  )
+
+  if (!payment?.id) {
+    throw new MedusaError(
+      MedusaError.Types.UNEXPECTED_STATE,
+      "Payment authorization failed"
+    )
+  }
 
   // 1. Capture the payment first
   await capturePaymentWorkflow(req.scope).run({
     input: {
-      payment_id,
+      payment_id: payment.id,
     },
   })
 

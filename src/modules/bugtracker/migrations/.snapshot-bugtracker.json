@@ -574,6 +574,192 @@
         }
       },
       "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "rating": {
+          "name": "rating",
+          "type": "real",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "float"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "developer_id": {
+          "name": "developer_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "developer_review",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "IDX_developer_review_developer_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_developer_review_developer_id\" ON \"developer_review\" (\"developer_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_developer_review_client_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_developer_review_client_id\" ON \"developer_review\" (\"client_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_developer_review_submission_id",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_developer_review_submission_id\" ON \"developer_review\" (\"submission_id\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "IDX_developer_review_deleted_at",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_developer_review_deleted_at\" ON \"developer_review\" (\"deleted_at\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "developer_review_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [
+        {
+          "name": "rating_range",
+          "expression": "rating >= 1 AND rating <= 5",
+          "definition": "check ((rating >= 1 AND rating <= 5))"
+        }
+      ],
+      "foreignKeys": {
+        "developer_review_developer_id_foreign": {
+          "constraintName": "developer_review_developer_id_foreign",
+          "columnNames": [
+            "developer_id"
+          ],
+          "localTableName": "public.developer_review",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.developer",
+          "updateRule": "cascade"
+        },
+        "developer_review_client_id_foreign": {
+          "constraintName": "developer_review_client_id_foreign",
+          "columnNames": [
+            "client_id"
+          ],
+          "localTableName": "public.developer_review",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.client",
+          "updateRule": "cascade"
+        },
+        "developer_review_submission_id_foreign": {
+          "constraintName": "developer_review_submission_id_foreign",
+          "columnNames": [
+            "submission_id"
+          ],
+          "localTableName": "public.developer_review",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.submission",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
     }
   ],
   "nativeEnums": {}

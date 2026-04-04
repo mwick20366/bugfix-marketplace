@@ -66,7 +66,7 @@ export const approveSubmissionWorkflow = createWorkflow(
 export const rejectSubmissionWorkflow = createWorkflow(
   "reject-submission",
   (input: RejectSubmissionWorkflowInput) => {
-    const submission = rejectSubmissionStep(input.submission)
+    const submission = rejectSubmissionStep()
     return new WorkflowResponse(submission)
   }
 )
