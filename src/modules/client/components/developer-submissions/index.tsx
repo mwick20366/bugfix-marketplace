@@ -102,11 +102,12 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
     // Fetch data when component mounts or dependencies change
   }, [])
 
-  const handleApprove = (clientSecret: string, paymentSession: any) => {
-    console.log("Client secret and payment session received in parent component:", { clientSecret, paymentSession })
-    setClientSecret(clientSecret)
-    setPaymentSession(paymentSession)
-    // setIsPaymentModalOpen(true)
+  const handleApprovalInitiated = () => {
+    // console.log("Client secret and payment session received in parent component:", { clientSecret, paymentSession })
+    // setClientSecret(clientSecret)
+    // etPaymentSession(paymentSession)
+    setIsDetailsModalOpen(false)
+    setIsPaymentModalOpen(true)
   }
 
   const handleRowClicked = (submission: Submission) => {
@@ -114,8 +115,8 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
     setIsDetailsModalOpen(true)
   }
 
-  const handlePaymentComplete = () => {
-    // setIsPaymentModalOpen(false)
+  const handleApprovalFinalized = () => {
+    setIsPaymentModalOpen(false)
   }
 
   const handleCloseModal = () => {
@@ -125,14 +126,14 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
     // setIsPaymentModalOpen(false)
   }
 
-  useEffect(() => {
-    console.log("Checking if we should open payment modal with clientSecret and paymentSession:", { clientSecret, paymentSession })
-    if (clientSecret && paymentSession) {
-      setIsPaymentModalOpen(true)
-    } else {
-      setIsPaymentModalOpen(false)
-    }
-  }, [clientSecret, paymentSession])
+  // useEffect(() => {
+  //   console.log("Checking if we should open payment modal with clientSecret and paymentSession:", { clientSecret, paymentSession })
+  //   if (clientSecret && paymentSession) {
+  //     setIsPaymentModalOpen(true)
+  //   } else {
+  //     setIsPaymentModalOpen(false)
+  //   }
+  // }, [clientSecret, paymentSession])
 
   return (
     <div className="w-full">
@@ -152,20 +153,25 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
         search={search}
         setSearch={setSearch}
       />
-      <SubmissionDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={handleCloseModal}
-        onApprove={handleApprove}
-        // onConfirm={handleClaimBug}
-        submission={selectedSubmission!}
-      />
-      <ApprovalModal
-        isOpen={isPaymentModalOpen}
-        onClose={handleCloseModal}
-        clientSecret={clientSecret!}
-        paymentSession={paymentSession}
-        onPaymentComplete={handlePaymentComplete}
-      />
+      {selectedSubmission && (
+        <>
+          <SubmissionDetailsModal
+            isOpen={isDetailsModalOpen}
+            onClose={handleCloseModal}
+            onApprovalInitiated={handleApprovalInitiated}
+            // onConfirm={handleClaimBug}
+            submission={selectedSubmission}
+          />
+          <ApprovalModal
+            submissionId={selectedSubmission?.id || ""}
+            isOpen={isPaymentModalOpen}
+            close={handleCloseModal}
+            // clientSecret={clientSecret!}
+            // paymentSession={paymentSession}
+            onApprovalFinalized={handleApprovalFinalized}
+          />
+        </>
+      )}
     </div>
   )
 }

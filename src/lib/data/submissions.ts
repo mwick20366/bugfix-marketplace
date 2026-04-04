@@ -182,23 +182,19 @@ export const initiateSubmissionApproval = async (
 export const finalizeSubmissionApproval = async (
   submissionId: string,
   client_notes?: string,
-  paymentId?: string
+  payment_id?: string
 ): Promise<any> => {
   const headers = { ...(await getAuthHeaders()) }
-
-  const submission = {
-    client_notes,
-  }
 
   // Let the SDK's FetchError propagate naturally
   const result = await sdk.client.fetch<{
     submission: Submission,
-    paymentId: string
+    payment_id: string
   }>(`/submissions/${submissionId}/finalize-approval`, {
     method: "POST",
     body: {
       client_notes,
-      payment_id: paymentId,
+      payment_id,
     },
     headers,
   })

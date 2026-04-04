@@ -6,15 +6,17 @@ import { Button, Heading, Label, Text as MedusaText, Textarea, toast } from "@me
 import Modal from "@modules/common/components/modal";
 import { useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ApproveRejectSubmissionSchema, approveRejectSubmissionSchema } from "./validators";
+import { InitiateSubmissionApprovalSchema, initiateSubmissionApprovalSchema } from "./validators";
+// import { ApproveRejectSubmissionSchema, approveRejectSubmissionSchema } from "./validators";
 import { useQueryClient } from "@tanstack/react-query";
-import { useApproveSubmission } from "@lib/hooks/use-finalize-submission-approval";
+import { useInitiateSubmissionApproval } from "@lib/hooks/use-initiate-submission-approval copy";
+// import { useApproveSubmission } from "@lib/hooks/use-finalize-submission-approval";
 import { useRejectSubmission } from "@lib/hooks/use-reject-submission";
 
 interface SubmissionDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onApprove?: (clientSecret: string, paymentSession: any) => void;
+  onApprovalInitiated?: () => void;
   onReject?: () => void;
   submission: Submission; // Optional: show which submission is being claimed
 }
@@ -22,51 +24,51 @@ interface SubmissionDetailsModalProps {
 export default function SubmissionDetailsModal({ 
   isOpen, 
   onClose = () => {}, 
-  onApprove = () => {}, 
+  onApprovalInitiated = () => {}, 
   onReject = () => {},
   submission,
 }: SubmissionDetailsModalProps) {
-  const form = useForm<ApproveRejectSubmissionSchema>({
-    resolver: zodResolver(approveRejectSubmissionSchema),
+  const form = useForm<InitiateSubmissionApprovalSchema>({
+    resolver: zodResolver(initiateSubmissionApprovalSchema),
     mode: "onChange",
-    defaultValues: {
-        notes: "",
-    },
+    // defaultValues: {
+    //     notes: "",
+    // },
   })
 
   const [showForm, setShowForm] = useState(false)
 
   const queryClient = useQueryClient();
 
-  const { mutate: approve, isPending: approveIsPending } = useApproveSubmission(submission?.id, {
-    onSuccess: ({ submission, clientSecret, paymentSession }) => {
-      queryClient.invalidateQueries({ queryKey: ["my-bugs"] })
-      queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
-      queryClient.invalidateQueries({ queryKey: ["client-me"] })
-      toast.success(`Fix approved successfully`)
+  // const { mutate: initiateApproval, isPending: approveIsPending } = useInitiateSubmissionApproval(submission?.id, {
+  //   onSuccess: ({ submission, clientSecret, paymentSession }) => {
+  //     queryClient.invalidateQueries({ queryKey: ["my-bugs"] })
+  //     queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
+  //     queryClient.invalidateQueries({ queryKey: ["client-me"] })
+  //     toast.success(`Fix approved successfully`)
 
-      onApprove(clientSecret, paymentSession) // Optionally update parent state immediately after approval
-      onClose()
-    },
-    onError: (error) => {
-      toast.error(`Failed to approve fix: ${error.message}`)
-    },
-  })
+  //     onApprove(clientSecret, paymentSession) // Optionally update parent state immediately after approval
+  //     onClose()
+  //   },
+  //   onError: (error) => {
+  //     toast.error(`Failed to approve fix: ${error.message}`)
+  //   },
+  // })
 
-  const { mutate: reject, isPending: rejectIsPending } = useRejectSubmission(submission?.id, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-bugs"] })
-      queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
-      queryClient.invalidateQueries({ queryKey: ["client-me"] })
-      toast.success(`Fix rejected successfully`)
+  // const { mutate: reject, isPending: rejectIsPending } = useRejectSubmission(submission?.id, {
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["my-bugs"] })
+  //     queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
+  //     queryClient.invalidateQueries({ queryKey: ["client-me"] })
+  //     toast.success(`Fix rejected successfully`)
 
-      onReject?.()
-      onClose()
-    },
-    onError: (error) => {
-      toast.error(`Failed to reject fix: ${error.message}`)
-    },
-  })
+  //     onReject?.()
+  //     onClose()
+  //   },
+  //   onError: (error) => {
+  //     toast.error(`Failed to reject fix: ${error.message}`)
+  //   },
+  // })
 
   const handleClose = () => {
     onClose()
@@ -77,13 +79,13 @@ export default function SubmissionDetailsModal({
     // if (submission?.status === "awaiting client review") {
       return (
         <>
-          {!showForm && (
-            <Button type="button" variant="primary" onClick={() => setShowForm(true)}>
+          {/* {!showForm && ( */}
+            <Button type="button" variant="primary" onClick={() => onApprovalInitiated()}>
               Approve
             </Button>
-          )}
+          {/* )} */}
 
-          {showForm && (
+          {/* {showForm && (
             <Button
               variant="primary"
               isLoading={approveIsPending}
@@ -96,9 +98,9 @@ export default function SubmissionDetailsModal({
               // type="submit"
             >
               Confirm Fix
-              {/* {isApproving ? "Confirm Fix" : "Approve"} */}
+              {isApproving ? "Confirm Fix" : "Approve"}
             </Button>
-          )}
+          )} */}
         </>
       )
     // }
@@ -106,50 +108,34 @@ export default function SubmissionDetailsModal({
     return null
   }
 
-  const handleConfirmFix = async () => {
-    // Call your approval API route to create the payment session
-    const { notes } = form.getValues()
-    const { id } = submission || {}
+//   const handleConfirmFix = async () => {
+//     // Call your approval API route to create the payment session
+//     const { notes } = form.getValues()
+//     const { id } = submission || {}
 
-    approve({ notes })
-    // await initiateApprovalPayment(id, notes)
-    //   .then(({ submission: updatedSubmission, clientSecret, paymentSession }) => {
-    //     onApprove?.(clientSecret, paymentSession) // Optionally update parent state immediately after approval
-    //     // Then show the payment modal with the returned clientSecret
-    //     // setClientSecret(clientSecret)
-    //     // setPaymentSession(paymentSession)
-    //     // setShowPaymentModal(true)    
-    //   })
-    //   .catch((error) => {
-    //     toast.error(`Failed to approve fix: ${error.message}`)
-    //   })
-    // onApprove?.(clientSecret, paymentSession) // Optionally update parent state immediately after approval
-    // Then show the payment modal with the returned clientSecret
-    // setClientSecret(clientSecret)
-    // setPaymentSession(paymentSession)
-    // setShowPaymentModal(true)
-}
+//     approve({ notes })
+// }
 
-  const handleSubmit = form.handleSubmit(async (data) => {
-    handleConfirmFix();
-    // approveReject(data)
-    // Call your approval API route to create the payment session
-    // const { notes } = form.getValues()
-    // const { id } = submission || {}
-    // const { submission: updatedSubmission, clientSecret, paymentSession } = await initiateApprovalPayment(id, notes)
+  // const handleSubmit = form.handleSubmit(async (data) => {
+  //   handleConfirmFix();
+  //   // approveReject(data)
+  //   // Call your approval API route to create the payment session
+  //   // const { notes } = form.getValues()
+  //   // const { id } = submission || {}
+  //   // const { submission: updatedSubmission, clientSecret, paymentSession } = await initiateApprovalPayment(id, notes)
   
-    // onApprove?.(clientSecret, paymentSession) // Optionally update parent state immediately after approval
-    // Then show the payment modal with the returned clientSecret
-    // setClientSecret(clientSecret)
-    // setPaymentSession(paymentSession)
-    // setShowPaymentModal(true)    
-  })
+  //   // onApprove?.(clientSecret, paymentSession) // Optionally update parent state immediately after approval
+  //   // Then show the payment modal with the returned clientSecret
+  //   // setClientSecret(clientSecret)
+  //   // setPaymentSession(paymentSession)
+  //   // setShowPaymentModal(true)    
+  // })
 
   return (
     <Modal isOpen={isOpen} close={handleClose}>
       <Modal.Title>Submission Details</Modal.Title>
-      <FormProvider {...form}>
-        <form onSubmit={handleSubmit} className="flex h-full flex-col overflow-hidden">
+      {/* <FormProvider {...form}> */}
+        {/* <form onSubmit={handleSubmit} className="flex h-full flex-col overflow-hidden"> */}
           <Modal.Body>
             <Heading level="h2">{submission?.bug?.title}</Heading>
             <div className="flex flex-col gap-y-2">
@@ -170,7 +156,7 @@ export default function SubmissionDetailsModal({
                 {submission?.file_url}
               </a>
             </div>
-            {showForm && (
+            {/* {showForm && (
               <Controller
                 control={form.control}
                 name="notes"
@@ -181,7 +167,7 @@ export default function SubmissionDetailsModal({
                   </div>
                 )}
               />
-            )}
+            )} */}
             {submission?.client_notes && (
               <div className="flex flex-col gap-y-2">
                 <Label>Notes</Label>
@@ -194,8 +180,8 @@ export default function SubmissionDetailsModal({
               {displayButtons()}
             </div>
           </Modal.Footer>
-        </form>
-      </FormProvider>
+        {/* </form>
+      </FormProvider> */}
     </Modal>
   );
 }
