@@ -2,7 +2,7 @@
 
 import { Bug } from "@lib/data/bugs"
 import { convertToLocale } from "@lib/util/money"
-import { Badge, createDataTableColumnHelper, DataTableColumnDef, DataTablePaginationState } from "@medusajs/ui"
+import { Badge, createDataTableColumnHelper } from "@medusajs/ui"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
@@ -160,6 +160,45 @@ export const clientStatusColumn = columnHelper.accessor("status", {
     return (
       <Badge color={getColor(status)} size="2xsmall" rounded="full">
         {getLabel(status)}
+      </Badge>
+    )
+  },
+})
+
+export const difficultyColumn = columnHelper.accessor("difficulty", {
+  header: "Difficulty",
+  enableSorting: true,
+  sortLabel: "Difficulty",
+  sortAscLabel: "A-Z",
+  sortDescLabel: "Z-A",
+  cell: ({ getValue }) => {
+    const difficulty = getValue() as string
+
+    const getColor = (difficulty: string) => {
+      switch (difficulty) {
+        case "easy":
+          return "green"
+        case "medium":
+          return "orange"
+        case "hard":
+          return "red"
+        default:
+          return "grey"
+      }
+    }
+
+    const getLabel = (difficulty: string) => {
+      switch (difficulty) {
+        case "easy": return "Easy"
+        case "medium": return "Medium"
+        case "hard": return "Hard"
+        default: return difficulty
+      }
+    }
+
+    return (
+      <Badge color={getColor(difficulty)} size="2xsmall" rounded="full">
+        {getLabel(difficulty)}
       </Badge>
     )
   },

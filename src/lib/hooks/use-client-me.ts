@@ -1,6 +1,6 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
-import { Client, retrieveClient } from "@lib/data/client"
+import { ClientData, retrieveClient } from "@lib/data/client"
 
 export const useClientMe = () => {
   const result = useQuery({
@@ -11,6 +11,6 @@ export const useClientMe = () => {
 
   return {
     ...result,
-    client: (result.data ?? null) as Client | null,
+    clientData: (result.data ?? null) as ClientData | null,
   }
 }

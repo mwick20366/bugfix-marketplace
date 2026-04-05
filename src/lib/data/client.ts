@@ -15,13 +15,35 @@ import { Member } from "./member"
 import { Submission } from "./submissions"
 import { Bug } from "./bugs"
 
-export type Client = Member & {
-  company: string
-  bugs?: Bug[],
+// export type Client = Member & {
+//   company: string
+//   bugs?: Bug[],
+// }
+
+export type Client = {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  company_name: string
+  contact_first_name: string
+  contact_last_name: string
+  bugs?: Bug[]
+  submissions?: Submission[]
+}
+
+export type ClientData = {
+  client: Client
+  dashboard: {
+    open_bugs: number
+    in_progress: number
+    pending_approvals: number
+    total_spent: number
+  }
 }
 
 export const retrieveClient =
-  async (): Promise<Client | null> => {
+  async (): Promise<ClientData | null> => {
     const authHeaders = await getAuthHeaders()
 
     if (!authHeaders) return null
@@ -35,13 +57,13 @@ export const retrieveClient =
     }
 
     const result = await sdk.client
-      .fetch<{ client: Client }>(`/clients/me`, {
+      .fetch(`/clients/me`, {
         headers,
         next,
         cache: "force-cache",
       })
 
-    return result.client
+    return result as ClientData;
       // .then(({ client }) => client)
       // .catch(() => null)
   }

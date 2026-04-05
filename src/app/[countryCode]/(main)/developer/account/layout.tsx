@@ -9,7 +9,10 @@ export default async function AccountPageLayout({
   dashboard?: React.ReactNode
   login?: React.ReactNode
 }) {
-  const developer = await retrieveDeveloper().catch(() => null)
+  const developerData = await retrieveDeveloper().catch(() => null)
+
+  console.log("Developer data in layout:", developerData) // Debug log to check developer data
+  const { developer } = developerData || {}
 
   return (
     <AccountLayout developer={developer}>

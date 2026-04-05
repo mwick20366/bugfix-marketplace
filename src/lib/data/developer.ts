@@ -18,14 +18,33 @@ import { Member } from "./member"
 import { Bug } from "./bugs"
 import { Submission } from "./submissions"
 
-export type Developer = Member & {
-  // any developer specific fields
-  bugs?: Bug[],
-  submissions?: Submission[],
+// export type Developer = Member & {
+//   // any developer specific fields
+//   bugs?: Bug[],
+//   submissions?: Submission[],
+// }
+
+export type Developer = {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  bugs?: Bug[]
+  submissions?: Submission[]
+}
+
+export type DeveloperData = {
+  developer: Developer
+  dashboard: {
+    open_bugs: number
+    active_claims: number
+    pending_review: number
+    total_earned: number
+  }
 }
 
 export const retrieveDeveloper =
-  async (): Promise<Developer | null> => {
+  async (): Promise<DeveloperData | null> => {
     const authHeaders = await getAuthHeaders()
 
     if (!authHeaders) return null
@@ -38,15 +57,22 @@ export const retrieveDeveloper =
       ...(await getCacheOptions("developers")),
     }
 
-    return await sdk.client
-      .fetch<{ developer: Developer }>(`/developers/me`, {
+    const result = await sdk.client
+      .fetch(`/developers/me`, {
         method: "GET",
         headers,
         next,
         cache: "force-cache",
       })
-      .then(({ developer }) => developer)
-      .catch(() => null)
+
+      console.log("Fetched developer data:", result) // Debug log to check fetched data
+
+      return result as DeveloperData
+      // .then(({ data }) => {
+      //   console.log("Fetched developer data:", data) // Debug log to check fetched data
+      //   return data
+      // })
+      // .catch(() => null)
   }
 
 export async function signupDeveloper(_currentState: unknown, formData: FormData) {

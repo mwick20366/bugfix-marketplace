@@ -9,7 +9,9 @@ export default async function AccountPageLayout({
   dashboard?: React.ReactNode
   login?: React.ReactNode
 }) {
-  const client = await retrieveClient().catch(() => null)
+  const clientData = await retrieveClient().catch(() => null)
+
+  const { client } = clientData || {}
 
   return (
     <AccountLayout client={client}>

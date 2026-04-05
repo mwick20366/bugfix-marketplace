@@ -17,14 +17,15 @@ export const useAuthActor = () => {
   const [actorId, setActorId] = useState<string>("")
   const [actorType, setActorType] = useState<string>("")
 
-  retrieveClient().then((client) => {
-    if (client) {
-      setActorId(client.id)
+  retrieveClient().then((clientData) => {
+    if (clientData) {
+      setActorId(clientData.client.id)
       setActorType("client")
     }
   })
   .catch(() => {
-    retrieveDeveloper().then((developer) => {
+    retrieveDeveloper().then((developerData) => {
+      const { developer } = developerData || {}
       if (developer) {
         setActorId(developer.id)
         setActorType("developer")

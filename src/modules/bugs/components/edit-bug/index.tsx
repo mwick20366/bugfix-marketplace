@@ -4,11 +4,12 @@
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Drawer, Heading, Label, Input, Textarea, Button, toast } from "@medusajs/ui"
+import { Drawer, Heading, Label, Input, Textarea, Button, toast, Select } from "@medusajs/ui"
 import { editBugSchema, EditBugSchema } from "./validators"
 import { sdk } from "@lib/config"
 import { Bug, retrieveBug, updateBug as saveBugChanges } from "@lib/data/bugs"
 import { useEffect } from "react"
+import { difficultyOptions } from "../create-bug"
 
 type EditBugDrawerProps = {
   bug: Bug
@@ -28,6 +29,7 @@ export const EditBugDrawer = ({ bug, isOpen, onClose }: EditBugDrawerProps) => {
       tech_stack: "",
       repo_link: "",
       bounty: 0,
+      difficulty: "easy",
     },
   })
 
@@ -49,6 +51,7 @@ export const EditBugDrawer = ({ bug, isOpen, onClose }: EditBugDrawerProps) => {
         tech_stack: retrievedBug.tech_stack || "",
         repo_link: retrievedBug.repo_link || "",
         bounty: retrievedBug.bounty,
+        difficulty: retrievedBug.difficulty,
       })
     }
   }, [retrievedBug, isOpen, form])
@@ -138,6 +141,28 @@ export const EditBugDrawer = ({ bug, isOpen, onClose }: EditBugDrawerProps) => {
                       type="number"
                       onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                     />
+                    {error && <span className="text-red-500 text-sm">{error.message}</span>}
+                  </div>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="difficulty"
+                render={({ field, fieldState: { error } }) => (
+                  <div className="flex flex-col gap-y-2">
+                    <Label size="small" weight="plus">Difficulty</Label>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <Select.Trigger>
+                        <Select.Value placeholder="Select difficulty" />
+                      </Select.Trigger>
+                      <Select.Content className="z-[100]">
+                        {difficultyOptions.map((option) => (
+                          <Select.Item key={option.value} value={option.value}>
+                            {option.label}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select>
                     {error && <span className="text-red-500 text-sm">{error.message}</span>}
                   </div>
                 )}

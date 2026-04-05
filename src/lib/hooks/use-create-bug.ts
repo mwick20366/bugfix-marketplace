@@ -14,8 +14,9 @@ export const useCreateBug = (clientId: string, options?: UseMutationOptions<any,
         tech_stack,
         repo_link,
         bounty,
+        difficulty
       }: CreateBugSchema
-    ) => createBug({ title, description, tech_stack, repo_link, bounty, clientId }),
+    ) => createBug({ title, description, tech_stack, repo_link, bounty, clientId, difficulty }),
     onSuccess: (data: any, variables: any, context: any, meta: any) => {
       queryClient.invalidateQueries({ queryKey: ["bugs"] })
       // Forward to hook-level consumer's onSuccess

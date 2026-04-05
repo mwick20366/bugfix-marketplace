@@ -1,9 +1,9 @@
 "use client"
-import { useMutation, UseMutationOptions, useQueryClient } from "@tanstack/react-query"
+import { useMutation, UseMutationOptions } from "@tanstack/react-query"
 import { initiateSubmissionApproval } from "@lib/data/submissions"
-import { InitiateSubmissionSchema } from "@modules/client/components/submission-details-modal/validators"
+import { InitiateSubmissionApprovalSchema } from "@modules/client/components/submission-details-modal/validators"
 
-export const useInitiateSubmissionApproval = (submissionId: string, options?: UseMutationOptions<any, any, InitiateSubmissionSchema>) => {
+export const useInitiateSubmissionApproval = (submissionId: string, options?: UseMutationOptions<any, any, InitiateSubmissionApprovalSchema>) => {
   return useMutation({
     mutationFn: () => {
       return initiateSubmissionApproval(submissionId)

@@ -7,6 +7,7 @@ import { useState } from "react"
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import * as zod from "zod"
 import { useFinalizeSubmissionApproval } from "@lib/hooks/use-finalize-submission-approval"
+import { useQueryClient } from "@tanstack/react-query"
 
 const schema = zod.object({
   firstName: zod.string().min(1, "First name is required"),
@@ -50,8 +51,11 @@ export function PaymentForm({
 
   const { formState: { isValid } } = form
 
+  const queryClient = useQueryClient()
+
   const { mutate: finalizeApproval, isPending: isFinalizing } = useFinalizeSubmissionApproval(submissionId, {
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
       setIsConfirming(false)
       onSuccess()
     },
@@ -93,12 +97,9 @@ export function PaymentForm({
           return
         }
 
-        console.log("paymentSession", paymentSession)
-        console.log("payment_id", paymentSession?.id)
-
         finalizeApproval({
           client_notes: clientNotes,
-          payment_id: paymentSession?.id,
+          payment_collection_id: paymentSession?.payment_collection_id,
         })
       })
       .catch(() => {

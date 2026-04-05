@@ -20,9 +20,9 @@ type Params = {
 }
 
 export default async function Page(props: Params) {
-  const client = await retrieveClient().catch(() => null)
+  const clientData = await retrieveClient().catch(() => null)
 
-  if (!client) {
+  if (!clientData) {
     redirect(`/login?redirectTo=${encodeURIComponent(window.location.href)}`)
   }
 
@@ -33,7 +33,7 @@ export default async function Page(props: Params) {
     limit: limit || SUBMISSIONS_LIMIT,
     offset: offset || 0,
     q: q || "",
-    client: client
+    client: clientData.client
   }
 
   return (

@@ -6,6 +6,7 @@ export const editBugSchema = z.object({
   tech_stack: z.string().min(1, "Tech stack is required"),
   repo_link: z.string().url("Repo link must be a valid URL"),
   bounty: z.number().min(1),
+  difficulty: z.enum(["easy", "medium", "hard"]),
 })
 
 export type EditBugSchema = z.infer<typeof editBugSchema>

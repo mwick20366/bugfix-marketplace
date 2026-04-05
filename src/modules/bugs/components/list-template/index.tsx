@@ -15,7 +15,8 @@ import {
   createdAtColumn,
   descriptionColumn,
   tech_stackColumn,
-  titleColumn
+  titleColumn,
+  difficultyColumn
 } from "./columns"
 
 const defaultColumns = [
@@ -24,6 +25,7 @@ const defaultColumns = [
   tech_stackColumn,
   createdAtColumn,
   bountyColumn,
+  difficultyColumn,
 ];
 
 type BugsListTemplateProps = {
@@ -67,9 +69,9 @@ const BugsListTemplate = ({
 
   const table = useDataTable({
     columns: columns || defaultColumns,
-    data: bugs,
+    data: bugs ?? [],
     getRowId: (row) => row.id,
-    rowCount: rowCount,
+    rowCount: rowCount ?? 0,
     isLoading,
     search: {
       state: search || "",
@@ -87,7 +89,7 @@ const BugsListTemplate = ({
       onSortingChange: setSorting,
     },
   })
-  
+
   if (onRowClick) {
     table.onRowClick = (event, row) => {
       if (onRowClick) {
@@ -97,12 +99,7 @@ const BugsListTemplate = ({
   }
 
   return (
-    <div
-      // className={clx({
-      //   "pl-[1px] overflow-y-scroll overflow-x-hidden no-scrollbar max-h-[420px]":
-      //     hasOverflow,
-      // })}
-    >
+    <div>
       <DataTable instance={table}>
         <div className="mt-6 mb-6 flex gap-2 items-center">
           <DataTable.Search placeholder="Search..." />
@@ -114,12 +111,16 @@ const BugsListTemplate = ({
             >
               Clear
             </Button>
-        )}
+          )}
         </div>
-        {/* <DataTable.Toolbar className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-          <DataTable.SortingMenu tooltip="Sort" />
-        </DataTable.Toolbar> */}
-        <DataTable.Table />
+        <DataTable.Table
+          emptyState={{
+            empty: {
+              heading: "No bugs found",
+              description: "Try adjusting your filters or search query.",
+            },
+          }}
+        />
         <DataTable.Pagination />
       </DataTable>
     </div>

@@ -3,7 +3,7 @@ import { FormProvider, Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { createBugSchema, CreateBugSchema } from "./validators"
 import Modal from "@modules/common/components/modal"
-import { Button, Label, Textarea, toast } from "@medusajs/ui"
+import { Button, Label, Select, Textarea, toast } from "@medusajs/ui"
 import Input from "@modules/common/components/input"
 import { useCreateBug } from "@lib/hooks/use-create-bug"
 import { Client } from "@lib/data/client"
@@ -14,6 +14,12 @@ type CreateBugProps = {
   client: Client,
   onCreate?: () => void,
 }
+
+export const difficultyOptions = [
+  { value: "easy", label: "Easy" },
+  { value: "medium", label: "Medium" },
+  { value: "hard", label: "Hard" },
+]
 
 export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
   const [open, setOpen] = useState(false)
@@ -26,7 +32,8 @@ export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
         description: "",
         repo_link: "",
         tech_stack: "",
-        bounty: 0
+        bounty: 0,
+        difficulty: "easy",
     },
   })
 
@@ -106,6 +113,30 @@ export const CreateBug = ({ client, onCreate }: CreateBugProps) => {
                   <div className="flex flex-col gap-y-2">
                     <Input type="number" label={"Bounty"} {...field} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
                     {error && <span className="text-red-500 text-sm">{error.message}</span>}
+                  </div>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="difficulty"
+                render={({ field, fieldState: { error } }) => (
+                  <div className="flex flex-col gap-y-2">
+                    <Label>Difficulty</Label>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <Select.Trigger>
+                        <Select.Value placeholder="Select difficulty" />
+                      </Select.Trigger>
+                      <Select.Content className="z-[100]">
+                        {difficultyOptions.map((option) => (
+                          <Select.Item key={option.value} value={option.value}>
+                            {option.label}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select>
+                    {error && (
+                      <span className="text-red-500 text-sm">{error.message}</span>
+                    )}
                   </div>
                 )}
               />

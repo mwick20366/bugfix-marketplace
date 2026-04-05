@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default async function Page(props: {
   params: Promise<{ countryCode: string }>
 }) {
-  const client = await retrieveClient()
+  const clientData = await retrieveClient().catch(() => null)
 
-  if (!client) {
+  if (!clientData) {
     notFound()
   }
 
@@ -29,9 +29,9 @@ export default async function Page(props: {
         </p>
       </div>
       <CreateBug
-        client={client}
+        client={clientData.client}
       />
-      <MyBugs client={client} />
+      <MyBugs client={clientData.client} />
     </div>
   )
 }

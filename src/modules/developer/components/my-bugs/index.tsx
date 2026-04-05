@@ -1,7 +1,5 @@
 "use client"
-import { Bug, claimBug, listBugs } from "@lib/data/bugs"
-import { Developer } from "@lib/data/developer"
-import { convertToLocale } from "@lib/util/money"
+import { Bug, listBugs } from "@lib/data/bugs"
 import {
   createDataTableColumnHelper,
   DataTablePaginationState,
@@ -12,15 +10,15 @@ import {
   Tooltip,  
   usePrompt
 } from "@medusajs/ui"
-import { ArrowUturnLeft, PaperPlane, Pencil, Trash } from "@medusajs/icons"
+import { ArrowUturnLeft, PaperPlane } from "@medusajs/icons"
 import BugsListTemplate from "@modules/bugs/components/list-template"
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
-import  { BugDetailsModal } from "@modules/developer/components/bug-details-modal"
+import { BugDetailsModal } from "@modules/developer/components/bug-details-modal"
 import { useDeveloperMe } from "@lib/hooks/use-developer-me"
 import { useUnclaimBug } from "@lib/hooks/use-unclaim-bug"
 import SubmitFixModal from "../submit-fix-modal"
-import { bountyColumn, convertDateToRelative, developerStatusColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
+import { bountyColumn, convertDateToRelative, developerStatusColumn, difficultyColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
@@ -30,24 +28,23 @@ const createColumns = (
 ) => [
   titleColumn,
   columnHelper.accessor("claimed_at", {
-      header: "Claimed",
-      enableSorting: true,
-      sortLabel: "Claimed",
-      sortAscLabel: "Oldest first",
-      sortDescLabel: "Newest first",
-      cell: ({ row }) => {
-        const date = row.original.claimed_at || row.original.updated_at
-        // const date = getValue() as string
-        return convertDateToRelative(date)
-      },
-    }),
+    header: "Claimed",
+    enableSorting: true,
+    sortLabel: "Claimed",
+    sortAscLabel: "Oldest first",
+    sortDescLabel: "Newest first",
+    cell: ({ row }) => {
+      const date = row.original.claimed_at || row.original.updated_at
+      return convertDateToRelative(date)
+    },
+  }),
   bountyColumn,
+  difficultyColumn,
   developerStatusColumn,
   columnHelper.display({
     id: "actions",
     header: "",
     cell: ({ row }) => {
-      
       const bug = row.original
       const canSubmitFix = bug.status === "claimed"
       const canUnclaim = bug.status === "claimed"
@@ -77,22 +74,14 @@ const createColumns = (
       return (
         <div className="flex items-center gap-x-2" onClick={(e) => e.stopPropagation()}>
           {canSubmitFix ? (
-            <Tooltip content="Submit a fix for this bug">
-              {submitButton}
-            </Tooltip>
+            <Tooltip content="Submit a fix for this bug">{submitButton}</Tooltip>
           ) : (
-            <Tooltip content="You can only submit a fix for claimed bugs">
-              {submitButton}
-            </Tooltip>
+            <Tooltip content="You can only submit a fix for claimed bugs">{submitButton}</Tooltip>
           )}
           {canUnclaim ? (
-            <Tooltip content="Unclaim this bug">
-              {unclaimButton}
-            </Tooltip>
+            <Tooltip content="Unclaim this bug">{unclaimButton}</Tooltip>
           ) : (
-            <Tooltip content="You can only unclaim claimed bugs">
-              {unclaimButton}
-            </Tooltip>
+            <Tooltip content="You can only unclaim claimed bugs">{unclaimButton}</Tooltip>
           )}
         </div>
       )
@@ -102,24 +91,20 @@ const createColumns = (
 
 const BUG_LIMIT = 15
 
-export default function MyBugs() {
+type MyBugsProps = {
+  statusFilter?: string[]
+  difficultyFilter?: string[]
+}
+
+export default function MyBugs({ statusFilter = [], difficultyFilter = [] }: MyBugsProps) {
   const [selectedBug, setSelectedBug] = useState<Bug | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isSubmitFixOpen, setIsSubmitFixOpen] = useState(false)
 
-  const { developer } = useDeveloperMe()
+  const { developerData } = useDeveloperMe()
+  const { developer } = developerData || {}
 
-  const queryParams = {
-    limit: BUG_LIMIT,
-    developer_id: developer?.id,
-  }
-
-  const sortingParams = {
-    sortId: "created_at",
-    sortDesc: true,
-  }
-
-  const limit = queryParams?.limit || 15
+  const limit = BUG_LIMIT
 
   const columns = useMemo(() => createColumns(
     (bug) => { setIsSubmitFixOpen(true); setSelectedBug(bug) },
@@ -136,31 +121,30 @@ export default function MyBugs() {
   }, [pagination])
 
   const [search, setSearch] = useState<string>("")
-  const [sorting, setSorting] = useState<DataTableSortingState | null>(null)
-
-  if (sortingParams && !sorting) {
-    setSorting({
-      id: sortingParams.sortId,
-      desc: sortingParams.sortDesc,
-    })
-  }
+  const [sorting, setSorting] = useState<DataTableSortingState | null>({
+    id: "created_at",
+    desc: true,
+  })
 
   const queryKey = useMemo(() => {
-    return ["my-bugs", limit, offset, search, sorting?.id, sorting?.desc]
-  }, [offset, search, sorting?.id, sorting?.desc])
+    return ["my-bugs", limit, offset, search, sorting?.id, sorting?.desc, statusFilter, difficultyFilter]
+  }, [offset, search, sorting?.id, sorting?.desc, statusFilter, difficultyFilter])
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryFn: () => listBugs({
       queryParams: {
-        ...queryParams,
+        developer_id: developer?.id,
         limit,
         offset,
         order: sorting ? `${sorting.desc ? "-" : ""}${sorting.id}` : undefined,
         q: search,
+        ...(statusFilter.length > 0 ? { status: statusFilter } : {}),
+        ...(difficultyFilter.length > 0 ? { difficulty: difficultyFilter } : {}),
       },
     }),
     queryKey,
     placeholderData: keepPreviousData,
+    enabled: !!developer?.id,
   })
 
   const { mutate: unclaimBug, isPending: isUnclaiming } = useUnclaimBug(selectedBug?.id || "")
@@ -175,12 +159,12 @@ export default function MyBugs() {
 
   const handleUnclaim = async (bug: Bug) => {
     const confirmed = await prompt({
-        title: "Unclaim bug?",
-        description: "Are you sure you want to unclaim this bug? It will be returned to the open pool for other developers to claim.",
-        confirmText: "Unclaim",
-        cancelText: "Cancel",
-        variant: "confirmation",
-      })
+      title: "Unclaim bug?",
+      description: "Are you sure you want to unclaim this bug? It will be returned to the open pool for other developers to claim.",
+      confirmText: "Unclaim",
+      cancelText: "Cancel",
+      variant: "confirmation",
+    })
 
     if (!confirmed) return
 
@@ -199,7 +183,7 @@ export default function MyBugs() {
 
   const handleSubmitFix = (bug: Bug) => {
     setIsModalOpen(false)
-    setIsSubmitFixOpen(true) // open the submit fix modal
+    setIsSubmitFixOpen(true)
   }
 
   const handleCloseModal = () => {
@@ -210,7 +194,7 @@ export default function MyBugs() {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`text-2xl`}>Bugs</h1>
+        <h1 className="text-2xl">Bugs</h1>
       </div>
       <BugsListTemplate
         bugs={data?.response?.bugs || []}

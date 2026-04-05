@@ -7,18 +7,19 @@ import { useParams, usePathname } from "next/navigation"
 import ChevronDown from "@modules/common/icons/chevron-down"
 import User from "@modules/common/icons/user"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { signout } from "@lib/data/customer"
 import { useClientMe } from "@lib/hooks/use-client-me"
+import { Client, signoutClient } from "@lib/data/client"
 
 const AccountNav = () => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
 
   const handleLogout = async () => {
-    await signout(countryCode)
+    await signoutClient(countryCode)
   }
 
-  const { client } = useClientMe()
+  const { clientData } = useClientMe()
+  const { client } = clientData || {}
 
   const developerSubmissions = client?.bugs?.flatMap((bug) => bug.submissions) || []
 
@@ -101,7 +102,7 @@ const AccountNav = () => {
             <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
               <li>
                 <AccountNavLink
-                  href="/account"
+                  href="/client/account"
                   route={route!}
                   data-testid="overview-link"
                 >

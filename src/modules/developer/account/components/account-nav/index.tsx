@@ -20,7 +20,8 @@ const AccountNav = () => {
     await signoutDeveloper(countryCode)
   }
 
-  const { developer } = useDeveloperMe()
+  const { developerData } = useDeveloperMe()
+  const { developer } = developerData || {}
 
   return (
     <div>
@@ -114,9 +115,18 @@ const AccountNav = () => {
             <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
               <li>
                 <AccountNavLink
-                  href="/developer/account/my-bugs"
+                  href="/developer/account"
                   route={route!}
                   data-testid="overview-link"
+                >
+                  Overview
+                </AccountNavLink>
+              </li>              
+              <li>
+                <AccountNavLink
+                  href="/developer/account/my-bugs"
+                  route={route!}
+                  data-testid="my-bugs-link"
                 >
                   My Bugs ({developer?.bugs?.length || 0})
                 </AccountNavLink>
@@ -130,7 +140,7 @@ const AccountNav = () => {
                   My Submissions ({developer?.submissions?.length || 0})
                 </AccountNavLink>
               </li>
-              <li>
+              {/* <li>
                 <AccountNavLink
                   href="/developer/account/profile"
                   route={route!}
@@ -147,7 +157,7 @@ const AccountNav = () => {
                 >
                   Addresses
                 </AccountNavLink>
-              </li>
+              </li> */}
               <li className="text-grey-700">
                 <button
                   type="button"

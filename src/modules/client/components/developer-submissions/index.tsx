@@ -8,6 +8,7 @@ import {
   DataTablePaginationState,
   DataTableSortingState,
   DataTableColumnDef,
+  toast,
 } from "@medusajs/ui"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
@@ -27,22 +28,14 @@ const columns = [
 
 const SUBMISSION_LIMIT = 15
 
-type DeveloperSubmissionsProps = {
-  queryParams: {
-    limit?: number
-    offset?: number
-    q?: string
-  }
-}
-
-export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
+export default function DeveloperSubmissions() {
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState<boolean>(false)
-  const [clientSecret, setClientSecret] = useState<string | null>(null)
-  const [paymentSession, setPaymentSession] = useState<any>(null)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState<boolean>(false)
   
-  const { client } = useClientMe()
+  const { clientData } = useClientMe()
+
+  const { client } = clientData || {}
 
   if (!client) {
     return <div className="py-12">Please log in to view your submissions.</div>
@@ -103,9 +96,6 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
   }, [])
 
   const handleApprovalInitiated = () => {
-    // console.log("Client secret and payment session received in parent component:", { clientSecret, paymentSession })
-    // setClientSecret(clientSecret)
-    // etPaymentSession(paymentSession)
     setIsDetailsModalOpen(false)
     setIsPaymentModalOpen(true)
   }
@@ -116,24 +106,15 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
   }
 
   const handleApprovalFinalized = () => {
-    setIsPaymentModalOpen(false)
+    toast.success("Submission approved and payment processed successfully!")
+    // setSelectedSubmission(null)
+    // setIsPaymentModalOpen(false)
   }
 
   const handleCloseModal = () => {
     setIsDetailsModalOpen(false)
-    // setSelectedSubmission(null)
-    // setClientSecret(null)
-    // setIsPaymentModalOpen(false)
+    setSelectedSubmission(null)
   }
-
-  // useEffect(() => {
-  //   console.log("Checking if we should open payment modal with clientSecret and paymentSession:", { clientSecret, paymentSession })
-  //   if (clientSecret && paymentSession) {
-  //     setIsPaymentModalOpen(true)
-  //   } else {
-  //     setIsPaymentModalOpen(false)
-  //   }
-  // }, [clientSecret, paymentSession])
 
   return (
     <div className="w-full">
@@ -164,6 +145,7 @@ export default function DeveloperSubmissions(props: DeveloperSubmissionsProps) {
           />
           <ApprovalModal
             submissionId={selectedSubmission?.id || ""}
+            developerId={selectedSubmission?.bug?.developer?.id || ""}
             isOpen={isPaymentModalOpen}
             close={handleCloseModal}
             // clientSecret={clientSecret!}

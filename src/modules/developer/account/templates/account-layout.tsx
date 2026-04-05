@@ -3,12 +3,10 @@ import React from "react"
 import UnderlineLink from "@modules/common/components/interactive-link"
 
 import AccountNav from "../components/account-nav"
-import { HttpTypes } from "@medusajs/types"
 import { Developer } from "@lib/data/developer"
 
 interface AccountLayoutProps {
-  developer: Developer | null
-  memberType?: string
+  developer?: Developer
   children: React.ReactNode
 }
 
@@ -20,7 +18,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
     <div className="flex-1 small:py-12" data-testid="account-page">
       <div className="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col">
         <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
-          <div>{developer && <AccountNav developer={developer} />}</div>
+          <div>{developer && <AccountNav />}</div>
           <div className="flex-1">{children}</div>
         </div>
         <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">

@@ -1,7 +1,7 @@
 "use client"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@lib/config"
-import { Developer, retrieveDeveloper } from "@lib/data/developer"
+import { DeveloperData, retrieveDeveloper } from "@lib/data/developer"
 
 export const useDeveloperMe = () => {
   const result = useQuery({
@@ -12,7 +12,6 @@ export const useDeveloperMe = () => {
 
   return {
     ...result,
-    developer: (result.data ?? null) as Developer | null,
+    developerData: (result.data ?? null) as DeveloperData | null,
   }
-
 }

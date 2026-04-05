@@ -8,18 +8,21 @@ import { loadStripe } from "@stripe/stripe-js"
 import Modal from "@modules/common/components/modal"
 import { PaymentForm } from "../approval-payment"
 import { useInitiateSubmissionApproval } from "@lib/hooks/use-initiate-submission-approval copy"
+import { DeveloperReview } from "../developer-review"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY || "")
 
-type Phase = "notes" | "payment" | "done"
+type Phase = "notes" | "payment" | "done" | "review"
 
 export default function ApprovalModal({
   submissionId,
+  developerId,
   isOpen,
   close,
   onApprovalFinalized,
 }: {
   submissionId: string
+  developerId: string
   isOpen: boolean
   close: () => void
   onApprovalFinalized: () => void
@@ -29,10 +32,9 @@ export default function ApprovalModal({
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [paymentSession, setPaymentSession] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-
+  
   const { mutate: initiateApproval, isPending: isInitiating } = useInitiateSubmissionApproval(submissionId, {
     onSuccess: (data) => {
-      console.log("Initiate approval success:", data)
       setClientSecret(data.clientSecret)
       setPaymentSession(data.paymentSession)
       setPhase("payment")
@@ -43,7 +45,7 @@ export default function ApprovalModal({
   })
 
   const handleApprove = () => {
-    initiateApproval({ submissionId, clientNotes })
+    initiateApproval({})
   }
 
   const handleClose = () => {
@@ -59,6 +61,7 @@ export default function ApprovalModal({
     notes: "Approve Submission",
     payment: "Enter Payment Details",
     done: "Submission Approved",
+    review: "Leave a Review",
   }[phase]
 
   return (
@@ -88,13 +91,21 @@ export default function ApprovalModal({
                 paymentSession={paymentSession}
                 clientNotes={clientNotes}
                 onSuccess={() => {
-                  setPhase("done")
+                  setPhase("review")
                   onApprovalFinalized()
                 }}
                 onError={setError}
               />
             </Elements>
           </>
+        )}
+
+        {phase === "review" && (
+          <DeveloperReview
+            submissionId={submissionId}
+            developerId={developerId}
+            onClose={handleClose}
+          />
         )}
 
         {phase === "done" && <p>Payment successful! Submission approved.</p>}

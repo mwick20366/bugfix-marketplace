@@ -6,6 +6,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import SideMenu from "@modules/layout/components/side-menu"
 import { retrieveClient } from "@lib/data/client"
 import { retrieveDeveloper } from "@lib/data/developer"
+import ProfileDropdownWrapper from "@modules/layout/components/profile-dropdown/logout-wrapper"
 
 export default async function Nav() {
   const [regions, locales, currentLocale] = await Promise.all([
@@ -14,16 +15,20 @@ export default async function Nav() {
     getLocale(),
   ])
 
-  const developer = await retrieveDeveloper().catch(() => null)
-  const client = await retrieveClient().catch(() => null)
+  const developerData = await retrieveDeveloper().catch(() => null)
+  const clientData = await retrieveClient().catch(() => null)
 
-  const isLoggedIn = Boolean(developer || client)
-  const isDeveloper = Boolean(developer)
+  const isLoggedIn = Boolean(developerData || clientData)
+  const isDeveloper = Boolean(developerData)
 
-  let marketplaceLink = "/marketplace/bugs";
+  const displayName =
+    developerData?.developer.first_name ||
+    clientData?.client.contact_first_name ||
+    "User"
 
+  let marketplaceLink = "/marketplace/bugs"
   if (isDeveloper) {
-    marketplaceLink = "/developer/account/bug-marketplace";
+    marketplaceLink = "/developer/account/bug-marketplace"
   }
 
   return (
@@ -78,19 +83,10 @@ export default async function Nav() {
                 Marketplace
               </LocalizedClientLink>
             </div>
-            {/* <Suspense
-              fallback={
-                <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
-                  href="/cart"
-                  data-testid="nav-cart-link"
-                >
-                  Cart (0)
-                </LocalizedClientLink>
-              }
-            >
-              <CartButton />
-            </Suspense> */}
+
+            {isLoggedIn && (
+              <ProfileDropdownWrapper name={displayName} />
+            )}
           </div>
         </nav>
       </header>

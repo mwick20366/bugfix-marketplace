@@ -1,23 +1,15 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { revalidateTag } from "next/cache"
-import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
   getCacheOptions,
   getCacheTag,
-  getCartId,
-  removeAuthToken,
-  removeCartId,
-  setAuthToken,
 } from "./cookies"
 import { Developer } from "./developer"
-import { cli } from "webpack"
 import { SortOptions } from "@modules/marketplace/components/refinement-list/sort-bugs"
-import { sortBugs } from "@lib/util/sort-bugs"
 import { Client } from "./client"
 import { Submission } from "./submissions"
 
@@ -30,6 +22,7 @@ export type Bug = {
     repo_link: string,
     bounty: number,
     status: string,
+    difficulty: "easy" | "medium" | "hard",
     created_at: string,
     updated_at: string,
     claimed_at?: string,
@@ -69,11 +62,23 @@ export const retrieveBug =
 export const listBugs = async ({
   queryParams,
 }: {
-  queryParams?: HttpTypes.FindParams & { q?: string, status?: string }
+  queryParams?: HttpTypes.FindParams & {
+    developer_id?: string,
+    client_id?: string,
+    q?: string
+    status?: string | string[]
+    difficulty?: string | string[]
+  }
   sortBy?: SortOptions
 }): Promise<{
   response: { bugs: Bug[]; count: number }
-  queryParams?: HttpTypes.FindParams & { q?: string, status?: string }
+  queryParams?: HttpTypes.FindParams & {
+    developer_id?: string,
+    client_id?: string,
+    q?: string
+    status?: string | string[]
+    difficulty?: string | string[]
+  }
 }> => {
   const headers = {
     ...(await getAuthHeaders()),
@@ -206,6 +211,7 @@ export const createBug = async ({
   repo_link,
   bounty,
   clientId,
+  difficulty,
 }: {
   title: string
   description: string
@@ -213,6 +219,8 @@ export const createBug = async ({
   repo_link: string
   bounty: number
   clientId: string
+  difficulty: "easy" | "medium" | "hard"
+
 }): Promise<any> => {
   const bug = {
     title,
@@ -221,6 +229,7 @@ export const createBug = async ({
     repo_link,
     bounty,
     client_id: clientId,
+    difficulty,
   }
 
   const headers = {
@@ -245,6 +254,7 @@ export const updateBug = async ({
   tech_stack,
   repo_link,
   bounty,
+  difficulty,
   bugId,
 }: {
   title: string
@@ -252,6 +262,7 @@ export const updateBug = async ({
   tech_stack: string
   repo_link: string
   bounty: number
+  difficulty: "easy" | "medium" | "hard"
   bugId: string
 }): Promise<any> => {
 
@@ -262,6 +273,7 @@ export const updateBug = async ({
     repo_link,
     bounty,
     id: bugId,
+    difficulty,
   }
 
   const headers = {
@@ -282,17 +294,13 @@ export const updateBug = async ({
 
 export const claimBug = async (
   bugId: string,
-  // developerId: string,
 ): Promise<any> => {
-  // const bugId = formData.get("bugId") as string
-  // const developerId = formData.get("developerId") as string
   const headers = {
     ...(await getAuthHeaders()),
   }
 
   const result = await sdk.client.fetch(`/bugs/${bugId}/claim`, {
     method: "POST",
-    // body: { developer_id: developerId },
     headers,
   })
 

@@ -18,7 +18,8 @@ type Params = {
 }
 
 export default async function Page(props: Params) {
-  const developer = await retrieveDeveloper().catch(() => null)
+  const developerData = await retrieveDeveloper().catch(() => null)
+  const { developer } = developerData || {}
 
   if (!developer) {
     redirect(`/login?redirectTo=${encodeURIComponent(window.location.href)}`)

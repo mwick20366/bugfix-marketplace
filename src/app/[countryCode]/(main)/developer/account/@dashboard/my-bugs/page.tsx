@@ -1,4 +1,5 @@
 import { retrieveDeveloper } from "@lib/data/developer"
+import BugMarketplaceView from "@modules/developer/components/bug-marketplace-view"
 import MyBugs from "@modules/developer/components/my-bugs"
 import { redirect } from "next/navigation"
 
@@ -12,7 +13,8 @@ export default async function Page() {
   return (
     <div className="py-12">
       <div className="content-container" data-testid="cart-container">
-        <MyBugs />
+        <BugMarketplaceView />
+        {/* <MyBugs /> */}
       </div>
     </div>
   )

@@ -18,7 +18,7 @@ import { useMemo, useState } from "react"
 import { useClaimBug } from "@lib/hooks/use-claim-bug"
 import ClientBugDetailsModal from "../bug-details-modal"
 import { title } from "process"
-import { bountyColumn, createdAtColumn, clientStatusColumn, tech_stackColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
+import { bountyColumn, createdAtColumn, clientStatusColumn, tech_stackColumn, titleColumn, difficultyColumn } from "@modules/bugs/components/list-template/columns"
 import { EditBugDrawer } from "@modules/bugs/components/edit-bug"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
@@ -32,6 +32,7 @@ const createColumns = (
   createdAtColumn,
   bountyColumn,
   clientStatusColumn,
+  difficultyColumn,
   columnHelper.display({
     id: "actions",
     header: "",
