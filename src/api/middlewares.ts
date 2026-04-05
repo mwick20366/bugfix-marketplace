@@ -88,6 +88,7 @@ export default defineMiddlewares({
             "description",
             "tech_stack",
             "bounty",
+            "difficulty",
             "status",
             "created_at",
             "updated_at",

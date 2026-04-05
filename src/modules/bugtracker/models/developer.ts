@@ -1,6 +1,7 @@
 import { model } from "@medusajs/framework/utils";
 import Bug from "./bug";
 import Submission from "./submission";
+import DeveloperReview from "./developer-review";
 
 const Developer = model.define("developer", {
   id: model.id().primaryKey(),
@@ -12,7 +13,10 @@ const Developer = model.define("developer", {
   }),
   submissions: model.hasMany(() => Submission, {
     mappedBy: "developer",
-  })
+  }),
+  reviews: model.hasMany(() => DeveloperReview, {
+    mappedBy: "developer",
+  } )
 });
 
 export default Developer;

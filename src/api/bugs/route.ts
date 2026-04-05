@@ -17,11 +17,13 @@ export const GET = async (
   const {
     q,
     status,
+    difficulty,
     developer_id,
     client_id,
   } = req.validatedQuery as {
     q?: string,
-    status?: string,
+    status?: string | string[],
+    difficulty?: string | string[],
     developer_id?: string,
     client_id?: string
   }
@@ -40,6 +42,15 @@ export const GET = async (
     }
   }
 
+  // Normalize status and difficulty to arrays
+  const statusFilter = status
+    ? Array.isArray(status) ? status : [status]
+    : undefined
+
+  const difficultyFilter = difficulty
+    ? Array.isArray(difficulty) ? difficulty : [difficulty]
+    : undefined
+
   const {
     data: bugs,
     metadata: { count, take, skip } = {},
@@ -55,15 +66,13 @@ export const GET = async (
           { tech_stack: { $ilike: `%${q}%` } },
         ],
       }),
-      ...(status && {
-        status: { $ilike: status }
-      }),
+      ...(statusFilter ? { status: statusFilter } : {}),
+      ...(difficultyFilter ? { difficulty: difficultyFilter } : {}),
       ...(developerId && {
         developer: {
           id: developerId
         }
-      }
-    ),
+      }),
       ...(clientId && {
         client: {
           id: clientId

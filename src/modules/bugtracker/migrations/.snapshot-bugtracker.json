@@ -265,6 +265,21 @@
           "nullable": true,
           "mappedType": "float"
         },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'medium'",
+          "enumItems": [
+            "easy",
+            "medium",
+            "hard"
+          ],
+          "mappedType": "enum"
+        },
         "status": {
           "name": "status",
           "type": "text",

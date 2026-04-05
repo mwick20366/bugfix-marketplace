@@ -10,6 +10,7 @@ const Bug = model.define("bug", {
   tech_stack: model.text(),
   repo_link: model.text().nullable(),
   bounty: model.float().nullable(),
+  difficulty: model.enum(["easy", "medium", "hard"]).default("medium"),
   status: model.text().nullable(),
   claimed_at: model.dateTime().nullable(),
   client: model.belongsTo(() => Client, { mappedBy: "bugs" }),

@@ -1,11 +1,11 @@
 import { z } from "@medusajs/framework/zod"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
-import develop from "@medusajs/medusa/commands/develop"
 
 export const GetBugsSchema = createFindParams().merge(
   z.object({
     q: z.string().optional(),
-    status: z.string().optional(),
+    status: z.union([z.string(), z.array(z.string())]).optional(),
+    difficulty: z.union([z.string(), z.array(z.string())]).optional(),
     developer_id: z.string().optional(),
     client_id: z.string().optional(),
   })
@@ -17,6 +17,7 @@ export const PostCreateBugSchema = z.object({
   tech_stack: z.string(),
   repo_link: z.string(),
   bounty: z.number(),
+  difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
   client_id: z.string(),
 })
 
