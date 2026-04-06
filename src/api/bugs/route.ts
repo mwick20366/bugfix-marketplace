@@ -3,7 +3,6 @@ import { z } from "@medusajs/framework/zod"
 import { PostCreateBugSchema } from "./validators"
 import { createBugWorkflow } from "../../workflows/bug"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import developer from "../../modules/bugtracker/models/developer"
 
 type CreateBugBody = z.infer<typeof PostCreateBugSchema>
 
