@@ -2,7 +2,7 @@ import React from "react"
 
 import { IconProps } from "types/icon"
 
-const Medusa: React.FC<IconProps> = ({
+const Bugzapper: React.FC<IconProps> = ({
   size = "20",
   color = "#9CA3AF",
   ...attributes
@@ -24,4 +24,4 @@ const Medusa: React.FC<IconProps> = ({
   )
 }
 
-export default Medusa
+export default Bugzapper

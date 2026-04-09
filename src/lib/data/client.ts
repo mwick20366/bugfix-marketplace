@@ -14,6 +14,7 @@ import {
 import { Member } from "./member"
 import { Submission } from "./submissions"
 import { Bug } from "./bugs"
+import { NotificationsResponse } from "./in-app-notification"
 
 // export type Client = Member & {
 //   company: string
@@ -67,6 +68,7 @@ export const retrieveClient =
       // .then(({ client }) => client)
       // .catch(() => null)
   }
+
 
 // TODO: Change below to updateClient and allow updating client specific fields as well, not just customer fields
 // export const updateClient = async (body: HttpTypes.StoreUpdateCustomer) => {

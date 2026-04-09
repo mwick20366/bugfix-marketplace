@@ -5,7 +5,7 @@ import { Bug, createBug } from "@lib/data/bugs";
 import {
   Button,
   Heading,
-  Text as MedusaText,
+  Text as BugzapperText,
   Textarea,
   toast
 } from "@medusajs/ui";
@@ -64,8 +64,8 @@ export default function SubmitFixModal({
         <form onSubmit={handleSubmit} className="flex h-full flex-col overflow-hidden">
           <Modal.Body>
             <Heading level="h2">{bug?.title}</Heading>
-            <MedusaText>{bug?.description}</MedusaText>
-            <MedusaText>Bounty: {bug?.bounty}</MedusaText>
+            <BugzapperText>{bug?.description}</BugzapperText>
+            <BugzapperText>Bounty: {bug?.bounty}</BugzapperText>
             <Controller
               control={form.control}
               name="notes"

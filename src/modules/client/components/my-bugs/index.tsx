@@ -176,6 +176,11 @@ export default function MyBugs(props: MyBugsProps) {
     })
   }
 
+  const handleReviewSubmission = () => {
+    // logic to open review submission modal goes here
+    toast.info("Review submission functionality is not implemented yet.")
+  }
+
   return (
     <div className="w-full">
       <BugsListTemplate
@@ -196,6 +201,7 @@ export default function MyBugs(props: MyBugsProps) {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onConfirm={handleClaimBug}
+          onReviewSubmission={handleReviewSubmission}
           bug={selectedBug}
         />
       )}

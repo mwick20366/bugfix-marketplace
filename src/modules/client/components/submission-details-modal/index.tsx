@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Submission } from "@lib/data/submissions";
-import { Button, Heading, Label, Text as MedusaText, Textarea, toast } from "@medusajs/ui";
+import { Button, Heading, Label, Text as BugzapperText, Textarea, toast } from "@medusajs/ui";
 import Modal from "@modules/common/components/modal";
 import { useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -140,15 +140,15 @@ export default function SubmissionDetailsModal({
             <Heading level="h2">{submission?.bug?.title}</Heading>
             <div className="flex flex-col gap-y-2">
               <Label>Bug Description</Label>
-              <MedusaText>{submission?.bug?.description}</MedusaText>
+              <BugzapperText>{submission?.bug?.description}</BugzapperText>
             </div>
             <div className="flex flex-col gap-y-2">
               <Label>Bounty</Label>
-              <MedusaText>${submission?.bug?.bounty}</MedusaText>
+              <BugzapperText>${submission?.bug?.bounty}</BugzapperText>
             </div>
             <div className="flex flex-col gap-y-2">
               <Label>Fix Description</Label>
-              <MedusaText>{submission?.notes}</MedusaText>
+              <BugzapperText>{submission?.notes}</BugzapperText>
             </div>
             <div className="flex flex-col gap-y-2">
               <Label>File URL</Label>
@@ -171,7 +171,7 @@ export default function SubmissionDetailsModal({
             {submission?.client_notes && (
               <div className="flex flex-col gap-y-2">
                 <Label>Notes</Label>
-                <MedusaText>{submission.client_notes}</MedusaText>
+                <BugzapperText>{submission.client_notes}</BugzapperText>
               </div>
             )}
           </Modal.Body>

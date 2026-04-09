@@ -2,7 +2,7 @@
 "use client"
 
 import { Button, Label } from "@medusajs/ui"
-import { Text as MedusaText } from "@medusajs/ui"
+import { Text as BugzapperText } from "@medusajs/ui"
 import { Bug } from "@lib/data/bugs"
 import Modal from "@modules/common/components/modal" // your custom Modal wrapper
 
@@ -35,11 +35,11 @@ export const BugDetailsModal = ({
         <div className="flex flex-col gap-y-4">
           <div>
             <Label size="small" weight="plus">Title</Label>
-            <MedusaText>{bug.title}</MedusaText>
+            <BugzapperText>{bug.title}</BugzapperText>
           </div>
           <div>
             <Label size="small" weight="plus">Description</Label>
-            <MedusaText>{bug.description}</MedusaText>
+            <BugzapperText>{bug.description}</BugzapperText>
           </div>
           {bug.repo_link && (
             <div>
@@ -57,16 +57,16 @@ export const BugDetailsModal = ({
           {bug.tech_stack && (
             <div>
               <Label size="small" weight="plus">Tech Stack</Label>
-              <MedusaText>{bug.tech_stack}</MedusaText>
+              <BugzapperText>{bug.tech_stack}</BugzapperText>
             </div>
           )}
           <div>
             <Label size="small" weight="plus">Bounty</Label>
-            <MedusaText>${bug.bounty}</MedusaText>
+            <BugzapperText>${bug.bounty}</BugzapperText>
           </div>
           <div>
             <Label size="small" weight="plus">Status</Label>
-            <MedusaText>{bug.status}</MedusaText>
+            <BugzapperText>{bug.status}</BugzapperText>
           </div>
         </div>
       </Modal.Body>

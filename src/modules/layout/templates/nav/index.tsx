@@ -7,6 +7,7 @@ import SideMenu from "@modules/layout/components/side-menu"
 import { retrieveClient } from "@lib/data/client"
 import { retrieveDeveloper } from "@lib/data/developer"
 import ProfileDropdownWrapper from "@modules/layout/components/profile-dropdown/logout-wrapper"
+import { ClientNotificationBell, DeveloperNotificationBell } from "@modules/layout/components/notification-bell/notification-bell-wrapper"
 
 export default async function Nav() {
   const [regions, locales, currentLocale] = await Promise.all([
@@ -83,9 +84,15 @@ export default async function Nav() {
                 Marketplace
               </LocalizedClientLink>
             </div>
-
             {isLoggedIn && (
-              <ProfileDropdownWrapper name={displayName} />
+              <div className="flex items-center gap-x-2">
+                {isDeveloper ? (
+                  <DeveloperNotificationBell />
+                ) : (
+                  <ClientNotificationBell />
+                )}
+                <ProfileDropdownWrapper name={displayName} />
+              </div>
             )}
           </div>
         </nav>

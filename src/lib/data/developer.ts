@@ -135,7 +135,7 @@ export async function loginDeveloper(_currentState: unknown, formData: FormData)
   }
 }
 
-export async function signoutDeveloper(countryCode: string) {
+export async function signoutDeveloper() {
   await sdk.auth.logout()
 
   await removeAuthToken()
@@ -148,5 +148,5 @@ export async function signoutDeveloper(countryCode: string) {
   // const cartCacheTag = await getCacheTag("carts")
   // revalidateTag(cartCacheTag)
 
-  redirect(`/${countryCode}/developer/account`)
+  redirect(`/developer/account`)
 }

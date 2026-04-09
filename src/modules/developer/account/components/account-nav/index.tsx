@@ -14,10 +14,9 @@ import { useDeveloperMe } from "@lib/hooks/use-developer-me"
 
 const AccountNav = () => {
   const route = usePathname()
-  const { countryCode } = useParams() as { countryCode: string }
 
   const handleLogout = async () => {
-    await signoutDeveloper(countryCode)
+    await signoutDeveloper()
   }
 
   const { developerData } = useDeveloperMe()
@@ -26,9 +25,9 @@ const AccountNav = () => {
   return (
     <div>
       <div className="small:hidden" data-testid="mobile-account-nav">
-        {route !== `/${countryCode}/account` ? (
+        {route !== `/developer/account` ? (
           <LocalizedClientLink
-            href="/account"
+            href="/developer/account"
             className="flex items-center gap-x-2 text-small-regular py-2"
             data-testid="account-main-link"
           >
@@ -46,7 +45,7 @@ const AccountNav = () => {
               <ul>
                 <li>
                   <LocalizedClientLink
-                    href="/account/profile"
+                    href="/developer/account/profile"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
                     data-testid="profile-link"
                   >
@@ -61,7 +60,7 @@ const AccountNav = () => {
                 </li>
                 <li>
                   <LocalizedClientLink
-                    href="/account/addresses"
+                    href="/developer/account/addresses"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
                     data-testid="addresses-link"
                   >
@@ -76,7 +75,7 @@ const AccountNav = () => {
                 </li>
                 <li>
                   <LocalizedClientLink
-                    href="/account/orders"
+                    href="/developer/account/orders"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
                     data-testid="orders-link"
                   >

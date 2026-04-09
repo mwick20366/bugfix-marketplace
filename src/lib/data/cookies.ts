@@ -1,6 +1,8 @@
 import "server-only"
 import { cookies as nextCookies } from "next/headers"
 
+export const COUNTRY_CODE_COOKIE_NAME = "_medusa_country_code"
+
 export const getAuthHeaders = async (): Promise<
   { authorization: string } | {}
 > => {
@@ -86,4 +88,13 @@ export const removeCartId = async () => {
   cookies.set("_medusa_cart_id", "", {
     maxAge: -1,
   })
+}
+
+export const getCountryCode = async (): Promise<string | null> => {
+  try {
+    const cookies = await nextCookies()
+    return cookies.get(COUNTRY_CODE_COOKIE_NAME)?.value ?? null
+  } catch {
+    return null
+  }
 }

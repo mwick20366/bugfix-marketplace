@@ -3,17 +3,17 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
+    <img alt="Bugzapper logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
     </picture>
   </a>
 </p>
 
 <h1 align="center">
-  Medusa Next.js Starter Template
+  Bugzapper Next.js Starter Template
 </h1>
 
 <p align="center">
-Combine Medusa's modules for your commerce backend with the newest Next.js 15 features for a performant storefront.</p>
+Combine Bugzapper's modules for your commerce backend with the newest Next.js 15 features for a performant storefront.</p>
 
 <p align="center">
   <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
@@ -29,7 +29,7 @@ Combine Medusa's modules for your commerce backend with the newest Next.js 15 fe
 
 ### Prerequisites
 
-To use the [Next.js Starter Template](https://medusajs.com/nextjs-commerce/), you should have a Medusa server running locally on port 9000.
+To use the [Next.js Starter Template](https://medusajs.com/nextjs-commerce/), you should have a Bugzapper server running locally on port 9000.
 For a quick setup, run:
 
 ```shell
@@ -40,12 +40,12 @@ Check out [create-medusa-app docs](https://docs.medusajs.com/learn/installation)
 
 # Overview
 
-The Medusa Next.js Starter is built with:
+The Bugzapper Next.js Starter is built with:
 
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Typescript](https://www.typescriptlang.org/)
-- [Medusa](https://medusajs.com/)
+- [Bugzapper](https://medusajs.com/)
 
 Features include:
 
@@ -108,11 +108,11 @@ To enable the integrations you need to add the following to your `.env.local` fi
 NEXT_PUBLIC_STRIPE_KEY=<your-stripe-public-key>
 ```
 
-You'll also need to setup the integrations in your Medusa server. See the [Medusa documentation](https://docs.medusajs.com) for more information on how to configure [Stripe](https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe#main).
+You'll also need to setup the integrations in your Bugzapper server. See the [Bugzapper documentation](https://docs.medusajs.com) for more information on how to configure [Stripe](https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe#main).
 
 # Resources
 
-## Learn more about Medusa
+## Learn more about Bugzapper
 
 - [Website](https://www.medusajs.com/)
 - [GitHub](https://github.com/medusajs)
