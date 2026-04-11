@@ -1,12 +1,17 @@
 // src/api/middlewares.ts
 import { z } from "@medusajs/framework/zod"
-import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAndTransformQuery, } from "@medusajs/framework/http"
+import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAndTransformQuery, MedusaRequest, MedusaResponse, MedusaNextFunction, } from "@medusajs/framework/http"
 import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
 import { GetSubmissionsSchema } from "./submissions/validators"
 import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
 import { PostCaptureSubmissionSchema } from "./submissions/[id]/finalize-approval/route"
 import { PostDeveloperReviewSchema } from "./developer-reviews/route"
+import { PostMessageSchema } from "./bugs/[id]/messages/validators"
+import { MarkMessagesReadSchema } from "./bugs/[id]/messages/mark-read/validators"
+import { ConfigModule } from "@medusajs/framework"
+import cors from "cors"
+import { parseCorsOrigins } from "@medusajs/framework/utils"
 
 export default defineMiddlewares({
   routes: [
@@ -82,6 +87,34 @@ export default defineMiddlewares({
     {
       matcher: "/developers/*",
       middlewares: [authenticate("developer", ["session", "bearer"])],
+    },
+    // Apply CORS to all /bugs* routes
+    {
+      matcher: "/bugs*",
+      middlewares: [
+        (
+          req: MedusaRequest,
+          res: MedusaResponse,
+          next: MedusaNextFunction
+        ) => {
+          const configModule: ConfigModule =
+            req.scope.resolve("configModule")
+
+          return cors({
+            origin: parseCorsOrigins(
+              configModule.projectConfig.http.storeCors
+            ),
+            credentials: true,
+          })(req, res, next)
+        },
+      ],
+    },
+    // Protect the messages routes — authenticated clients and developers only
+    {
+      matcher: "/bugs/:bugId/messages*",
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
     },
     {
       matcher: "/bugs",
@@ -203,7 +236,21 @@ export default defineMiddlewares({
       ],
     },
     {
-      matcher: "/store/bugs/:id/messages*",
+      matcher: "/bugs/:id/messages",
+      method: "POST",
+      middlewares: [
+        validateAndTransformBody(PostMessageSchema),
+      ],
+    },
+    {
+      matcher: "/bugs/:id/messages/mark-read",
+      method: "POST",
+      middlewares: [
+        validateAndTransformBody(MarkMessagesReadSchema),
+      ],
+    },
+    {
+      matcher: "/bugs/:id/messages*",
       middlewares: [
         authenticate(["client", "developer"], ["session", "bearer"]),
       ],
@@ -213,6 +260,27 @@ export default defineMiddlewares({
       methods: ["GET"],
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer", "api-key"]),
+      ],
+    },
+    {
+      matcher: "/messages",
+      methods: ["GET"],
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
+    },
+    {
+      matcher: "/messages/unread",
+      methods: ["GET"],
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
+    },
+    {
+      matcher: "/bugs/:id/messages/unread",
+      methods: ["GET"],
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     {
