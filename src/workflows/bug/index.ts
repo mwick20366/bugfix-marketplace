@@ -8,6 +8,7 @@ import { deleteBugStep, DeleteBugStepInput } from "./steps/delete-bug"
 import { claimBugStep } from "./steps/claim-bug"
 import { unClaimBugStep } from "./steps/unclaim-bug"
 import { submitBugFixStep, SubmitBugFixStepInput } from "./steps/submit-bug-fix"
+import { emitEventStep } from "@medusajs/medusa/core-flows"
 
 // --- Types ---
 
@@ -57,6 +58,12 @@ export const claimBugWorkflow = createWorkflow(
   "claim-bug",
   (input: { bug_id: string; developer_id: string }) => {
     const bug = claimBugStep(input)
+
+    emitEventStep({
+      eventName: "bug.claimed",
+      data: { id: input.bug_id },
+    })
+
     return new WorkflowResponse(bug)
   }
 )
@@ -65,6 +72,12 @@ export const unClaimBugWorkflow = createWorkflow(
   "unclaim-bug",
   (input: { bug_id: string; developer_id: string }) => {
     const bug = unClaimBugStep(input)
+
+    emitEventStep({
+      eventName: "bug.unclaimed",
+      data: { id: input.bug_id },
+    })
+
     return new WorkflowResponse(bug)
   }
 )
@@ -73,7 +86,13 @@ export const submitBugFixWorkflow = createWorkflow(
   "submit-bug-fix",
   (input: SubmitBugFixWorkflowInput) =>
   {
-    const bug = submitBugFixStep(input.submission)
-    return new WorkflowResponse(bug)
+    const submission = submitBugFixStep(input.submission)
+
+    emitEventStep({
+      eventName: "submission.created",
+      data: { id: submission.id },
+    })
+
+    return new WorkflowResponse(submission)
   }
 )

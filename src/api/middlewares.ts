@@ -39,6 +39,10 @@ export default defineMiddlewares({
       ],
     },
     {
+      matcher: "/clients/me/notifications*",
+      middlewares: [authenticate("client", ["session", "bearer"])],
+    },
+    {
       matcher: "/developers",
       method: "POST",
       middlewares: [
@@ -65,7 +69,11 @@ export default defineMiddlewares({
         isList: false,
       }),
       ],
-    },    
+    },
+    {
+      matcher: "/developers/me/notifications*",
+      middlewares: [authenticate("developer", ["session", "bearer"])],
+    },
     // Protect authenticated routes
     {
       matcher: "/clients/*",
@@ -87,11 +95,13 @@ export default defineMiddlewares({
             "title",
             "description",
             "tech_stack",
+            "repo_link",
             "bounty",
             "difficulty",
             "status",
             "created_at",
             "updated_at",
+            "claimed_at",
             "developer.*", // retrieves all fields of linked developer record
             "client.id",
             "client.company_name",
@@ -190,6 +200,12 @@ export default defineMiddlewares({
       middlewares: [
         authenticate(["developer"], ["session", "bearer"]),
         validateAndTransformBody(SubmitBugFixSchema),
+      ],
+    },
+    {
+      matcher: "/store/bugs/:id/messages*",
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     {

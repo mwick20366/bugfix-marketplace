@@ -7,6 +7,7 @@ import { updateSubmissionStep, UpdateSubmissionStepInput } from "./steps/update-
 import { deleteSubmissionStep, DeleteSubmissionStepInput } from "./steps/delete-submission"
 import { approveSubmissionStep, ApproveSubmissionStepInput } from "./steps/approve-submission"
 import { rejectSubmissionStep, RejectSubmissionStepInput } from "./steps/reject-submission"
+import { emitEventStep } from "@medusajs/medusa/core-flows"
 
 // --- Types ---
 export type CreateSubmissionWorkflowInput = {
@@ -59,6 +60,14 @@ export const approveSubmissionWorkflow = createWorkflow(
   "approve-submission",
   (input: ApproveSubmissionWorkflowInput) => {
     const submission = approveSubmissionStep(input.submission)
+
+    emitEventStep({
+      eventName: "submission.updated",
+      data: {
+        id: input.submission.submissionId,
+      },
+    })
+
     return new WorkflowResponse(submission)
   }
 )
@@ -67,6 +76,14 @@ export const rejectSubmissionWorkflow = createWorkflow(
   "reject-submission",
   (input: RejectSubmissionWorkflowInput) => {
     const submission = rejectSubmissionStep()
+
+    emitEventStep({
+      eventName: "submission.updated",
+      data: {
+        id: input.submission.submissionId,
+      },
+    })
+
     return new WorkflowResponse(submission)
   }
 )

@@ -36,8 +36,10 @@ export const submitBugFixStep = createStep(
       bugId: data.bug_id,
     })
   },
-  async ({ submissionId, bugId }: CompensationInput, { container }) => {
+  async (compensationData, { container }) => {
+    if (!compensationData) return
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
+    const { submissionId, bugId } = compensationData
     // Undo in reverse order:
 
     // 1. Revert the bug's status back to "claimed"

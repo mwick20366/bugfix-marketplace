@@ -25,6 +25,12 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/bugtracker",
     },
+    {
+      resolve: "./src/modules/in-app-notification",
+    },
+    {
+      resolve: "./src/modules/messaging",
+    },
     // Configure the Auth Module to include the emailpass provider
     {
       resolve: "@medusajs/medusa/auth",
@@ -48,6 +54,24 @@ module.exports = defineConfig({
             id: "stripe",
             options: {
               apiKey: process.env.STRIPE_API_KEY,
+            },
+          },
+        ],
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/notification-local",
+            id: "local",
+            options: {
+              channels: [
+                process.env.NODE_ENV === "development"
+                  ? "email"
+                  : "feed",
+              ],
             },
           },
         ],
