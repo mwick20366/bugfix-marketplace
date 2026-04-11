@@ -8,6 +8,7 @@ import { retrieveClient } from "@lib/data/client"
 import { retrieveDeveloper } from "@lib/data/developer"
 import ProfileDropdownWrapper from "@modules/layout/components/profile-dropdown/logout-wrapper"
 import { ClientNotificationBell, DeveloperNotificationBell } from "@modules/layout/components/notification-bell/notification-bell-wrapper"
+import GlobalMessageIcon from "@modules/messaging/components/global-message-icon"
 
 export default async function Nav() {
   const [regions, locales, currentLocale] = await Promise.all([
@@ -22,6 +23,8 @@ export default async function Nav() {
   const isLoggedIn = Boolean(developerData || clientData)
   const isDeveloper = Boolean(developerData)
 
+  const currentUserId = developerData?.developer.id || clientData?.client.id || ""
+  
   const displayName =
     developerData?.developer.first_name ||
     clientData?.client.contact_first_name ||
@@ -85,7 +88,11 @@ export default async function Nav() {
               </LocalizedClientLink>
             </div>
             {isLoggedIn && (
-              <div className="flex items-center gap-x-2">
+              <div className="flex items-center gap-x-4">
+                <GlobalMessageIcon
+                  currentUserId={currentUserId}
+                  currentUserType={isDeveloper ? "developer" : "client"}
+                />
                 {isDeveloper ? (
                   <DeveloperNotificationBell />
                 ) : (

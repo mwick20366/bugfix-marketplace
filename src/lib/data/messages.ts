@@ -85,3 +85,85 @@ export const sendMessage = async ({
       return { success: false, error: err.toString() }
     })
 }
+
+export const markMessagesRead = async ({
+  bugId,
+  actorType,
+}: {
+  bugId: string
+  actorType: "client" | "developer"
+}): Promise<{ success: boolean; error?: string }> => {
+  const authHeaders = await getAuthHeaders()
+
+  if (!authHeaders) return { success: false, error: "Not authenticated" }
+
+  return sdk.client
+    .fetch(`/store/bugs/${bugId}/messages/mark-read`, {
+      method: "POST",
+      headers: { ...authHeaders },
+    })
+    .then(async () => {
+      const messagesCacheTag = await getCacheTag(`messages-${bugId}`)
+      revalidateTag(messagesCacheTag)
+      return { success: true }
+    })
+    .catch((err) => ({ success: false, error: err.toString() }))
+}
+
+export const getUnreadCount = async ({
+  bugId,
+  senderId,
+  senderType,
+  actorType,
+}: {
+  bugId: string
+  senderId: string
+  senderType: "client" | "developer"
+  actorType: "client" | "developer"
+}): Promise<number> => {
+  const authHeaders = await getAuthHeaders()
+  if (!authHeaders) return 0
+
+  const params = new URLSearchParams({
+    sender_id: senderId,
+    sender_type: senderType,
+  })
+
+  const result = await sdk.client.fetch(
+    `/store/bugs/${bugId}/messages/unread?${params.toString()}`,
+    {
+      headers: { ...authHeaders },
+      next: await getCacheOptions(`messages-${bugId}`),
+      cache: "force-cache",
+    }
+  )
+
+  return (result as any).unread_count ?? 0
+}
+
+export const getGlobalUnreadCount = async ({
+  senderId,
+  senderType,
+}: {
+  senderId: string
+  senderType: "client" | "developer"
+}): Promise<number> => {
+  const authHeaders = await getAuthHeaders()
+  if (!authHeaders) return 0
+
+  const params = new URLSearchParams({
+    sender_id: senderId,
+    sender_type: senderType,
+  })
+
+  const result = await sdk.client.fetch(
+    `/store/messages/unread?${params.toString()}`,
+    {
+      headers: { ...authHeaders },
+      next: await getCacheOptions(`messages-unread-${senderId}`),
+      cache: "force-cache",
+    }
+  )
+
+  return (result as any).unread_count ?? 0
+}

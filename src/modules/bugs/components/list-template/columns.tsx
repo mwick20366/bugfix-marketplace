@@ -4,6 +4,7 @@ import { Bug } from "@lib/data/bugs"
 import { StatusBadge, DifficultyBadge } from "@modules/common/components/bug-badges"
 import { convertToLocale } from "@lib/util/money"
 import { createDataTableColumnHelper } from "@medusajs/ui"
+import UnreadMessageBadge from "@modules/messaging/components/unread-message-badge"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
@@ -108,3 +109,27 @@ export const difficultyColumn = columnHelper.accessor("difficulty", {
   sortDescLabel: "Z-A",
   cell: ({ getValue }) => <DifficultyBadge difficulty={getValue() as string} />,
 })
+
+export const createMessagesColumn = (
+  currentUserId: string,
+  currentUserType: "client" | "developer"
+) =>
+  columnHelper.display({
+    id: "messages",
+    header: "",
+    cell: ({ row }) => {
+      const bug = row.original
+      const isActive =
+        bug.status === "claimed" || bug.status === "fix submitted"
+
+      if (!isActive) return null
+
+      return (
+        <UnreadMessageBadge
+          bugId={bug.id}
+          currentUserId={currentUserId}
+          currentUserType={currentUserType}
+        />
+      )
+    },
+  })

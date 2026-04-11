@@ -18,12 +18,13 @@ import { useMemo, useState } from "react"
 import { useClaimBug } from "@lib/hooks/use-claim-bug"
 import ClientBugDetailsModal from "../bug-details-modal"
 import { title } from "process"
-import { bountyColumn, createdAtColumn, clientStatusColumn, techStackColumn, titleColumn, difficultyColumn } from "@modules/bugs/components/list-template/columns"
+import { bountyColumn, createdAtColumn, clientStatusColumn, techStackColumn, titleColumn, difficultyColumn, createMessagesColumn } from "@modules/bugs/components/list-template/columns"
 import { EditBugDrawer } from "@modules/bugs/components/edit-bug"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
 const createColumns = (
+  client: Client,
   onEdit: (bug: Bug) => void,
   onDelete: (bug: Bug) => void
 ) => [
@@ -33,6 +34,7 @@ const createColumns = (
   bountyColumn,
   clientStatusColumn,
   difficultyColumn,
+  createMessagesColumn(client.id, "client"),
   columnHelper.display({
     id: "actions",
     header: "",
@@ -108,6 +110,7 @@ export default function MyBugs(props: MyBugsProps) {
   }
 
   const columns = useMemo(() => createColumns(
+    client,
     handleEdit,
     (bug) => { /* trigger delete mutation */ }
   ), [])
@@ -213,6 +216,7 @@ export default function MyBugs(props: MyBugsProps) {
           onDelete={(bug) => {
             // trigger your delete mutation here, same as the list column
           }}
+          currentUserId={client.id}
         />
       )}
       {selectedBug && (

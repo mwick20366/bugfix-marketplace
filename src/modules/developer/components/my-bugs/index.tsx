@@ -18,11 +18,13 @@ import { BugDetailsModal } from "@modules/developer/components/bug-details-modal
 import { useDeveloperMe } from "@lib/hooks/use-developer-me"
 import { useUnclaimBug } from "@lib/hooks/use-unclaim-bug"
 import SubmitFixModal from "../submit-fix-modal"
-import { bountyColumn, convertDateToRelative, developerStatusColumn, difficultyColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
+import { bountyColumn, convertDateToRelative, createMessagesColumn, developerStatusColumn, difficultyColumn, titleColumn } from "@modules/bugs/components/list-template/columns"
+import { Developer } from "@lib/data/developer"
 
 const columnHelper = createDataTableColumnHelper<Bug>()
 
 const createColumns = (
+  developer: Developer,
   onSubmitFix: (bug: Bug) => void,
   onUnclaimBug: (bug: Bug) => void
 ) => [
@@ -41,6 +43,7 @@ const createColumns = (
   bountyColumn,
   difficultyColumn,
   developerStatusColumn,
+  createMessagesColumn(developer?.id || "", "developer"),
   columnHelper.display({
     id: "actions",
     header: "",
@@ -104,9 +107,14 @@ export default function MyBugs({ statusFilter = [], difficultyFilter = [] }: MyB
   const { developerData } = useDeveloperMe()
   const { developer } = developerData || {}
 
+  if (!developer) {
+    return <div>Loading...</div>
+  }
+  
   const limit = BUG_LIMIT
 
   const columns = useMemo(() => createColumns(
+    developer,
     (bug) => { setIsSubmitFixOpen(true); setSelectedBug(bug) },
     (bug) => { setSelectedBug(bug); handleUnclaim(bug) },
   ), [])
@@ -217,6 +225,7 @@ export default function MyBugs({ statusFilter = [], difficultyFilter = [] }: MyB
           onSubmitFix={handleSubmitFix}
           onUnclaim={handleUnclaim}
           isUnclaiming={isUnclaiming}
+          currentUserId={developer?.id || ""}
         />
       )}
       {selectedBug && (

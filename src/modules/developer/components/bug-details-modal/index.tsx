@@ -6,7 +6,9 @@ import { Bug } from "@lib/data/bugs"
 import Modal from "@modules/common/components/modal"
 import { DetailRow } from "@modules/marketplace/components/bug-details-modal"
 import { StatusBadge, DifficultyBadge } from "@modules/common/components/bug-badges"
-import React from "react"
+import React, { useEffect } from "react"
+import MessageThread from "@modules/messaging/components/message-thread"
+import { markMessagesRead } from "@lib/data/messages"
 
 type BugDetailsModalProps = {
   bug: Bug | null
@@ -15,6 +17,7 @@ type BugDetailsModalProps = {
   onSubmitFix: (bug: Bug) => void
   onUnclaim: (bug: Bug) => void
   isUnclaiming?: boolean
+  currentUserId: string
 }
 
 export const BugDetailsModal = ({
@@ -24,14 +27,21 @@ export const BugDetailsModal = ({
   onSubmitFix,
   onUnclaim,
   isUnclaiming,
+  currentUserId,
 }: BugDetailsModalProps) => {
   if (!bug) return null
+
+  useEffect(() => {
+    if (isOpen && bug?.id && (bug.status === "claimed" || bug.status === "fix submitted")) {
+      markMessagesRead({ bugId: bug.id, actorType: "developer" }) // or "client"
+    }
+  }, [isOpen, bug?.id])
 
   const canSubmitFix = bug.status === "claimed"
   const canUnclaim = bug.status === "claimed"
 
   return (
-    <Modal isOpen={isOpen} close={onClose} size="medium">
+    <Modal isOpen={isOpen} close={onClose} size="large">
       <Modal.Title>Bug Details</Modal.Title>
       <Modal.Body>
         <div className="flex flex-col gap-y-2">
@@ -60,6 +70,16 @@ export const BugDetailsModal = ({
             <StatusBadge status={bug.status ?? ""} />
           </DetailRow>
         </div>
+        {(bug.status === "claimed" || bug.status === "fix submitted") && (
+          <div className="mt-4 border-t pt-4">
+            <p className="text-sm font-semibold mb-2">Messages</p>
+            <MessageThread
+              bugId={bug.id}
+              currentUserId={currentUserId}
+              currentUserType="developer"
+            />
+          </div>
+        )}        
       </Modal.Body>
       <Modal.Footer>
         <Button

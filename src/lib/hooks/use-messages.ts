@@ -1,6 +1,6 @@
 // src/lib/hooks/use-messages.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { listMessages, sendMessage, Message } from "@lib/data/messages"
+import { listMessages, sendMessage, getUnreadCount, Message, getGlobalUnreadCount } from "@lib/data/messages"
 
 export const useMessages = (bugId: string) => {
   const { data, isLoading, error } = useQuery<{ messages: Message[] } | null>({
@@ -29,4 +29,32 @@ export const useSendMessage = (bugId: string) => {
       queryClient.invalidateQueries({ queryKey: ["messages", bugId] })
     },
   })
+}
+
+export const useUnreadMessageCount = (
+  bugId: string,
+  senderId: string,
+  senderType: "client" | "developer"
+) => {
+  const { data, isLoading } = useQuery<number>({
+    queryFn: () => getUnreadCount({ bugId, senderId, senderType, actorType: senderType }),
+    queryKey: ["messages-unread", bugId, senderId],
+    enabled: !!bugId && !!senderId,
+  })
+
+  return { unreadCount: data ?? 0, isLoading }
+}
+
+export const useGlobalUnreadMessageCount = (
+  senderId: string,
+  senderType: "client" | "developer"
+) => {
+  const { data, isLoading } = useQuery<number>({
+    queryFn: () => getGlobalUnreadCount({ senderId, senderType }),
+    queryKey: ["messages-unread-global", senderId],
+    enabled: !!senderId,
+    refetchInterval: 30000, // poll every 30s as a fallback
+  })
+
+  return { unreadCount: data ?? 0, isLoading }
 }

@@ -1,10 +1,13 @@
 "use client";
 
 import { Bug } from "@lib/data/bugs";
+import { markMessagesRead } from "@lib/data/messages";
 import { Button, Tooltip } from "@medusajs/ui";
 import { DifficultyBadge, StatusBadge } from "@modules/common/components/bug-badges";
 import Modal from "@modules/common/components/modal";
 import { DetailRow } from "@modules/marketplace/components/bug-details-modal";
+import MessageThread from "@modules/messaging/components/message-thread";
+import { useEffect } from "react";
 
 interface BugDetailsModalProps {
   isOpen: boolean;
@@ -14,6 +17,7 @@ interface BugDetailsModalProps {
   onReviewSubmission?: () => void;
   onEdit: (bug: Bug) => void;
   onDelete: (bug: Bug) => void;
+  currentUserId: string;
 }
 
 export default function ClientBugDetailsModal({
@@ -24,21 +28,28 @@ export default function ClientBugDetailsModal({
   onReviewSubmission,
   onEdit,
   onDelete,
+  currentUserId,
 }: BugDetailsModalProps) {
+    useEffect(() => {
+      if (isOpen && bug?.id && (bug.status === "claimed" || bug.status === "fix submitted")) {
+        markMessagesRead({ bugId: bug.id, actorType: "client" }) // or "developer"
+      }
+    }, [isOpen, bug?.id])
+
   const canDelete = bug?.status === "open";
 
-const deleteButton = (
-  <Button
-    variant="danger"
-    onClick={() => canDelete && onDelete(bug)}
-    disabled={!canDelete}
-  >
-    Delete
-  </Button>
-);
+  const deleteButton = (
+    <Button
+      variant="danger"
+      onClick={() => canDelete && onDelete(bug)}
+      disabled={!canDelete}
+    >
+      Delete
+    </Button>
+  );
 
   return (
-    <Modal isOpen={isOpen} close={onClose} size="medium">
+    <Modal isOpen={isOpen} close={onClose} size="large">
       <Modal.Title>Bug Details</Modal.Title>
       <Modal.Body>
         <div className="flex flex-col gap-y-2">
@@ -76,6 +87,16 @@ const deleteButton = (
             </DetailRow>
           )}
         </div>
+        {(bug.status === "claimed" || bug.status === "fix submitted") && (
+          <div className="mt-4 border-t pt-4">
+            <p className="text-sm font-semibold mb-2">Messages</p>
+            <MessageThread
+              bugId={bug.id}
+              currentUserId={currentUserId}
+              currentUserType="client"
+            />
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         {/* Edit and Delete buttons on the left */}
