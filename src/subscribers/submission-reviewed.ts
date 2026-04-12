@@ -33,7 +33,7 @@ export default async function submissionReviewedHandler({
       message,
       resource_id: submission.id,
       resource_type: "submission",
-      resource_url: `/developer/account/bug-marketplace/${submission.bug.id}`,
+      resource_url: `/developer/account/bug-marketplace?status=open&bugId=${submission.bug.id}`,
     },
   })
 }

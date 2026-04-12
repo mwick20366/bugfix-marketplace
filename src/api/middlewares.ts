@@ -12,6 +12,7 @@ import { MarkMessagesReadSchema } from "./bugs/[id]/messages/mark-read/validator
 import { ConfigModule } from "@medusajs/framework"
 import cors from "cors"
 import { parseCorsOrigins } from "@medusajs/framework/utils"
+import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
 
 export default defineMiddlewares({
   routes: [
@@ -146,6 +147,26 @@ export default defineMiddlewares({
         }),
       ],
     },
+    {
+      matcher: "/submissions*",
+      middlewares: [
+        (
+          req: MedusaRequest,
+          res: MedusaResponse,
+          next: MedusaNextFunction
+        ) => {
+          const configModule: ConfigModule =
+            req.scope.resolve("configModule")
+
+          return cors({
+            origin: parseCorsOrigins(
+              configModule.projectConfig.http.storeCors
+            ),
+            credentials: true,
+          })(req, res, next)
+        },
+      ],
+    },    
     {
       matcher: "/submissions",
       methods: ["GET"],
@@ -289,6 +310,29 @@ export default defineMiddlewares({
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer"]),
         validateAndTransformBody(PostDeveloperReviewSchema),
+      ],
+    },
+    {
+      matcher: "/marketplace*",
+      middlewares: [
+        (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) => {
+          const configModule: ConfigModule = req.scope.resolve("configModule")
+          return cors({
+            origin: parseCorsOrigins(configModule.projectConfig.http.storeCors),
+            credentials: true,
+          })(req, res, next)
+        },
+      ],
+    },
+    // Query config for the bugs list
+    {
+      matcher: "/marketplace/bugs",
+      methods: ["GET"],
+      middlewares: [
+        validateAndTransformQuery(GetMarketplaceBugsSchema, {
+          isList: true,
+          defaults: ["id", "title", "description", "tech_stack", "bounty", "difficulty", "created_at"],
+        }),
       ],
     },
   ],
