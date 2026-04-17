@@ -16,7 +16,7 @@ export async function GET(
 
   const { data: [bug] } = await query.graph({
     entity: "bug",
-    fields: ["*"],
+    fields: ["*", "client.*", "developer.*", "submissions.*", "attachments.*"],
     filters: {
       id: bugId,
     },

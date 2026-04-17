@@ -22,7 +22,7 @@ export async function POST(
 
   const { result } = await createDeveloperWorkflow(req.scope).run({
     input: {
-      developer: req.body,
+      developer: {...req.body},
       authIdentityId: req.auth_context.auth_identity_id,
     },
   })

@@ -2,6 +2,7 @@ import { model } from "@medusajs/framework/utils";
 import Client from "./client";
 import Submission from "./submission";
 import Developer from "./developer";
+import BugAttachment from "./bug-attachment";
 
 const Bug = model.define("bug", {
   id: model.id().primaryKey(),
@@ -18,6 +19,7 @@ const Bug = model.define("bug", {
   submissions: model.hasMany(() => Submission, {
     mappedBy: "bug",
   }),
+  attachments: model.hasMany(() => BugAttachment, { mappedBy: "bug" }),
 });
 
 export default Bug;

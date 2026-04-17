@@ -2,14 +2,6 @@
 import type { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
 import { createClientWorkflow, CreateClientWorkflowInput } from "../../workflows/client"
-import { CreateClientStepInput } from "../../workflows/client/steps/create-client"
-
-// type RequestBody = {
-//   contact_first_name: string
-//   contact_last_name: string
-//   company_name: string
-//   email: string
-// }
 
 export async function POST(
   req: AuthenticatedMedusaRequest<CreateClientWorkflowInput>,

@@ -15,11 +15,13 @@ export const createClientStep = createStep(
   "create-client",
   async (data: CreateClientStepInput, { container }) => {
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
+    console.log("Creating client with data:", data)
     const client = await service.createClients(data)
     return new StepResponse(client, client.id)
   },
   async (clientId, { container }) => {
     if (!clientId) return
+    console.log("Rolling back client creation for clientId:", clientId)
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     await service.deleteClients(clientId)
   }

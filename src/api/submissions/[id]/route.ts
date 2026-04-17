@@ -10,7 +10,7 @@ export async function GET(
 
   const { data: [submission] } = await query.graph({
     entity: "submission",
-    fields: ["*", "bug.*", "bug.developer.*", "bug.client.*"],
+    fields: ["*", "bug.*", "bug.developer.*", "bug.client.*", "attachments.*"],
     filters: {
       id: submissionId,
     },

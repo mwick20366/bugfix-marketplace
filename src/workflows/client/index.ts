@@ -29,6 +29,8 @@ export type CreateClientWorkflowInput = {
 export const createClientWorkflow = createWorkflow(
   "create-client",
   function (input: CreateClientWorkflowInput) {
+    console.log("Starting createClientWorkflow with input:", input)
+    
     // Arguments are passed when invoking the step inside the workflow
     const client = createClientStep(input.client)
 

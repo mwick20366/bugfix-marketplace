@@ -5,6 +5,8 @@ import Developer from "./models/developer"
 import Bug from "./models/bug"
 import Submission from "./models/submission"
 import DeveloperReview from "./models/developer-review"
+import BugAttachment from "./models/bug-attachment"
+import SubmissionAttachment from "./models/submission-attachment"
 
 class BugTrackerModuleService extends MedusaService({
   Client,
@@ -12,6 +14,8 @@ class BugTrackerModuleService extends MedusaService({
   Bug,
   Submission,
   DeveloperReview,
+  BugAttachment,
+  SubmissionAttachment,
 }) {}
 
 export default BugTrackerModuleService

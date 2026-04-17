@@ -26,6 +26,7 @@
     "@medusajs/cli": "2.13.1",
     "@medusajs/framework": "2.13.1",
     "@medusajs/medusa": "2.13.1",
+    "@types/multer": "^2.1.0",
     "cors": "^2.8.6"
   },
   "devDependencies": {

@@ -13,6 +13,12 @@ import { ConfigModule } from "@medusajs/framework"
 import cors from "cors"
 import { parseCorsOrigins } from "@medusajs/framework/utils"
 import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
+import multer from "multer"
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+})
 
 export default defineMiddlewares({
   routes: [
@@ -27,7 +33,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/clients/me",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate("client", ["session", "bearer"]),
         validateAndTransformQuery(createFindParams(), {
@@ -59,7 +65,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/developers/me",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
       authenticate("developer", ["session", "bearer"]),
       validateAndTransformQuery(createFindParams(), {
@@ -79,6 +85,13 @@ export default defineMiddlewares({
     {
       matcher: "/developers/me/notifications*",
       middlewares: [authenticate("developer", ["session", "bearer"])],
+    },
+    {
+      matcher: "/developers/me/reviews",
+      methods: ["GET"],
+      middlewares: [
+        authenticate("developer", ["session", "bearer"]),
+      ],
     },
     // Protect authenticated routes
     {
@@ -110,6 +123,22 @@ export default defineMiddlewares({
         },
       ],
     },
+    {
+      method: ["POST"],
+      matcher: "/bugs/attachments",
+      bodyParser:  { sizeLimit: "50mb" },
+      middlewares: [
+        // @ts-ignore
+        upload.array("files"),
+      ],
+    },
+    {
+      matcher: "/bugs/attachments/:id",
+      method: ["DELETE"],
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
+    },
     // Protect the messages routes — authenticated clients and developers only
     {
       matcher: "/bugs/:bugId/messages*",
@@ -119,9 +148,9 @@ export default defineMiddlewares({
     },
     {
       matcher: "/bugs",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
-        authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
+        authenticate(["client", "developer"], ["session", "bearer"]),
         validateAndTransformQuery(GetBugsSchema, {
           isList: true,
           defaults: [
@@ -137,6 +166,7 @@ export default defineMiddlewares({
             "updated_at",
             "claimed_at",
             "developer.*", // retrieves all fields of linked developer record
+            "submissions.*", // retrieves all fields of linked submission records
             "client.id",
             "client.company_name",
             "client.email",
@@ -169,7 +199,7 @@ export default defineMiddlewares({
     },    
     {
       matcher: "/submissions",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
         validateAndTransformQuery(GetSubmissionsSchema, {
@@ -192,15 +222,51 @@ export default defineMiddlewares({
     },
     {
       matcher: "/submissions",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
       authenticate("client", ["session", "bearer"]),
       validateAndTransformBody(PostCreateSubmissionSchema),
       ],
     },
     {
+      method: ["POST"],
+      matcher: "/submissions/attachments",
+      bodyParser:  { sizeLimit: "50mb" },
+      middlewares: [
+        // @ts-ignore
+        upload.array("files"),
+      ],
+    },
+    // Protect the messages routes — authenticated clients and developers only
+    {
+      matcher: "/submissions/:id/messages*",
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
+    },
+    {
+      matcher: "/submissions/:id/messages",
+      method: "POST",
+      middlewares: [
+        validateAndTransformBody(PostMessageSchema),
+      ],
+    },
+    {
+      matcher: "/submissions/:id/messages/mark-read",
+      method: "POST",
+      middlewares: [
+        validateAndTransformBody(MarkMessagesReadSchema),
+      ],
+    },
+    {
+      matcher: "/submissions/:id/messages*",
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+      ],
+    },
+    {
       matcher: "/submissions/:id/initiate-approval",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
         validateAndTransformBody(PostApproveSubmissionSchema),
@@ -208,7 +274,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/submissions/:id/finalize-approval",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
         validateAndTransformBody(PostCaptureSubmissionSchema),
@@ -216,7 +282,7 @@ export default defineMiddlewares({
     },    
     {
       matcher: "/submissions/:id/reject",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
         validateAndTransformBody(PostRejectSubmissionSchema),
@@ -225,24 +291,51 @@ export default defineMiddlewares({
     // Only clients can create bugs
     {
       matcher: "/bugs",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
       authenticate("client", ["session", "bearer"]),
       validateAndTransformBody(PostCreateBugSchema),
       ],
     },
+    {
+      matcher: "/bugs/:id",
+      method: ["GET"],
+      middlewares: [
+        authenticate(["client", "developer"], ["session", "bearer"]),
+        validateAndTransformQuery(createFindParams(), {
+          isList: false,
+          defaults: [
+            "id",
+            "title",
+            "description",
+            "tech_stack",
+            "repo_link",
+            "bounty",
+            "difficulty",
+            "status",
+            "claimed_at",
+            "created_at",
+            "updated_at",
+            "attachments.*",
+            "developer.*",
+            "client.*",
+            "submissions.*",
+          ],
+        }),
+      ],
+    },
     // Clients OR admins can update/delete bugs
     {
       matcher: "/bugs/:id",
-      methods: ["POST", "DELETE"],
+      method: ["POST", "DELETE"],
       middlewares: [
-        authenticate(["client", "user"], ["session", "bearer", "api-key"]),
+        authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     // Only developers can claim a bug
     {
       matcher: "/bugs/:id/claim",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
         authenticate("developer", ["session", "bearer"]),
       ],
@@ -250,7 +343,7 @@ export default defineMiddlewares({
     // Only developers can submit a fix for a bug
     {
       matcher: "/bugs/:id/submit-fix",
-      methods: ["POST"],
+      method: ["POST"],
       middlewares: [
         authenticate(["developer"], ["session", "bearer"]),
         validateAndTransformBody(SubmitBugFixSchema),
@@ -278,34 +371,34 @@ export default defineMiddlewares({
     },
     {
       matcher: "/bugs/clients/:clientId",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer", "api-key"]),
       ],
     },
     {
       matcher: "/messages",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     {
       matcher: "/messages/unread",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     {
       matcher: "/bugs/:id/messages/unread",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         authenticate(["client", "developer"], ["session", "bearer"]),
       ],
     },
     {
-      methods: ["POST"],
+      method: ["POST"],
       matcher: "/developer-reviews",
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer"]),
@@ -327,7 +420,7 @@ export default defineMiddlewares({
     // Query config for the bugs list
     {
       matcher: "/marketplace/bugs",
-      methods: ["GET"],
+      method: ["GET"],
       middlewares: [
         validateAndTransformQuery(GetMarketplaceBugsSchema, {
           isList: true,
