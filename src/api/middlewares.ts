@@ -87,7 +87,7 @@ export default defineMiddlewares({
       middlewares: [authenticate("developer", ["session", "bearer"])],
     },
     {
-      matcher: "/developers/me/reviews",
+      matcher: "/developers/me/reviews*",
       methods: ["GET"],
       middlewares: [
         authenticate("developer", ["session", "bearer"]),

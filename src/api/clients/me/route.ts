@@ -51,3 +51,16 @@ export async function GET(
     },
   })
 }
+
+export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const recipientId = req.auth_context?.actor_id
+
+  const notificationModuleService = req.scope.resolve(NOTIFICATION_MODULE)
+
+  await notificationModuleService.deleteInAppNotifications({
+    recipient_id: recipientId,
+    recipient_type: "client",
+  })
+
+  res.json({ success: true })
+}

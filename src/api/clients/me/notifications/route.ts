@@ -6,13 +6,19 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const recipientId = req.auth_context?.actor_id
 
-  const { order = "-created_at" } = req.query as { order?: string }
+  const {
+    order = "-created_at",
+    limit = "15",
+    offset = "0",
+  } = req.query as { order?: string; limit?: string; offset?: string }
 
-  // Determine sort field and direction from the order param
   const isDescending = order.startsWith("-")
   const field = isDescending ? order.slice(1) : order
 
-  const { data: notifications } = await query.graph({
+  const {
+    data: notifications,
+    metadata: { count, take, skip } = {},
+  } = await query.graph({
     entity: "in_app_notification",
     fields: ["*"],
     filters: {
@@ -20,6 +26,8 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
       recipient_type: "client",
     },
     pagination: {
+      take: Number(limit),
+      skip: Number(offset),
       order: {
         [field]: isDescending ? "DESC" : "ASC",
       },
@@ -28,5 +36,11 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
 
   const unread_count = notifications.filter((n: any) => !n.is_read).length
 
-  res.json({ notifications, unread_count })
+  res.json({
+    notifications,
+    unread_count,
+    count: count ?? 0,
+    limit: take ?? Number(limit),
+    offset: skip ?? Number(offset),
+  })
 }
