@@ -102,7 +102,7 @@ export const listBugs = async ({
         },
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       }
     )
     .then(({ bugs, count }) => {
@@ -185,7 +185,7 @@ export const listDeveloperBugs = async ({
         },
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       }
     )
     .then(({ bugs, count }) => {

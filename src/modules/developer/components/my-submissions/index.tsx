@@ -1,23 +1,21 @@
+// src/modules/developer/components/my-submissions/index.tsx
 "use client"
+
 import {
   Submission,
   listSubmissions
 } from "@lib/data/submissions"
 import { Developer } from "@lib/data/developer"
 import {
-  createDataTableColumnHelper,
   DataTablePaginationState,
   DataTableSortingState,
   DataTableColumnDef,
 } from "@medusajs/ui"
-import BugsListTemplate from "@modules/bugs/components/list-template"
+import SubmissionsListTemplate from "@modules/submissions/components/list-template"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useEffect, useMemo, useState } from "react"
 import SubmissionDetailsModal from "@modules/developer/components/submission-details-modal"
-import SubmissionsListTemplate from "@modules/submissions/components/list-template"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-
-const columnHelper = createDataTableColumnHelper<Submission>()
 
 const SUBMISSION_LIMIT = 15
 
@@ -28,17 +26,18 @@ type MySubmissionsProps = {
     q?: string
   }
   developer: Developer
+  statusFilter?: string[]
 }
 
 export default function MySubmissions(props: MySubmissionsProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()  
-  
+  const searchParams = useSearchParams()
+
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-  const { developer } = props
+  const { developer, statusFilter } = props
 
   const queryParams = {
     limit: SUBMISSION_LIMIT,
@@ -72,8 +71,16 @@ export default function MySubmissions(props: MySubmissionsProps) {
   }
 
   const queryKey = useMemo(() => {
-    return ["my-submissions", limit, offset, search, sorting?.id, sorting?.desc]
-  }, [offset, search, sorting?.id, sorting?.desc])
+    return [
+      "my-submissions",
+      limit,
+      offset,
+      search,
+      sorting?.id,
+      sorting?.desc,
+      statusFilter,
+    ]
+  }, [offset, search, sorting?.id, sorting?.desc, statusFilter])
 
   const { data, isLoading, refetch } = useQuery({
     queryFn: () => listSubmissions({
@@ -83,16 +90,12 @@ export default function MySubmissions(props: MySubmissionsProps) {
         offset,
         order: sorting ? `${sorting.desc ? "-" : ""}${sorting.id}` : undefined,
         q: search,
+        status: statusFilter?.length ? statusFilter : undefined,
       },
     }),
     queryKey,
     placeholderData: keepPreviousData,
   })
-
-  // useEffect(() => {
-  //   refetch()
-  //   // Fetch data when component mounts or dependencies change
-  // }, [])
 
   useEffect(() => {
     const submissionId = searchParams.get("submissionId")
@@ -114,7 +117,7 @@ export default function MySubmissions(props: MySubmissionsProps) {
     const params = new URLSearchParams(searchParams.toString())
     params.delete("submissionId")
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
-    router.replace(newUrl)    
+    router.replace(newUrl)
   }
 
   return (
@@ -124,7 +127,6 @@ export default function MySubmissions(props: MySubmissionsProps) {
       </div>
       <SubmissionsListTemplate
         submissions={data?.response?.submissions || []}
-        // columns={columns as DataTableColumnDef<Submission>[]}
         rowCount={data ? data.response?.count : 0}
         isLoading={isLoading}
         onRowClick={handleRowClicked}
@@ -138,7 +140,6 @@ export default function MySubmissions(props: MySubmissionsProps) {
       <SubmissionDetailsModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        // onConfirm={handleClaimBug}
         submissionId={selectedSubmissionId || undefined}
       />
     </div>

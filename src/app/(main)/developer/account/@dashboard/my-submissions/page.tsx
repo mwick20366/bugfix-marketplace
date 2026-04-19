@@ -1,6 +1,6 @@
 import { retrieveDeveloper } from "@lib/data/developer"
 import { getPageMetadata } from "@modules/common/functions/metadata"
-import MySubmissions from "@modules/developer/components/my-submissions"
+import MySubmissionsView from "@modules/developer/components/my-submissions-view"
 import { redirect } from "next/navigation"
 
 export async function generateMetadata() {
@@ -45,7 +45,8 @@ export default async function Page(props: Params) {
       {Sync}
       <div className="py-12">
         <div className="content-container" data-testid="cart-container">
-          <MySubmissions
+          <MySubmissionsView
+            // @ts-ignore - need to verify types
             queryParams={submissionsListQueryParams}
             developer={developer}
           />

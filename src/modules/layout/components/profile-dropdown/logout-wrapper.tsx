@@ -5,13 +5,17 @@ import { logout } from "@lib/data/auth-actions"
 import ProfileDropdown from "."
 
 type Props = {
-  name: string
+  name: string,
+  profileHref?: string,
+  avatarUrl?: string,
 }
 
-export default function ProfileDropdownWrapper({ name }: Props) {
+export default function ProfileDropdownWrapper({ name, avatarUrl, profileHref }: Props) {
   return (
     <ProfileDropdown
       name={name}
+      avatarUrl={avatarUrl}
+      profileHref={profileHref}
       onLogout={() => logout()}
     />
   )

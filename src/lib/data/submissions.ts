@@ -58,11 +58,11 @@ export const retrieveSubmission =
 export const listSubmissions = async ({
   queryParams,
 }: {
-  queryParams?: HttpTypes.FindParams & { q?: string, status?: string }
+  queryParams?: HttpTypes.FindParams & { q?: string; status?: string | string[] }
   sortBy?: SortOptions
 }): Promise<{
   response: { submissions: Submission[]; count: number }
-  queryParams?: HttpTypes.FindParams & { q?: string, status?: string }
+  queryParams?: HttpTypes.FindParams & { q?: string; status?: string | string[] }
 }> => {
   const headers = {
     ...(await getAuthHeaders()),
@@ -82,7 +82,7 @@ export const listSubmissions = async ({
         },
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       }
     )
     .then(({ submissions, count }) => {
@@ -123,7 +123,7 @@ export const listDeveloperSubmissions = async ({
         },
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       }
     )
     .then(({ submissions, count }) => {
@@ -159,7 +159,7 @@ export const createSubmission = async (
     }),
     headers,
     next,
-    cache: "force-cache",
+    cache: "no-store",
   })
 
   const cacheTag = await getCacheTag("my-submissions")

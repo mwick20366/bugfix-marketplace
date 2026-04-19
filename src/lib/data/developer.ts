@@ -12,12 +12,14 @@ import {
 } from "./cookies"
 import { Bug } from "./bugs"
 import { Submission } from "./submissions"
+import { getAuthToken } from "./auth-token"
 
 export type Developer = {
   id: string
   email: string
   first_name: string
   last_name: string
+  avatar_url?: string
   bugs?: Bug[]
   submissions?: Submission[]
 }
@@ -74,7 +76,7 @@ export const retrieveDeveloper =
         method: "GET",
         headers,
         next,
-        cache: "force-cache",
+        cache: "no-store",
       })
 
       return result as DeveloperData
@@ -107,13 +109,41 @@ export const retrieveDeveloperReviews =
     return result as DeveloperReviewResponse
   }
 
+export const updateDeveloper = async (body: {
+  first_name?: string
+  last_name?: string
+  avatar_url?: string
+}) => {
+  const token = await getAuthToken()
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/developers/me`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(body),
+    }
+  )
+  .finally(async () => {
+    const developerCacheTag = getCacheTag("developers")
+    revalidateTag(await developerCacheTag)
+  })
+
+  return response.json()
+}
+
 export async function signupDeveloper(_currentState: unknown, formData: FormData) {
   const password = formData.get("password") as string
-  
+  const avatarUrl = formData.get("avatar_url") as string | null
+
   const developerForm = {
     email: formData.get("email") as string,
     first_name: formData.get("first_name") as string,
     last_name: formData.get("last_name") as string,
+    ...(avatarUrl && { avatar_url: avatarUrl }),
   }
 
   try {
@@ -131,7 +161,7 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
     const createdDeveloper = await sdk.client.fetch("/developers", {
       method: "POST",
       body: { ...developerForm },
-      headers
+      headers,
     })
 
     const loginToken = await sdk.auth.login("developer", "emailpass", {

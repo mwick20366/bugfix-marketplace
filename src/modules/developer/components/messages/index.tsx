@@ -13,7 +13,8 @@ export default function Messages() {
   const [selectedBug, setSelectedBug] = useState<Bug | null>(null)
   const [isBugModalOpen, setIsBugModalOpen] = useState(false)
 
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<Submission | null>(null)
   const [isSubmissionModalOpen, setIsSubmissionModalOpen] = useState(false)
 
   const { bugs, submissions, isLoading } = useMessageThreads()
@@ -34,75 +35,103 @@ export default function Messages() {
     })
   }, [submissions])
 
-  if (isLoading) return <span className="text-sm text-ui-fg-subtle">Loading conversations...</span>
+  if (isLoading)
+    return (
+      <span className="text-sm text-ui-fg-subtle">
+        Loading conversations...
+      </span>
+    )
 
   return (
-    <div className="w-full">
-      <h2 className="text-xl font-semibold mb-4">Messages</h2>
+    <div className="py-12">
+      <div className="content-container flex flex-col gap-y-4">
+        <h1 className="text-2xl font-semibold text-ui-fg-base">
+          Messages
+        </h1>
+        <div className="grid grid-cols-2 gap-x-6 items-start">
+          {/* Left column: Bug threads */}
+          <div>
+            <h3 className="text-sm font-semibold text-ui-fg-base mb-2">Bugs</h3>
+            {sortedBugs.length === 0 ? (
+              <p className="text-sm text-ui-fg-subtle">No bug conversations.</p>
+            ) : (
+              <ul className="divide-y divide-ui-border-base">
+                {sortedBugs.map((bug) => (
+                  <BugThreadRow
+                    key={`bug-${bug.id}`}
+                    bug={bug}
+                    onOpen={() => {
+                      setSelectedBug(bug as Bug)
+                      setIsBugModalOpen(true)
+                    }}
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
 
-      <div className="grid grid-cols-2 gap-x-6 items-start">
-        {/* Left column: Bug threads */}
-        <div>
-          <h3 className="text-sm font-semibold text-ui-fg-base mb-2">Bugs</h3>
-          {sortedBugs.length === 0 ? (
-            <p className="text-sm text-ui-fg-subtle">No bug conversations.</p>
-          ) : (
-            <ul className="divide-y divide-ui-border-base">
-              {sortedBugs.map((bug) => (
-                <BugThreadRow
-                  key={`bug-${bug.id}`}
-                  bug={bug}
-                  onOpen={() => { setSelectedBug(bug as Bug); setIsBugModalOpen(true) }}
-                />
-              ))}
-            </ul>
-          )}
+          {/* Right column: Submission threads */}
+          <div>
+            <h3 className="text-sm font-semibold text-ui-fg-base mb-2">
+              Submissions
+            </h3>
+            {sortedSubmissions.length === 0 ? (
+              <p className="text-sm text-ui-fg-subtle">
+                No submission conversations.
+              </p>
+            ) : (
+              <ul className="divide-y divide-ui-border-base">
+                {sortedSubmissions.map((submission) => (
+                  <SubmissionThreadRow
+                    key={`submission-${submission.id}`}
+                    submission={submission}
+                    actorType="developer"
+                    onOpen={() => {
+                      setSelectedSubmission(submission as Submission)
+                      setIsSubmissionModalOpen(true)
+                    }}
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
-        {/* Right column: Submission threads */}
-        <div>
-          <h3 className="text-sm font-semibold text-ui-fg-base mb-2">Submissions</h3>
-          {sortedSubmissions.length === 0 ? (
-            <p className="text-sm text-ui-fg-subtle">No submission conversations.</p>
-          ) : (
-            <ul className="divide-y divide-ui-border-base">
-              {sortedSubmissions.map((submission) => (
-                <SubmissionThreadRow
-                  key={`submission-${submission.id}`}
-                  submission={submission}
-                  actorType="developer"
-                  onOpen={() => { setSelectedSubmission(submission as Submission); setIsSubmissionModalOpen(true) }}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
+        {selectedBug && (
+          <DeveloperBugDetailsModal
+            isOpen={isBugModalOpen}
+            onClose={() => {
+              setIsBugModalOpen(false)
+              setSelectedBug(null)
+            }}
+            bug={selectedBug}
+            onSubmitFix={() => {}}
+            onUnclaim={() => {}}
+          />
+        )}
+
+        {selectedSubmission && (
+          <DeveloperSubmissionDetailsModal
+            isOpen={isSubmissionModalOpen}
+            onClose={() => {
+              setIsSubmissionModalOpen(false)
+              setSelectedSubmission(null)
+            }}
+            submission={selectedSubmission}
+            onConfirm={() => {}}
+          />
+        )}
       </div>
-
-      {selectedBug && (
-        <DeveloperBugDetailsModal
-          isOpen={isBugModalOpen}
-          onClose={() => { setIsBugModalOpen(false); setSelectedBug(null) }}
-          bug={selectedBug}
-          onSubmitFix={() => {}}
-          onUnclaim={() => {}}
-        />
-      )}
-
-      {selectedSubmission && (
-        <DeveloperSubmissionDetailsModal
-          isOpen={isSubmissionModalOpen}
-          onClose={() => { setIsSubmissionModalOpen(false); setSelectedSubmission(null) }}
-          submission={selectedSubmission}
-          onConfirm={() => {}}
-        />
-      )}
     </div>
   )
 }
 
 function BugThreadRow({ bug, onOpen }: { bug: any; onOpen: () => void }) {
-  const { mutate: markRead, isPending } = useMarkMessagesRead(bug.id, "developer", "bug")
+  const { mutate: markRead, isPending } = useMarkMessagesRead(
+    bug.id,
+    "developer",
+    "bug"
+  )
 
   return (
     <li className="flex items-center justify-between py-4 px-2 hover:bg-ui-bg-subtle rounded-md">
@@ -135,7 +164,10 @@ function BugThreadRow({ bug, onOpen }: { bug: any; onOpen: () => void }) {
       <div className="flex items-center gap-x-2 ml-2">
         {bug.has_unread && (
           <button
-            onClick={(e) => { e.stopPropagation(); markRead() }}
+            onClick={(e) => {
+              e.stopPropagation()
+              markRead()
+            }}
             disabled={isPending}
             className="text-xs text-blue-600 hover:underline disabled:opacity-50"
           >
@@ -157,7 +189,11 @@ function SubmissionThreadRow({
   actorType: "client" | "developer"
   onOpen: () => void
 }) {
-  const { mutate: markRead, isPending } = useMarkMessagesRead(submission.id, actorType, "submission")
+  const { mutate: markRead, isPending } = useMarkMessagesRead(
+    submission.id,
+    actorType,
+    "submission"
+  )
 
   return (
     <li className="flex items-center justify-between py-4 px-2 hover:bg-ui-bg-subtle rounded-md">
@@ -189,7 +225,10 @@ function SubmissionThreadRow({
       </div>
       {submission.has_unread && (
         <button
-          onClick={(e) => { e.stopPropagation(); markRead() }}
+          onClick={(e) => {
+            e.stopPropagation()
+            markRead()
+          }}
           disabled={isPending}
           className="text-xs text-blue-600 hover:underline disabled:opacity-50 ml-2"
         >

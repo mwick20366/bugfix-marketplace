@@ -179,6 +179,8 @@ export default function MyBugs({ statusFilter = [], difficultyFilter = [] }: MyB
   const prompt = usePrompt()
 
   const handleUnclaim = async (bug: Bug) => {
+    setIsModalOpen(false)
+    
     const confirmed = await prompt({
       title: "Unclaim bug?",
       description: "Are you sure you want to unclaim this bug? It will be returned to the open pool for other developers to claim.",
@@ -192,7 +194,8 @@ export default function MyBugs({ statusFilter = [], difficultyFilter = [] }: MyB
     unclaimBug(undefined, {
       onSuccess: () => {
         toast.success("Bug unclaimed successfully")
-        queryClient.invalidateQueries({ queryKey: ["bugs"] })
+        queryClient.invalidateQueries({ queryKey: ["my-bugs"] })
+        queryClient.invalidateQueries({ queryKey: ["developer-me"] })
         setIsModalOpen(false)
         setSelectedBugId(null)
       },

@@ -7,7 +7,10 @@ import SideMenu from "@modules/layout/components/side-menu"
 import { retrieveClient } from "@lib/data/client"
 import { retrieveDeveloper } from "@lib/data/developer"
 import ProfileDropdownWrapper from "@modules/layout/components/profile-dropdown/logout-wrapper"
-import { ClientNotificationBell, DeveloperNotificationBell } from "@modules/layout/components/notification-bell/notification-bell-wrapper"
+import {
+  ClientNotificationBell,
+  DeveloperNotificationBell,
+} from "@modules/layout/components/notification-bell/notification-bell-wrapper"
 import GlobalMessageIcon from "@modules/messaging/components/global-message-icon"
 import { getActorType } from "@modules/common/functions/get-actor-type"
 
@@ -15,14 +18,18 @@ export default async function Nav() {
   const actorType: "client" | "developer" | null = await getActorType()
 
   let displayName = "User"
+  let avatarUrl = ""
 
   if (actorType === "developer") {
     const developerData = await retrieveDeveloper().catch(() => null)
     displayName = developerData?.developer.first_name || "Developer"
+    avatarUrl = developerData?.developer.avatar_url || ""
   } else if (actorType === "client") {
     const clientData = await retrieveClient().catch(() => null)
     displayName = clientData?.client.contact_first_name || "Client"
+    // avatarUrl = clientData?.client.avatar_url || null
   }
+
   const isLoggedIn = Boolean(actorType)
   const isDeveloper = actorType === "developer"
 
@@ -38,7 +45,7 @@ export default async function Nav() {
       marketplaceLink = "/developer/account/bug-marketplace?status=open"
     } else {
       marketplaceLink = "/client/account/bug-marketplace"
-    }  
+    }
   }
 
   return (
@@ -103,7 +110,15 @@ export default async function Nav() {
                 ) : (
                   <ClientNotificationBell />
                 )}
-                <ProfileDropdownWrapper name={displayName} />
+                <ProfileDropdownWrapper
+                  name={displayName}
+                  avatarUrl={avatarUrl}
+                  profileHref={
+                    isDeveloper
+                      ? "/developer/account/profile"
+                      : "/client/account/profile"
+                  }
+                />
               </div>
             )}
           </div>
