@@ -13,7 +13,7 @@ export const GET = async (
     status,
   } = req.validatedQuery as {
     q?: string,
-    status?: string,
+    status?: string | string[],
   }
 
   const isAdmin = req.auth_context?.actor_type === "user"
@@ -31,17 +31,10 @@ export const GET = async (
     }
   }
 
-  // console.log("Authenticated user:", {
-  //   actorId: req.auth_context?.actor_id,
-  //   actorType: req.auth_context?.actor_type,
-  // })
-
-  console.log("Querying submissions with filters:", {
-    q,
-    status,
-    developerId,
-    clientId,
-  })
+  // Normalize status to an array if present
+  const statusFilter = status
+    ? Array.isArray(status) ? status : [status]
+    : undefined
 
   const {
     data: submissions,
@@ -51,37 +44,21 @@ export const GET = async (
     ...req.queryConfig,
     // @ts-ignore
     filters: {
-      // ...(q && {
-      //   $or: [
-      //     { title: { $ilike: `%${q}%` } },
-      //     { description: { $ilike: `%${q}%` } },
-      //     { tech_stack: { $ilike: `%${q}%` } },
-      //   ],
-      // }),
-      ...(status && {
-        status: { $ilike: status }
-      }),
+      ...(statusFilter ? { status: statusFilter } : {}),
       ...(developerId && {
         developer: {
-          id: developerId
-        }
-      }
-    ),
+          id: developerId,
+        },
+      }),
       ...(clientId && {
         bug: {
           client: {
-            id: clientId
-          }
-        }
-        // client: {
-        //   id: clientId
-        // }
+            id: clientId,
+          },
+        },
       }),
     },
   })
 
-  // console.log("Fetched submissions:", submissions)
-  // console.log("Count:", count, "Take:", take, "Skip:", skip)
-  
   res.json({ submissions, count, limit: take, offset: skip })
 }

@@ -14,14 +14,31 @@ import cors from "cors"
 import { parseCorsOrigins } from "@medusajs/framework/utils"
 import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
 import multer from "multer"
+import { PostDeveloperSchema } from "./developers/validators"
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 })
 
+const corsMiddleware = (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) => {
+  const configModule: ConfigModule = req.scope.resolve("configModule")
+  return cors({
+    origin: parseCorsOrigins(configModule.projectConfig.http.storeCors),
+    credentials: true,
+  })(req, res, next)
+}
+
 export default defineMiddlewares({
   routes: [
+    {
+      matcher: "/developers*",
+      middlewares: [corsMiddleware],
+    },
+    {
+      matcher: "/clients*",
+      middlewares: [corsMiddleware],
+    },
     {
       matcher: "/clients",
       method: "POST",
@@ -61,6 +78,7 @@ export default defineMiddlewares({
         authenticate("developer", ["session", "bearer"], {
           allowUnregistered: true,
         }),
+        validateAndTransformBody(PostDeveloperSchema),
       ],
     },
     {
@@ -80,6 +98,13 @@ export default defineMiddlewares({
         ],
         isList: false,
       }),
+      ],
+    },
+    {
+      matcher: "/developers/me",
+      method: "POST",
+      middlewares: [
+        authenticate("developer", ["bearer", "session"]),
       ],
     },
     {
@@ -105,23 +130,7 @@ export default defineMiddlewares({
     // Apply CORS to all /bugs* routes
     {
       matcher: "/bugs*",
-      middlewares: [
-        (
-          req: MedusaRequest,
-          res: MedusaResponse,
-          next: MedusaNextFunction
-        ) => {
-          const configModule: ConfigModule =
-            req.scope.resolve("configModule")
-
-          return cors({
-            origin: parseCorsOrigins(
-              configModule.projectConfig.http.storeCors
-            ),
-            credentials: true,
-          })(req, res, next)
-        },
-      ],
+      middlewares: [corsMiddleware],
     },
     {
       method: ["POST"],
@@ -179,23 +188,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/submissions*",
-      middlewares: [
-        (
-          req: MedusaRequest,
-          res: MedusaResponse,
-          next: MedusaNextFunction
-        ) => {
-          const configModule: ConfigModule =
-            req.scope.resolve("configModule")
-
-          return cors({
-            origin: parseCorsOrigins(
-              configModule.projectConfig.http.storeCors
-            ),
-            credentials: true,
-          })(req, res, next)
-        },
-      ],
+      middlewares: [corsMiddleware],
     },    
     {
       matcher: "/submissions",
@@ -340,6 +333,13 @@ export default defineMiddlewares({
         authenticate("developer", ["session", "bearer"]),
       ],
     },
+    {
+      matcher: "/bugs/:id/unclaim",
+      method: "POST",
+      middlewares: [
+        authenticate("developer", ["bearer", "session"]),
+      ],
+    },
     // Only developers can submit a fix for a bug
     {
       matcher: "/bugs/:id/submit-fix",
@@ -407,15 +407,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/marketplace*",
-      middlewares: [
-        (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) => {
-          const configModule: ConfigModule = req.scope.resolve("configModule")
-          return cors({
-            origin: parseCorsOrigins(configModule.projectConfig.http.storeCors),
-            credentials: true,
-          })(req, res, next)
-        },
-      ],
+      middlewares: [corsMiddleware],
     },
     // Query config for the bugs list
     {
@@ -426,6 +418,21 @@ export default defineMiddlewares({
           isList: true,
           defaults: ["id", "title", "description", "tech_stack", "bounty", "difficulty", "created_at"],
         }),
+      ],
+    },
+    {
+      matcher: "/profile*",
+      middlewares: [corsMiddleware],
+    },
+    {
+      matcher: "/profile/avatar",
+      method: "POST",
+      middlewares: [
+        authenticate(["developer", "client"], ["bearer", "session"], {
+          allowUnauthenticated: true,
+        }),
+        // @ts-ignore
+        upload.array("files"),
       ],
     },
   ],

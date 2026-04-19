@@ -1,4 +1,4 @@
-// src/api/bugs/[id]/claim/route.ts
+// src/api/bugs/[id]/unclaim/route.ts
 import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,

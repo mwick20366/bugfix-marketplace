@@ -2,7 +2,8 @@ import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
+import updateDeveloperWorkflow from "../../../workflows/developer/steps/update-developer"
 
 export async function GET(
   req: AuthenticatedMedusaRequest,
@@ -49,4 +50,28 @@ export async function GET(
       total_earned: totalEarned,
     },
   })
+}
+
+type RequestBody = {
+  first_name?: string
+  last_name?: string
+  avatar_url?: string
+}
+
+export async function POST(
+  req: AuthenticatedMedusaRequest<RequestBody>,
+  res: MedusaResponse
+) {
+  if (!req.auth_context?.actor_id) {
+    throw new MedusaError(MedusaError.Types.UNAUTHORIZED, "Not authenticated.")
+  }
+
+  const { result } = await updateDeveloperWorkflow(req.scope).run({
+    input: {
+      id: req.auth_context.actor_id,
+      ...req.body,
+    },
+  })
+
+  res.status(200).json({ developer: result })
 }

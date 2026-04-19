@@ -8,6 +8,7 @@ const Client = model.define("client", {
   contact_last_name: model.text(),
   company_name: model.text(),
   email: model.text(),
+  avatar_url: model.text().nullable(),
   bugs: model.hasMany(() => Bug, {
     mappedBy: "client",
   }),

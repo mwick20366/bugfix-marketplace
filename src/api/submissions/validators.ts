@@ -5,7 +5,7 @@ import develop from "@medusajs/medusa/commands/develop"
 export const GetSubmissionsSchema = createFindParams().merge(
   z.object({
     q: z.string().optional(),
-    status: z.string().optional(),
+    status: z.union([z.string(), z.array(z.string())]).optional(),
     developer_id: z.string().optional(),
     client_id: z.string().optional(),
   })

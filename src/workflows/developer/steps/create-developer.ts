@@ -13,6 +13,7 @@ export type CreateDeveloperStepInput = {
   first_name: string
   last_name: string
   email: string
+  avatar_url?: string  // add this
 }
 
 const createDeveloperStep = createStep(
@@ -40,7 +41,6 @@ type CreateDeveloperWorkflowInput = {
 const createDeveloperWorkflow = createWorkflow(
   "create-developer",
   function (input: CreateDeveloperWorkflowInput) {
-    // Arguments are passed when invoking the step inside the workflow
     const developer = createDeveloperStep(input.developer)
 
     setAuthAppMetadataStep({

@@ -8,6 +8,7 @@ const Developer = model.define("developer", {
   first_name: model.text(),
   last_name: model.text(),
   email: model.text(),
+  avatar_url: model.text().nullable(),
   bugs: model.hasMany(() => Bug, {
     mappedBy: "developer",
   }),
