@@ -158,6 +158,15 @@
           "nullable": false,
           "mappedType": "text"
         },
+        "tech_stack": {
+          "name": "tech_stack",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
         "avatar_url": {
           "name": "avatar_url",
           "type": "text",

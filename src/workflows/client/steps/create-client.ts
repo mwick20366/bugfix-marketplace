@@ -8,7 +8,7 @@ export type CreateClientStepInput = {
   contact_last_name: string
   company_name?: string
   email: string
-  authIdentityId: string
+  avatar_url?: string
 }
 
 export const createClientStep = createStep(

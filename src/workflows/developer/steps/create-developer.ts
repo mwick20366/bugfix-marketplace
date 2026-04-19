@@ -13,6 +13,7 @@ export type CreateDeveloperStepInput = {
   first_name: string
   last_name: string
   email: string
+  tech_stack?: string
   avatar_url?: string  // add this
 }
 

@@ -3,7 +3,9 @@ import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
+import updateClientWorkflow from "../../../workflows/client/steps/update-client"
+import { IN_APP_NOTIFICATION_MODULE } from "../../../modules/in-app-notification"
 
 export async function GET(
   req: AuthenticatedMedusaRequest,
@@ -52,10 +54,40 @@ export async function GET(
   })
 }
 
+
+type RequestBody = {
+  contact_first_name?: string
+  contact_last_name?: string
+  company_name?: string
+  avatar_url?: string
+}
+
+export async function POST(
+  req: AuthenticatedMedusaRequest<RequestBody>,
+  res: MedusaResponse
+) {
+  if (!req.auth_context?.actor_id) {
+    throw new MedusaError(MedusaError.Types.UNAUTHORIZED, "Not authenticated.")
+  }
+
+  const { result } = await updateClientWorkflow(req.scope).run({
+    input: {
+      id: req.auth_context.actor_id,
+      ...req.body,
+    },
+  })
+
+  res.status(200).json({ client: result })
+}
+
 export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const recipientId = req.auth_context?.actor_id
 
-  const notificationModuleService = req.scope.resolve(NOTIFICATION_MODULE)
+  if (!recipientId) {
+    throw new MedusaError(MedusaError.Types.UNAUTHORIZED, "Not authenticated.")
+  }
+
+  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
 
   await notificationModuleService.deleteInAppNotifications({
     recipient_id: recipientId,

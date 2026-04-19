@@ -12,6 +12,7 @@ export type UpdateDeveloperStepInput = {
   id: string
   first_name?: string
   last_name?: string
+  tech_stack?: string
   avatar_url?: string
 }
 
@@ -39,6 +40,7 @@ const updateDeveloperStep = createStep(
       first_name: prevData.first_name,
       last_name: prevData.last_name,
       avatar_url: prevData.avatar_url,
+      tech_stack: prevData.tech_stack,
     })
   }
 )
@@ -48,6 +50,7 @@ type UpdateDeveloperWorkflowInput = {
   first_name?: string
   last_name?: string
   avatar_url?: string
+  tech_stack?: string
 }
 
 const updateDeveloperWorkflow = createWorkflow(

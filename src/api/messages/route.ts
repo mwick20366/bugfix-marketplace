@@ -59,12 +59,13 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
           "difficulty",
           "status",
           "developer.first_name",
+          "developer.avatar_url",  // ← added
           "client.first_name",
+          "client.avatar_url",     // ← added
         ],
         filters: { id: activeBugIds },
       })
 
-      // Attach last_message_at and has_unread to each bug
       bugs = bugData.map((bug) => {
         const threadMessages = bugMessages.filter((m) => m.bug_id === bug.id)
         const last_message_at = threadMessages.reduce((latest, m) => {
@@ -124,11 +125,11 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
             "bug.title",
             "bug.bounty",
             "developer.first_name",
+            "developer.avatar_url",  // ← added
           ],
           filters: { id: activeSubmissionIds },
         })
 
-        // Attach last_message_at and has_unread to each submission
         submissions = submissionData.map((submission) => {
           const threadMessages = submissionMessages.filter((m) => m.submission_id === submission.id)
           const last_message_at = threadMessages.reduce((latest, m) => {
@@ -195,11 +196,11 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
               "bug.title",
               "bug.bounty",
               "developer.first_name",
+              "developer.avatar_url",  // ← added
             ],
             filters: { id: activeSubmissionIds },
           })
 
-          // Attach last_message_at and has_unread to each submission
           submissions = submissionData.map((submission) => {
             const threadMessages = submissionMessages.filter((m) => m.submission_id === submission.id)
             const last_message_at = threadMessages.reduce((latest, m) => {

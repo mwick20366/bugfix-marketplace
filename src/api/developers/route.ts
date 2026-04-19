@@ -6,8 +6,9 @@ import createDeveloperWorkflow from "../../workflows/developer/steps/create-deve
 type RequestBody = {
   first_name: string
   last_name: string
+  tech_stack?: string
   email: string
-  avatar_url?: string  // add this
+  avatar_url?: string
 }
 
 export async function POST(

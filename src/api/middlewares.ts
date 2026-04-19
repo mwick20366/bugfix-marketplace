@@ -1,5 +1,4 @@
 // src/api/middlewares.ts
-import { z } from "@medusajs/framework/zod"
 import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAndTransformQuery, MedusaRequest, MedusaResponse, MedusaNextFunction, } from "@medusajs/framework/http"
 import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
@@ -15,6 +14,7 @@ import { parseCorsOrigins } from "@medusajs/framework/utils"
 import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
 import multer from "multer"
 import { PostDeveloperSchema } from "./developers/validators"
+import { PostClientSchema } from "./clients/validators"
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -46,6 +46,7 @@ export default defineMiddlewares({
         authenticate("client", ["session", "bearer"], {
           allowUnregistered: true,
         }),
+        validateAndTransformBody(PostClientSchema),
       ],
     },
     {
@@ -92,6 +93,7 @@ export default defineMiddlewares({
           "email",
           "first_name",
           "last_name",
+          "tech_stack",
           "bugs.*", // retrieves all fields of linked bug records
           "submissions.*", // retrieves all fields of linked submission records
           "reviews.*", // retrieves all fields of linked developer review records
