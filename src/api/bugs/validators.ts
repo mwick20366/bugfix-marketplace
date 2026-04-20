@@ -8,6 +8,7 @@ export const GetBugsSchema = createFindParams().merge(
     difficulty: z.union([z.string(), z.array(z.string())]).optional(),
     developer_id: z.string().optional(),
     client_id: z.string().optional(),
+    tech_stack: z.union([z.string(), z.array(z.string())]).optional(),
   })
 )
 
