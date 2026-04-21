@@ -1,6 +1,7 @@
 // src/api/developers/me/notifications/route.ts
 import type { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { IN_APP_NOTIFICATION_MODULE } from "../../../../modules/in-app-notification"
 
 export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
@@ -48,7 +49,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
 export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const recipientId = req.auth_context?.actor_id
 
-  const notificationModuleService = req.scope.resolve(NOTIFICATION_MODULE)
+  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
 
   await notificationModuleService.deleteInAppNotifications({
     recipient_id: recipientId,

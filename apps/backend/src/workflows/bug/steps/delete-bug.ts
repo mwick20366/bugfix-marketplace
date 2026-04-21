@@ -20,11 +20,13 @@ export const deleteBugStep = createStep(
   async (originalBug, { container }) => {
     if (!originalBug) return
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
-    const { client, developer, ...bugData } = originalBug
+    const { client, developer, submissions, attachments, ...bugData } = originalBug
     await service.createBugs({
       ...bugData,
       client: client?.id,
       developer: developer?.id,
+      submissions: submissions?.map((s) => s.id),
+      attachments: attachments?.map((a) => a.id),
     })
   }
 )

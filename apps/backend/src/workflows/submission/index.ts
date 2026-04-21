@@ -75,7 +75,7 @@ export const approveSubmissionWorkflow = createWorkflow(
 export const rejectSubmissionWorkflow = createWorkflow(
   "reject-submission",
   (input: RejectSubmissionWorkflowInput) => {
-    const submission = rejectSubmissionStep()
+    const submission = rejectSubmissionStep(input.submission)
 
     emitEventStep({
       eventName: "submission.updated",

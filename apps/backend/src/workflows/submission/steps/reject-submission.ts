@@ -34,10 +34,11 @@ export const rejectSubmissionStep = createStep(
       submissionId: submission.id,
     })
   },
-  async ({ submissionId }: CompensationInput, { container }) => {
+  async (compensationData, { container }) => {
+    if (!compensationData) return
     const service: BugTrackerModuleService = container.resolve(BUGTRACKER_MODULE)
     // Undo in reverse order:
-    const originalSubmission = await service.retrieveSubmission(submissionId)
+    const originalSubmission = await service.retrieveSubmission(compensationData.submissionId)
     const bugId = originalSubmission.bug_id
 
     // 1. Revert the bug's status back to "fix submitted"
@@ -49,9 +50,9 @@ export const rejectSubmissionStep = createStep(
     }
 
     // 2. Revert the submission's status back to "awaiting client review"
-    if (submissionId) {
+    if (compensationData.submissionId) {
       await service.updateSubmissions({
-        id: submissionId,
+        id: compensationData.submissionId,
         status: "awaiting client review",
       })
     }
