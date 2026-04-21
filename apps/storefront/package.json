@@ -70,7 +70,11 @@
   },
   "overrides": {
     "react": "19.0.4",
-    "react-dom": "19.0.4"
+    "react-dom": "19.0.4",
+    "@medusajs/icons": {
+      "react": "19.0.4",
+      "react-dom": "19.0.4"
+    }
   },
   "packageManager": "pnpm@10.32.1"
 }
