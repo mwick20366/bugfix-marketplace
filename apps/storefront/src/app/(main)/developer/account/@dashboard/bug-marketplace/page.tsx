@@ -26,7 +26,7 @@ export default async function Page(props: Params) {
   const developerData = await retrieveDeveloper().catch(() => null)
 
   if (!developerData) {
-    redirect(`/login?redirectTo=${encodeURIComponent(window.location.href)}`)
+    redirect(`/login?redirectTo=${encodeURIComponent("/developer/account/bug-marketplace")}`)
   }
 
   const { developer } = developerData

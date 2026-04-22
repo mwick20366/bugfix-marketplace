@@ -27,7 +27,7 @@ export default async function Page(props: Params) {
   const { developer } = developerData || {}
 
   if (!developer) {
-    redirect(`/login?redirectTo=${encodeURIComponent(window.location.href)}`)
+    redirect(`/login?redirectTo=${encodeURIComponent("/developer/account/submissions")}`)
   }
 
   const queryParams = await props.searchParams

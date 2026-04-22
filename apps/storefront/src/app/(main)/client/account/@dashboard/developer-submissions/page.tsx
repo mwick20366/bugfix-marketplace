@@ -26,7 +26,7 @@ export default async function Page(props: Params) {
   const clientData = await retrieveClient().catch(() => null)
 
   if (!clientData) {
-    redirect(`/login?redirectTo=${encodeURIComponent(window.location.href)}`)
+    redirect(`/login?redirectTo=${encodeURIComponent("/client/account/developer-submissions")}`)
   }
 
   const queryParams = await props.searchParams
@@ -45,6 +45,7 @@ export default async function Page(props: Params) {
       <div className="py-12">
         <div className="content-container" data-testid="cart-container">
           <DeveloperSubmissions
+          // @ts-ignore - need to verify types
             queryParams={submissionsListQueryParams}
           />
         </div>

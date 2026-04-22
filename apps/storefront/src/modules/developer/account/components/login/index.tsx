@@ -1,31 +1,36 @@
+"use client"
+
 import { loginDeveloper } from "@lib/data/developer"
-import { LOGIN_VIEW, MemberType } from "@modules/developer/account/templates/login-template"
+import { LOGIN_VIEW } from "@modules/developer/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import Input from "@modules/common/components/input"
 import { useActionState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
 }
 
 const Login = ({ setCurrentView }: Props) => {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [message, formAction] = useActionState(
-    (prevState: unknown, formData: FormData) => {
-      loginDeveloper(prevState, formData)
-        .then(() => {
-          // Handle successful login if needed
-          const params = new URLSearchParams(window.location.search)
-          const redirect = params.get("redirect")
-          if (redirect) {
-            window.location.href = redirect
-          }
+    async (prevState: unknown, formData: FormData) => {
+      try {
+        await loginDeveloper(prevState, formData)
+        const redirect = searchParams.get("redirect")
+        if (redirect) {
+          router.push(redirect)
+        } else {
+          router.push("/developer/account")
         }
-        ).catch((error) => {
-          // Handle error if needed
-          console.error("Login failed:", error);
-          return error.toString()
-        })
+        return null
+      } catch (error) {
+        console.error("Login failed:", error)
+        return error?.toString() ?? "An error occurred"
+      }
     },
     null
   )
