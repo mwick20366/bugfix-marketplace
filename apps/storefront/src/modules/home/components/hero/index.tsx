@@ -16,7 +16,7 @@ const Hero = () => {
             level="h2"
             className="text-3xl leading-10 text-ui-fg-subtle font-normal"
           >
-            Powered by Bugzapper and Next.js
+            Powered by Bugixa and Next.js
           </Heading>
         </span>
         <a

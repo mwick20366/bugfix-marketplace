@@ -7,7 +7,7 @@ import {
   Button,
   Heading,
   Label,
-  Text as BugzapperText,
+  Text as BugixaText,
   Textarea,
   toast
 } from "@medusajs/ui";
@@ -112,8 +112,8 @@ export default function SubmitFixModal({
             ) : (
               <>
                 <Heading level="h2">{bug?.title}</Heading>
-                {/* <BugzapperText>{bug?.description}</BugzapperText> */}
-                <BugzapperText>Bounty: ${bug?.bounty ?? 0}</BugzapperText>
+                {/* <BugixaText>{bug?.description}</BugixaText> */}
+                <BugixaText>Bounty: ${bug?.bounty ?? 0}</BugixaText>
               </>
             )}
             <Controller

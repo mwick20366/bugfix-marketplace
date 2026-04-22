@@ -12,7 +12,7 @@ import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "View and edit your Bugzapper Marketplace profile.",
+  description: "View and edit your Bugixa Marketplace profile.",
 }
 
 export default async function Profile() {

@@ -6,7 +6,7 @@ import ClientProfile from "@modules/client/components/profile"
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "View and edit your Bugzapper Marketplace profile.",
+  description: "View and edit your Bugixa Marketplace profile.",
 }
 
 export default async function Profile() {

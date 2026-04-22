@@ -4,7 +4,7 @@ import { clx } from "@medusajs/ui"
 import { ArrowRightOnRectangle, BugAntSolid, PaperPlane, ChatBubbleLeftRight, BellAlert, House } from "@medusajs/icons"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-
+import Image from "next/image"
 import ChevronDown from "@modules/common/icons/chevron-down"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { signoutClient } from "@lib/data/client"
@@ -35,7 +35,7 @@ const AccountNav = () => {
     {
       href: "/client/account/my-bugs",
       label: `My Bugs (${client?.bugs?.length || 0})`,
-      icon: <BugAntSolid className={ICON_SIZE} />,
+      icon: <Image src="/images/bug-icon.png" alt="Bug Icon" width={24} height={24} />,
       testId: "my-bugs-link",
     },
     {

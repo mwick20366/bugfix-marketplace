@@ -4,7 +4,7 @@ import LoginTemplate from "@modules/client/account/templates/login-template"
 
 // export const metadata: Metadata = {
 //   title: "Sign in",
-//   description: "Sign in to your BugZapper Client account.",
+//   description: "Sign in to your Bugixa Client account.",
 // }
 
 export default function Login() {

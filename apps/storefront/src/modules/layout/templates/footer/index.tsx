@@ -2,7 +2,8 @@ import { Text } from "@medusajs/ui"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { getActorType } from "@modules/common/functions/get-actor-type"
-import BugzapperCTA from "@modules/layout/components/medusa-cta"
+import BugixaCTA from "@modules/layout/components/medusa-cta"
+import Image from "next/image"
 
 export default async function Footer() {
   const actorType: "client" | "developer" | null = await getActorType()
@@ -17,11 +18,14 @@ export default async function Footer() {
               href="/"
               className="txt-compact-xlarge-plus text-ui-fg-base hover:text-ui-fg-subtle uppercase"
             >
-              Bugzapper
+              <Image
+                src="/images/primary-logo.png"
+                alt="Bugixa"
+                width={240}
+                height={80}
+                priority
+              />
             </LocalizedClientLink>
-            <Text className="txt-small text-ui-fg-muted">
-              A marketplace connecting clients with developers to squash bugs and ship fixes fast.
-            </Text>
           </div>
 
           {/* Links grid */}
@@ -165,9 +169,9 @@ export default async function Footer() {
         {/* Bottom bar */}
         <div className="flex w-full mb-16 justify-between items-center border-t border-ui-border-base pt-6 text-ui-fg-muted">
           <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Bugzapper Marketplace. All rights reserved.
+            © {new Date().getFullYear()} Bugixa Marketplace. All rights reserved.
           </Text>
-          <BugzapperCTA />
+          <BugixaCTA />
         </div>
       </div>
     </footer>

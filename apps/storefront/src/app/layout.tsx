@@ -1,13 +1,13 @@
 import { Providers } from "./providers"
-import { getBaseURL } from "@lib/util/env"
 import { TooltipProvider, Toaster } from "@medusajs/ui"
 import { Metadata } from "next"
+// @ts-ignore
 import "../styles/globals.css"
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Bugzapper", // %s is replaced by the page's title
-    default: "Bugzapper Home",
+    template: "%s | Bugixa", // %s is replaced by the page's title
+    default: "Bugixa Home",
   },
 }
 

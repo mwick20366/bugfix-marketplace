@@ -2,6 +2,18 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@layer base {
+  body {
+    /* font-family: 'Inter SemiBold', sans-serif; */
+    /* background-color: #E5E7EB; */
+  }
+}
+
+:root {
+  --color-primary: #2563EB;
+  --color-secondary: #22C55E;
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {

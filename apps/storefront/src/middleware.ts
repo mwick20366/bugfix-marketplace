@@ -3,7 +3,7 @@ import { COUNTRY_CODE_COOKIE_NAME } from "@lib/data/cookies"
 import { HttpTypes } from "@medusajs/types"
 // plus whatever you already use for getRegionMap, DEFAULT_REGION, etc.
 
-const DEFAULT_REGION = "us" // must match a country code present in your Bugzapper region
+const DEFAULT_REGION = "us" // must match a country code present in your Bugixa region
 const BACKEND_URL = process.env.MEDUSA_BACKEND_URL
 const PUBLISHABLE_API_KEY = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
@@ -52,7 +52,7 @@ async function getCountryCode(
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
       console.error(
-        "Middleware.ts: Error getting the country code. Did you set up regions in your Bugzapper Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named NEXT_PUBLIC_MEDUSA_BACKEND_URL."
+        "Middleware.ts: Error getting the country code. Did you set up regions in your Bugixa Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named NEXT_PUBLIC_MEDUSA_BACKEND_URL."
       )
     }
     return null
@@ -64,7 +64,7 @@ async function getRegionMap(cacheId: string) {
 
   if (!BACKEND_URL) {
     throw new Error(
-      "Middleware.ts: Error fetching regions. Did you set up regions in your Bugzapper Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named NEXT_PUBLIC_MEDUSA_BACKEND_URL."
+      "Middleware.ts: Error fetching regions. Did you set up regions in your Bugixa Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named NEXT_PUBLIC_MEDUSA_BACKEND_URL."
     )
   }
 
@@ -72,7 +72,7 @@ async function getRegionMap(cacheId: string) {
     !regionMap.keys().next().value ||
     regionMapUpdated < Date.now() - 3600 * 1000
   ) {
-    // Fetch regions from Bugzapper. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
+    // Fetch regions from Bugixa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
     const { regions } = await fetch(`${BACKEND_URL}/store/regions`, {
       headers: {
         "x-publishable-api-key": PUBLISHABLE_API_KEY!,
@@ -94,7 +94,7 @@ async function getRegionMap(cacheId: string) {
 
     if (!regions?.length) {
       throw new Error(
-        "No regions found. Please set up regions in your Bugzapper Admin."
+        "No regions found. Please set up regions in your Bugixa Admin."
       )
     }
 
@@ -126,7 +126,7 @@ export async function middleware(request: NextRequest) {
   const regionMap = await getRegionMap(cacheId)
   if (!regionMap) {
     return new NextResponse(
-      "No valid regions configured. Please set up regions with countries in your Bugzapper Admin.",
+      "No valid regions configured. Please set up regions with countries in your Bugixa Admin.",
       { status: 500 }
     )
   }
@@ -134,7 +134,7 @@ export async function middleware(request: NextRequest) {
   const countryCode = await getCountryCode(request, regionMap)
   if (!countryCode) {
     return new NextResponse(
-      "No valid regions configured. Please set up regions with countries in your Bugzapper Admin.",
+      "No valid regions configured. Please set up regions with countries in your Bugixa Admin.",
       { status: 500 }
     )
   }

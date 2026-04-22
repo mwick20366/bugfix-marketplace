@@ -93,10 +93,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${product.title} | Bugzapper Marketplace`,
+    title: `${product.title} | Bugixa Marketplace`,
     description: `${product.title}`,
     openGraph: {
-      title: `${product.title} | Bugzapper Marketplace`,
+      title: `${product.title} | Bugixa Marketplace`,
       description: `${product.title}`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },

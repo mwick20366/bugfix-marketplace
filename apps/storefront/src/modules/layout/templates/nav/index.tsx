@@ -13,6 +13,7 @@ import {
 } from "@modules/layout/components/notification-bell/notification-bell-wrapper"
 import GlobalMessageIcon from "@modules/messaging/components/global-message-icon"
 import { getActorType } from "@modules/common/functions/get-actor-type"
+import Image from "next/image"
 
 export default async function Nav() {
   const actorType: "client" | "developer" | null = await getActorType()
@@ -64,7 +65,13 @@ export default async function Nav() {
               className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
               data-testid="nav-store-link"
             >
-              BugZapper Marketplace
+              <Image
+                src="/images/banner-logo.png"
+                alt="Bugixa"
+                width={120}
+                height={40}
+                priority
+              />
             </LocalizedClientLink>
           </div>
 

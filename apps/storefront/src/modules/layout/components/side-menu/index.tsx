@@ -126,7 +126,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                         />
                       </div>
                       <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Bugzapper Marketplace. All rights
+                        © {new Date().getFullYear()} Bugixa Marketplace. All rights
                         reserved.
                       </Text>
                     </div>

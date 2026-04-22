@@ -100,10 +100,10 @@ const Register = ({ setCurrentView }: Props) => {
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6">
-        Become a BugZapper Member!
+        Become a Bugixa Member!
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        Create your BugZapper Developer profile, and earn money zapping bugs.
+        Create your Bugixa Developer profile, and earn money zapping bugs.
       </p>
       <form className="w-full flex flex-col" onSubmit={handleSubmit}>
         <div className="flex flex-col w-full gap-y-2">
@@ -183,7 +183,7 @@ const Register = ({ setCurrentView }: Props) => {
         <ErrorMessage error={error} data-testid="register-error" />
 
         <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          By creating an account, you agree to Bugzapper Marketplace&apos;s{" "}
+          By creating an account, you agree to Bugixa Marketplace&apos;s{" "}
           <LocalizedClientLink href="/content/privacy-policy" className="underline">
             Privacy Policy
           </LocalizedClientLink>{" "}
