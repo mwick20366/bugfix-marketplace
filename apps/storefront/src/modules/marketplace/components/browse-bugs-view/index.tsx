@@ -3,7 +3,6 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useCallback } from "react"
-import BugFilters from "@modules/developer/components/bug-filters"
 import MarketplaceBugs from "../marketplace-bugs"
 import DifficultyFilter from "@modules/bugs/components/difficulty-filter"
 

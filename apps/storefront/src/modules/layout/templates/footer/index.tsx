@@ -9,7 +9,7 @@ export default async function Footer() {
   const actorType: "client" | "developer" | null = await getActorType()
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
+    <footer className="border-t border-ui-border-base bg-gray-900 w-full">
       <div className="content-container flex flex-col w-full">
         <div className="flex flex-col gap-y-8 xsmall:flex-row items-start justify-between py-12">
           {/* Brand */}
@@ -19,7 +19,7 @@ export default async function Footer() {
               className="txt-compact-xlarge-plus text-ui-fg-base hover:text-ui-fg-subtle uppercase"
             >
               <Image
-                src="/images/primary-logo.png"
+                src="/images/logo-dark-1.png"
                 alt="Bugixa"
                 width={240}
                 height={80}
@@ -32,12 +32,11 @@ export default async function Footer() {
           <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
             {/* Marketplace */}
             <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus text-ui-fg-base">Marketplace</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
                   <LocalizedClientLink
-                    href={`/${actorType}/account/bug-marketplace`}
-                    className="hover:text-ui-fg-base"
+                    href={actorType ? `/${actorType}/account/bug-marketplace` : "/marketplace"}
+                    className="text-white"
                   >
                     Browse Bugs
                   </LocalizedClientLink>
@@ -45,119 +44,133 @@ export default async function Footer() {
                 {actorType === "client" && (
                   <li>
                     <LocalizedClientLink
-                      href={'/client/account/my-bugs'}
-                      className="hover:text-ui-fg-base"
+                      href={"/client/account/my-bugs"}
+                      className="text-white"
                     >
                       My Posted Bugs
                     </LocalizedClientLink>
                   </li>
-                  )
-                }
+                )}
                 {actorType === "client" && (
                   <li>
                     <LocalizedClientLink
                       href={`/client/account/my-bugs?create=true`}
-                      className="hover:text-ui-fg-base"
+                      className="text-white"
                     >
                       Post a Bug
                     </LocalizedClientLink>
                   </li>
-                  )
-                }
+                )}
                 {actorType === "developer" && (
                   <li>
                     <LocalizedClientLink
                       href={`/${actorType}/account/my-bugs`}
-                      className="hover:text-ui-fg-base"
+                      className="text-white"
                     >
                       My Claimed Bugs
                     </LocalizedClientLink>
                   </li>
                 )}
-                <li>
-                  <LocalizedClientLink
-                    href={`/${actorType}/account/${actorType === "client" ? "developer" : "my"}-submissions`}
-                    className="hover:text-ui-fg-base"
-                  >
-                    {actorType === "client" ? "Developer" : "My"} Submissions
-                  </LocalizedClientLink>
-                </li>
-              </ul>
-            </div>
-
-            {/* Account */}
-            <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus text-ui-fg-base">Account</span>
-              <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>
-                  <LocalizedClientLink
-                    href={`/${actorType}/account`}
-                    className="hover:text-ui-fg-base"
-                  >
-                    My Account
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href={`/${actorType}/account/messages`}
-                    className="hover:text-ui-fg-base"
-                  >
-                    Messages
-                  </LocalizedClientLink>
-                </li>
-                <li>
-                  <LocalizedClientLink
-                    href={`/${actorType}/account/notifications`}
-                    className="hover:text-ui-fg-base"
-                  >
-                    Notifications
-                  </LocalizedClientLink>
-                </li>
-                {actorType === "developer" && (
+                {actorType && (
                   <li>
                     <LocalizedClientLink
-                      href="/developer/account/my-reviews"
-                      className="hover:text-ui-fg-base"
+                      href={`/${actorType}/account/${
+                        actorType === "client" ? "developer" : "my"
+                      }-submissions`}
+                      className="text-white"
                     >
-                      My Reviews
+                      {actorType === "client" ? "Developer" : "My"} Submissions
                     </LocalizedClientLink>
                   </li>
                 )}
-              </ul>         
+              </ul>
             </div>
+            {/* Account */}
+            {!actorType && (
+              <div className="flex flex-col gap-y-2">
+                <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
+                  <li>
+                    <LocalizedClientLink
+                      className="text-white"
+                      href="/client/account"
+                      data-testid="nav-account-link"
+                    >
+                      For Clients
+                    </LocalizedClientLink>
+                  </li>
+                  <li>
+                    <LocalizedClientLink
+                      className="text-white"
+                      href="/developer/account"
+                      data-testid="nav-account-link"
+                    >
+                      For Developers
+                    </LocalizedClientLink>
+                  </li>
+                </ul>
+              </div>
+            )}
+            {actorType && (
+              <div className="flex flex-col gap-y-2">
+                <span className="txt-small-plus text-ui-fg-base">Account</span>
+                <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
+                  <li>
+                    <LocalizedClientLink
+                      href={`/${actorType}/account`}
+                      className="text-white"
+                    >
+                      My Account
+                    </LocalizedClientLink>
+                  </li>
+                  <li>
+                    <LocalizedClientLink
+                      href={`/${actorType}/account/messages`}
+                      className="text-white"
+                    >
+                      Messages
+                    </LocalizedClientLink>
+                  </li>
+                  <li>
+                    <LocalizedClientLink
+                      href={`/${actorType}/account/notifications`}
+                      className="text-white"
+                    >
+                      Notifications
+                    </LocalizedClientLink>
+                  </li>
+                  {actorType === "developer" && (
+                    <li>
+                      <LocalizedClientLink
+                        href="/developer/account/my-reviews"
+                        className="text-white"
+                      >
+                        My Reviews
+                      </LocalizedClientLink>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
             {/* Company */}
             <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus text-ui-fg-base">Company</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
-                  <a
-                    href="/about"
-                    className="hover:text-ui-fg-base"
-                  >
+                  <a href="/about" className="text-white">
                     About
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/customer-service"
-                    className="hover:text-ui-fg-base"
-                  >
+                  <a href="/customer-service" className="text-white">
                     Customer Service
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/privacy"
-                    className="hover:text-ui-fg-base"
-                  >
+                  <a href="/privacy" className="text-white">
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/terms"
-                    className="hover:text-ui-fg-base"
-                  >
+                  <a href="/terms" className="text-white">
                     Terms of Service
                   </a>
                 </li>
@@ -168,8 +181,9 @@ export default async function Footer() {
 
         {/* Bottom bar */}
         <div className="flex w-full mb-16 justify-between items-center border-t border-ui-border-base pt-6 text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Bugixa Marketplace. All rights reserved.
+          <Text className="txt-compact-small text-white">
+            © {new Date().getFullYear()} Bugixa Marketplace. All rights
+            reserved.
           </Text>
           <BugixaCTA />
         </div>

@@ -46,7 +46,7 @@ export default function ProfileDropdown({
 
   return (
     <div className="relative flex items-center gap-x-2" ref={ref}>
-      <span className="text-ui-fg-subtle text-sm hidden small:block">
+      <span className="text-white text-sm hidden small:block">
         Welcome, {name}
       </span>
       <button
@@ -58,7 +58,7 @@ export default function ProfileDropdown({
           <Avatar src={avatarUrl} fallback={initials} />
         ) : (
           <div className="flex items-center justify-center w-full h-full bg-ui-bg-subtle">
-            <User className="text-ui-fg-subtle" />
+            <User className="text-white" />
           </div>
         )}
       </button>

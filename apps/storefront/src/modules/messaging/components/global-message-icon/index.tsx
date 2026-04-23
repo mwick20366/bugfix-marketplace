@@ -20,7 +20,7 @@ export default function GlobalMessageIcon({
       className="relative flex items-center justify-center w-8 h-8"
       aria-label="Messages"
     >
-      <ChatBubbleLeftRight className="text-ui-fg-subtle" />
+      <ChatBubbleLeftRight className="text-ui-fg-subtle text-white" />
 
       {unreadCount > 0 && (
         <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[10px] font-semibold leading-none">

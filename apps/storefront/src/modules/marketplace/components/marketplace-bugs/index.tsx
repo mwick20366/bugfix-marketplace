@@ -104,16 +104,8 @@ export default function MarketplaceBugs({ difficultyFilter = [] }: MarketplaceBu
     setSelectedBug(null)
   }
 
-  const handleClaimBug = async () => {
-    setIsModalOpen(false)
-    setSelectedBug(null)
-  }
-
   return (
     <div className="w-full">
-      {/* <div className="flex w-full items-center justify-between">
-        <h1 className="text-2xl">Browse Open Bugs</h1>
-      </div> */}
       <BugsListTemplate
         bugs={data?.response?.bugs || []}
         columns={columns as DataTableColumnDef<Bug>[]}

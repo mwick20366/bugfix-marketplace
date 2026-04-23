@@ -11,7 +11,7 @@ export default async function Home() {
     return null
   }
 
-  const actorType = await getActorType();
+  const actorType = await getActorType()
 
   if (actorType === "client") {
     redirect("/client/account")
@@ -22,12 +22,12 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-y-16 px-8">
+    <div className="flex flex-col items-center justify-center h-screen gap-y-16 px-8">
       <Image
         src="/images/primary-logo.png"
         alt="Bugixa"
-        width={932}
-        height={306}
+        width={500}
+        height={164}
         priority
       />
       <div className="flex gap-x-4">
