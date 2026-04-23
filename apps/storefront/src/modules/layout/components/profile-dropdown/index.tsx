@@ -58,7 +58,7 @@ export default function ProfileDropdown({
           <Avatar src={avatarUrl} fallback={initials} />
         ) : (
           <div className="flex items-center justify-center w-full h-full bg-ui-bg-subtle">
-            <User className="text-white" />
+            <User className="text-ui-fg-base" />
           </div>
         )}
       </button>

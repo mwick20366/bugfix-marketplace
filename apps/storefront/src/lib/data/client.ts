@@ -138,7 +138,7 @@ export async function signupClient(_currentState: unknown, formData: FormData) {
     const clientCacheTag = await getCacheTag("clients")
     revalidateTag(clientCacheTag)
 
-    return createdClient
+    return null
   } catch (error: any) {
     return error.toString()
   }

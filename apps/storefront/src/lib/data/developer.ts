@@ -177,7 +177,7 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
     const developerCacheTag = await getCacheTag("developers")
     revalidateTag(developerCacheTag)
 
-    return createdDeveloper
+    return null
   } catch (error: any) {
     return error.toString()
   }
