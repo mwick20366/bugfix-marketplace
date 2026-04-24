@@ -10,6 +10,7 @@ import { Button, Label } from "@medusajs/ui"
 import { useDropzone } from "react-dropzone"
 import { useUploadAvatar } from "@lib/hooks/use-upload-avatar"
 import { signupClient } from "@lib/data/client"
+import StockAvatarModal from "@modules/common/components/stock-avatar-modal"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
@@ -28,6 +29,7 @@ const Register = ({ setCurrentView }: Props) => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false)
 
   const form = useForm<RegisterFormValues>({
     defaultValues: {
@@ -54,6 +56,12 @@ const Register = ({ setCurrentView }: Props) => {
     multiple: false,
   })
 
+  // Add a handler for when a stock avatar is selected
+  const handleSelectStockAvatar = (url: string) => {
+    setAvatarFile(null) // clear any uploaded file
+    setAvatarPreview(url)
+  }
+
   const handleSubmit = form.handleSubmit(async (data) => {
     setIsSubmitting(true)
     setError(null)
@@ -63,8 +71,16 @@ const Register = ({ setCurrentView }: Props) => {
 
       // Step 1: Upload avatar if provided
       if (avatarFile) {
+        // User uploaded a new file
         const result = await uploadAvatar({ file: avatarFile })
-        avatarUrl = result.files[0]?.url
+        avatarUrl = result.files?.[0]?.url
+      } else if (avatarPreview) {
+        // User selected a stock avatar - convert relative path to absolute URL
+        if (avatarPreview.startsWith("/")) {
+          avatarUrl = `${window.location.origin}${avatarPreview}`
+        } else {
+          avatarUrl = avatarPreview
+        }
       }
 
       // Step 2: Build a FormData or plain object to pass to signupClient
@@ -76,11 +92,6 @@ const Register = ({ setCurrentView }: Props) => {
       formData.append("password", data.password)
       if (avatarUrl) {
         formData.append("avatar_url", avatarUrl)
-      }
-
-      console.log("Submitting registration with form data:")
-      for (const [key, value] of Array.from(formData.entries())) {
-        console.log(`${key}: ${value}`)
       }
 
       const result = await signupClient(null, formData)
@@ -177,6 +188,14 @@ const Register = ({ setCurrentView }: Props) => {
                   : "Drag and drop an image, or click to select"}
               </p>
             </div>
+            {/* Stock avatar link */}
+            <button
+              type="button"
+              onClick={() => setIsStockModalOpen(true)}
+              className="text-xs text-ui-fg-interactive hover:underline text-left"
+            >
+              Or choose from stock avatars
+            </button>
           </div>
         </div>
 
@@ -184,11 +203,17 @@ const Register = ({ setCurrentView }: Props) => {
 
         <span className="text-center text-ui-fg-base text-small-regular mt-6">
           By creating an account, you agree to Bugixa Marketplace&apos;s{" "}
-          <LocalizedClientLink href="/content/privacy-policy" className="underline">
+          <LocalizedClientLink
+            href="/content/privacy-policy"
+            className="underline"
+          >
             Privacy Policy
           </LocalizedClientLink>{" "}
           and{" "}
-          <LocalizedClientLink href="/content/terms-of-use" className="underline">
+          <LocalizedClientLink
+            href="/content/terms-of-use"
+            className="underline"
+          >
             Terms of Use
           </LocalizedClientLink>
           .
@@ -215,6 +240,12 @@ const Register = ({ setCurrentView }: Props) => {
         </button>
         .
       </span>
+      {/* Stock Avatar Modal */}
+      <StockAvatarModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        onSelect={handleSelectStockAvatar}
+      />
     </div>
   )
 }

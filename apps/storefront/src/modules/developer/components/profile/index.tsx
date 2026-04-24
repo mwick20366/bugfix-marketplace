@@ -10,6 +10,7 @@ import { useDropzone } from "react-dropzone"
 import { useUploadAvatar } from "@lib/hooks/use-upload-avatar"
 import { Developer, updateDeveloper } from "@lib/data/developer"
 import { useQueryClient } from "@tanstack/react-query"
+import StockAvatarModal from "@modules/common/components/stock-avatar-modal"
 
 type Props = {
   developer: Developer
@@ -28,6 +29,7 @@ export default function DeveloperProfile({ developer }: Props) {
   )
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false)
 
   const queryClient = useQueryClient()
   const { mutateAsync: uploadAvatar } = useUploadAvatar()
@@ -53,20 +55,28 @@ export default function DeveloperProfile({ developer }: Props) {
     multiple: false,
   })
 
+  const handleSelectStockAvatar = (url: string) => {
+    setAvatarFile(null) // clear any uploaded file
+    setAvatarPreview(url)
+  }
+
   const handleSubmit = form.handleSubmit(async (data) => {
+    setIsStockModalOpen(false)
     setIsSubmitting(true)
     setError(null)
 
     try {
       let avatarUrl: string | undefined
 
-      // Step 1: Upload new avatar if one was selected
       if (avatarFile) {
+        // User uploaded a new file
         const result = await uploadAvatar({ file: avatarFile })
         avatarUrl = result.files?.[0]?.url
+      } else if (avatarPreview && avatarPreview !== developer.avatar_url) {
+        // User selected a stock avatar (URL changed but no file upload)
+        avatarUrl = avatarPreview
       }
 
-      // Step 2: Update developer profile
       await updateDeveloper({
         first_name: data.first_name,
         last_name: data.last_name,
@@ -124,6 +134,14 @@ export default function DeveloperProfile({ developer }: Props) {
                 : "Drag and drop an image, or click to select"}
             </p>
           </div>
+          {/* Stock avatar link */}
+          <button
+            type="button"
+            onClick={() => setIsStockModalOpen(true)}
+            className="text-xs text-ui-fg-interactive hover:underline text-left"
+          >
+            Or choose from stock avatars
+          </button>
         </div>
 
         {/* Name Fields */}
@@ -152,6 +170,12 @@ export default function DeveloperProfile({ developer }: Props) {
           Save Changes
         </Button>
       </form>
+      {/* Stock Avatar Modal */}
+      <StockAvatarModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        onSelect={handleSelectStockAvatar}
+      />
     </div>
   )
 }

@@ -161,10 +161,10 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
       ...(await getAuthHeaders()),
     }
 
-    const createdDeveloper = await sdk.client.fetch("/developers", {
+    await sdk.client.fetch("/developers", {
       method: "POST",
       body: { ...developerForm },
-      headers,
+      headers
     })
 
     const loginToken = await sdk.auth.login("developer", "emailpass", {

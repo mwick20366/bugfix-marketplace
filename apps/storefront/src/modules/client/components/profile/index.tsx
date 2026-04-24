@@ -8,9 +8,9 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import { Button, Label, toast } from "@medusajs/ui"
 import { useDropzone } from "react-dropzone"
 import { useUploadAvatar } from "@lib/hooks/use-upload-avatar"
-import { Developer, updateDeveloper } from "@lib/data/developer"
 import { useQueryClient } from "@tanstack/react-query"
 import { Client, updateClient } from "@lib/data/client"
+import StockAvatarModal from "@modules/common/components/stock-avatar-modal"
 
 type Props = {
   client: Client
@@ -27,6 +27,7 @@ export default function ClientProfile({ client }: Props) {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
     client.avatar_url || null
   )
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -54,6 +55,12 @@ export default function ClientProfile({ client }: Props) {
     multiple: false,
   })
 
+  // Add a handler for when a stock avatar is selected
+  const handleSelectStockAvatar = (url: string) => {
+    setAvatarFile(null) // clear any uploaded file
+    setAvatarPreview(url)
+  }
+
   const handleSubmit = form.handleSubmit(async (data) => {
     setIsSubmitting(true)
     setError(null)
@@ -61,13 +68,15 @@ export default function ClientProfile({ client }: Props) {
     try {
       let avatarUrl: string | undefined
 
-      // Step 1: Upload new avatar if one was selected
       if (avatarFile) {
+        // User uploaded a new file
         const result = await uploadAvatar({ file: avatarFile })
         avatarUrl = result.files?.[0]?.url
+      } else if (avatarPreview && avatarPreview !== client.avatar_url) {
+        // User selected a stock avatar (URL changed but no file upload)
+        avatarUrl = avatarPreview
       }
 
-      // Step 2: Update client profile
       await updateClient({
         contact_first_name: data.contact_first_name,
         contact_last_name: data.contact_last_name,
@@ -89,7 +98,6 @@ export default function ClientProfile({ client }: Props) {
       <h1 className="text-large-semi uppercase">My Profile</h1>
 
       <form className="w-full flex flex-col gap-y-4" onSubmit={handleSubmit}>
-
         {/* Avatar */}
         <div className="flex flex-col gap-y-2">
           <Label>Profile Avatar</Label>
@@ -127,6 +135,14 @@ export default function ClientProfile({ client }: Props) {
                 : "Drag and drop an image, or click to select"}
             </p>
           </div>
+          {/* Stock avatar link */}
+          <button
+            type="button"
+            onClick={() => setIsStockModalOpen(true)}
+            className="text-xs text-ui-fg-interactive hover:underline text-left"
+          >
+            Or choose from stock avatars
+          </button>
         </div>
 
         {/* Name Fields */}
@@ -157,6 +173,12 @@ export default function ClientProfile({ client }: Props) {
           Save Changes
         </Button>
       </form>
+      {/* Stock Avatar Modal */}
+      <StockAvatarModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        onSelect={handleSelectStockAvatar}
+      />
     </div>
   )
 }

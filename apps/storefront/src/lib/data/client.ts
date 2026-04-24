@@ -122,7 +122,7 @@ export async function signupClient(_currentState: unknown, formData: FormData) {
       ...(await getAuthHeaders()),
     }
 
-    const createdClient = await sdk.client.fetch("/clients", {
+    await sdk.client.fetch("/clients", {
       method: "POST",
       body: { ...clientForm },
       headers
