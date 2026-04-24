@@ -5,6 +5,7 @@ on:
     branches: [ aws-integration-1 ]
     paths:
       - 'apps/backend/**' # Only deploy if the backend code changes
+      - '.github/workflows/deploy.yml'
       - 'package.json'
       - 'pnpm-lock.yaml'
 
