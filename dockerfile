@@ -1,33 +1,26 @@
-# 1. Base image
-FROM node:20-slim AS base
+# 1. Use the same node version as your laptop
+FROM node:20-slim
 RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# 2. Set the working directory
 WORKDIR /app
 
-# 2. Builder stage
-FROM base AS builder
-# Copy EVERYTHING to keep workspace context
+# 3. Copy the ENTIRE monorepo
 COPY . .
 
-# Install dependencies from the root
-RUN pnpm install --filter backend
-
-# Run the build from the root using the filter
-# This ensures pnpm finds the 'medusa' binary in the workspace
+# 4. Install and Build just like you do locally
+RUN pnpm install
 RUN pnpm --filter backend build
 
-# 3. Production runner
-FROM base AS runner
-# Copy the compiled bundle. 
-# Medusa v2 builds into [app-path]/.medusa/server
-COPY --from=builder /app/apps/backend/.medusa/server /app/server
+# 5. Move into the backend directory
+WORKDIR /app/apps/backend
 
-WORKDIR /app/server
-
-# Install production-only deps for the standalone bundle
+# 6. Production settings
 ENV NODE_ENV=production
-RUN pnpm install --prod
-
 EXPOSE 9000
 
-# Use npx to run the commands from the local bundle
+# 7. Use npx - it works on your laptop, it will work here.
+# We run the build AGAIN here just to be 1000% sure the admin index.html is generated in the right spot
+RUN npx medusa build
+
 CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
