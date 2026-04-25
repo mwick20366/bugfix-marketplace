@@ -6,14 +6,12 @@ RUN corepack enable
 WORKDIR /app
 
 # 2. Install dependencies
-# 2. Install dependencies
 FROM base AS deps
-# We copy the root package.json and the backend files specifically
-COPY package.json pnpm-workspace.yaml* ./
-RUN mkdir -p apps/backend
-COPY apps/backend/package.json apps/backend/pnpm-lock.yaml ./apps/backend/
-
-# Install from the backend directory context
+# Copy root config files
+COPY package.json pnpm-workspace.yaml* pnpm-lock.yaml* ./
+# Copy backend-specific files
+COPY apps/backend/package.json ./apps/backend/
+# Use filter to install only backend-related modules
 RUN pnpm install --filter backend
 
 # 3. Build the backend
@@ -23,11 +21,9 @@ RUN pnpm --filter backend build
 
 # 4. Production runner
 FROM base AS runner
-# Copy all workspace dependencies
+# Copy the root node_modules (where the actual binaries live)
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/backend/node_modules ./apps/backend/node_modules
-
-# COPY THE ENTIRE BACKEND FOLDER (Essential for V2)
+# Copy the entire backend folder (includes the .medusa build artifacts)
 COPY --from=builder /app/apps/backend ./apps/backend
 
 WORKDIR /app/apps/backend
