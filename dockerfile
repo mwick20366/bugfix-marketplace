@@ -18,5 +18,5 @@ WORKDIR /app/apps/backend
 ENV NODE_ENV=production
 EXPOSE 9000
 
-# 6. FIXED CMD: No complex quotes, just the direct path
-CMD ["sh", "-c", "../../node_modules/.bin/medusa db:migrate && ../../node_modules/.bin/medusa start"]
+# 6. THE BYPASS: Let npx handle the pathing entirely
+CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
