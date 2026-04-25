@@ -8,7 +8,8 @@ on:
       - '.github/workflows/deploy.yml'
       - 'package.json'
       - 'pnpm-lock.yaml'
-
+      - 'pnpm-workspace.yaml' # Add this
+      - 'package.json'        # Add this
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
