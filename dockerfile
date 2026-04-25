@@ -25,7 +25,5 @@ WORKDIR /app/apps/backend
 ENV NODE_ENV=production
 EXPOSE 9000
 
-# Run migrations and start
-# Change the last line to use absolute paths from the /app root:
-# This finds the medusa binary automatically, regardless of where pnpm placed it
-CMD ["sh", "-c", "$(find /app -name medusa | grep .bin/medusa | head -n 1) db:migrate && $(find /app -name medusa | grep .bin/medusa | head -n 1) start"]
+# We use pnpm to run the commands because it handles the binary paths automatically
+CMD ["sh", "-c", "pnpm medusa db:migrate && pnpm medusa start"]
