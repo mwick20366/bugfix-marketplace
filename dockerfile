@@ -27,4 +27,5 @@ EXPOSE 9000
 
 # Run migrations and start
 # Change the last line to use absolute paths from the /app root:
-CMD ["sh", "-c", "/app/node_modules/.bin/medusa db:migrate && /app/node_modules/.bin/medusa start"]
+# This finds the medusa binary automatically, regardless of where pnpm placed it
+CMD ["sh", "-c", "$(find /app -name medusa | grep .bin/medusa | head -n 1) db:migrate && $(find /app -name medusa | grep .bin/medusa | head -n 1) start"]
