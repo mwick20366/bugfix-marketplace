@@ -11,7 +11,7 @@ export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse)
 
   res.json({ success: true })
 }
-""
+
 export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const recipientId = req.auth_context?.actor_id
   const { id } = req.params
@@ -22,7 +22,7 @@ export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaRespons
     id,
     recipient_id: recipientId,
     recipient_type: "client",
-  })
+  }) as any
 
   res.json({ id, deleted: true })
 }
