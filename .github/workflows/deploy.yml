@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/backend/**' # Only deploy if the backend code changes
       - '.github/workflows/deploy.yml'
+      - 'dockerfile'
       - 'package.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml' # Add this
