@@ -1,22 +1,22 @@
-# 1. Use Node base
+# 1. Base image
 FROM node:20-slim
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
-# 2. Copy the ENTIRE monorepo
+# 2. THE SECRET SAUCE: Force pnpm to hoist all dependencies
+# This ensures Vite can find @medusajs/dashboard, draft-order, etc.
+RUN echo "public-hoist-pattern[]=@medusajs/*" > .npmrc
+RUN echo "shamefully-hoist=true" >> .npmrc
+
+# 3. Copy the entire monorepo
 COPY . .
 
-# 3. Install ALL dependencies
-# We remove the filter here to ensure the Dashboard and all peer deps are available
+# 4. Install EVERYTHING
+# With the .npmrc above, all @medusajs packages will be visible to the backend
 RUN pnpm install
 
-# 4. Explicitly add the dashboard package to the backend folder
-# This ensures Vite can resolve the import that's currently failing
+# 5. Build the backend
 WORKDIR /app/apps/backend
-RUN pnpm add @medusajs/dashboard
-
-# 5. Build the production-ready server and admin
-# This will now find @medusajs/dashboard and finish the build
 RUN npx medusa build
 
 # 6. Production settings
