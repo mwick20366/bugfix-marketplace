@@ -5,23 +5,31 @@ WORKDIR /app
 
 # 2. Builder stage
 FROM base AS builder
+# Copy the entire monorepo for context
 COPY . .
+
+# Install all dependencies for the backend
 RUN pnpm install --filter backend
-# Build the production-ready server bundle
-RUN pnpm --filter backend build
+
+# Run the build from the backend directory
+# This generates the standalone bundle in apps/backend/.medusa/server
+WORKDIR /app/apps/backend
+RUN pnpm medusa build
 
 # 3. Production runner
 FROM base AS runner
-# Copy ONLY the compiled production bundle
-COPY --from=builder /app/apps/backend/.medusa/server /app
+# Copy the bundle from the builder stage
+# We use the relative path from the builder's /app root
+COPY --from=builder /app/apps/backend/.medusa/server /app/server
 
-WORKDIR /app
-# Medusa Cloud runs as production
+# Set working directory to the bundled server
+WORKDIR /app/server
+
+# Medusa v2 production bundle needs its own production dependencies
 ENV NODE_ENV=production
-EXPOSE 9000
-
-# Install the dependencies required specifically for the bundled server
 RUN pnpm install --prod
 
-# Start exactly like Medusa Cloud
+EXPOSE 9000
+
+# Start from the bundled output exactly like Medusa Cloud
 CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
