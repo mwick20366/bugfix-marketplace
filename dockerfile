@@ -26,4 +26,5 @@ ENV NODE_ENV=production
 EXPOSE 9000
 
 # Run migrations and start
-CMD ["sh", "-c", "./node_modules/.bin/medusa db:migrate && ./node_modules/.bin/medusa start"]
+# Change the last line to use absolute paths from the /app root:
+CMD ["sh", "-c", "/app/node_modules/.bin/medusa db:migrate && /app/node_modules/.bin/medusa start"]
