@@ -12,14 +12,16 @@ RUN pnpm --filter backend build
 
 # 3. Production runner
 FROM base AS runner
-# Copy the entire app directory from the builder
+# Copy EVERYTHING from builder
 COPY --from=builder /app /app
 
-# Set working directory to the backend app
+# IMPORTANT: Re-link the binaries so the shortcuts aren't broken
+RUN pnpm install --filter backend --offline --prod
+
 WORKDIR /app/apps/backend
 
 ENV NODE_ENV=production
 EXPOSE 9000
 
-# Call the binary using its absolute path in the monorepo root
-CMD ["sh", "-c", "/app/node_modules/.bin/medusa db:migrate && /app/node_modules/.bin/medusa start"]
+# Now pnpm will definitely find 'medusa'
+CMD ["sh", "-c", "pnpm medusa db:migrate && pnpm medusa start"]
