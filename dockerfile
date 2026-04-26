@@ -10,8 +10,7 @@ RUN echo "public-hoist-pattern[]=*@medusajs/*" > .npmrc && \
     echo "public-hoist-pattern[]=react-router-dom" >> .npmrc
 
 # 3. Copy workspace config files and package.json files first
-# (optimizes Docker layer caching — dependencies only reinstall when these change)
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/backend/package.json ./apps/backend/
 COPY apps/storefront/package.json ./apps/storefront/
 
