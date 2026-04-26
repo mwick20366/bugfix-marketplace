@@ -16,7 +16,7 @@ export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaRespons
   const recipientId = req.auth_context?.actor_id
   const { id } = req.params
 
-  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
+  const notificationModuleService: InAppNotificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
 
   await notificationModuleService.deleteInAppNotifications({
     id,

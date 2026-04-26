@@ -24,8 +24,13 @@
   "dependencies": {
     "@medusajs/admin-sdk": "2.13.1",
     "@medusajs/cli": "2.13.1",
+    "@medusajs/dashboard": "^2.14.1",
+    "@medusajs/draft-order": "^2.14.1",
     "@medusajs/framework": "2.13.1",
+    "@medusajs/icons": "^2.14.1",
     "@medusajs/medusa": "2.13.1",
+    "@medusajs/types": "^2.14.1",
+    "@medusajs/ui": "^4.1.8",
     "cors": "^2.8.6",
     "multer": "^2.1.1"
   },
