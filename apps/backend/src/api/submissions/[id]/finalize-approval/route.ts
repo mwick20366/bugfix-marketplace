@@ -3,19 +3,14 @@ import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { z } from "@medusajs/framework/zod"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 import { approveSubmissionWorkflow } from "../../../../workflows/submission"
 import { capturePaymentWorkflow } from "@medusajs/medusa/core-flows"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-
-export const PostCaptureSubmissionSchema = z.object({
-  payment_collection_id: z.string(),
-  client_notes: z.string().optional(),
-})
+import { PostCaptureSubmissionSchema } from "./validators"
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest<z.infer<typeof PostCaptureSubmissionSchema>>,
+  req: AuthenticatedMedusaRequest<typeof PostCaptureSubmissionSchema>,
   res: MedusaResponse
 ) => {
   const currentClientId = req.auth_context?.actor_id
@@ -47,7 +42,7 @@ export const POST = async (
   //   )
   // }
 
-  const { payment_collection_id, client_notes } = req.validatedBody
+  const { payment_collection_id, client_notes } = req.validatedBody as any
 
   const { data: [paymentCollection] } = await query.graph({
     entity: "payment_collection",
@@ -94,3 +89,5 @@ export const POST = async (
 
   res.json({ success: true, submission: result })
 }
+
+export { PostCaptureSubmissionSchema }

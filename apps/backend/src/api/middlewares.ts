@@ -1,20 +1,20 @@
 // src/api/middlewares.ts
 import { defineMiddlewares, authenticate,  validateAndTransformBody, validateAndTransformQuery, MedusaRequest, MedusaResponse, MedusaNextFunction, } from "@medusajs/framework/http"
-import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
+// import { GetBugsSchema, PostCreateBugSchema, SubmitBugFixSchema } from "./bugs/validators"
 import { createFindParams } from "@medusajs/medusa/api/utils/validators"
-import { GetSubmissionsSchema } from "./submissions/validators"
-import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
-import { PostCaptureSubmissionSchema } from "./submissions/[id]/finalize-approval/route"
-import { PostDeveloperReviewSchema } from "./developer-reviews/route"
-import { PostMessageSchema } from "./bugs/[id]/messages/validators"
-import { MarkMessagesReadSchema } from "./bugs/[id]/messages/mark-read/validators"
+// import { GetSubmissionsSchema } from "./submissions/validators"
+// import { PostCreateSubmissionSchema, PostApproveSubmissionSchema, PostRejectSubmissionSchema } from "./submissions/validators"
+// import { PostCaptureSubmissionSchema } from "./submissions/[id]/finalize-approval/validators"
+// import { PostDeveloperReviewSchema } from "./developer-reviews/validators"
+// import { PostMessageSchema } from "./bugs/[id]/messages/validators"
+// import { MarkMessagesReadSchema } from "./bugs/[id]/messages/mark-read/validators"
 import { ConfigModule } from "@medusajs/framework"
 import cors from "cors"
 import { parseCorsOrigins } from "@medusajs/framework/utils"
-import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
+// import { GetMarketplaceBugsSchema } from "./marketplace/bugs/validators"
 import multer from "multer"
-import { PostDeveloperSchema } from "./developers/validators"
-import { PostClientSchema } from "./clients/validators"
+// import { PostDeveloperSchema } from "./developers/validators"
+// import { PostClientSchema } from "./clients/validators"
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -46,7 +46,7 @@ export default defineMiddlewares({
         authenticate("client", ["session", "bearer"], {
           allowUnregistered: true,
         }),
-        validateAndTransformBody(PostClientSchema),
+        // validateAndTransformBody(PostClientSchema),
       ],
     },
     {
@@ -79,7 +79,7 @@ export default defineMiddlewares({
         authenticate("developer", ["session", "bearer"], {
           allowUnregistered: true,
         }),
-        validateAndTransformBody(PostDeveloperSchema),
+        // validateAndTransformBody(PostDeveloperSchema),
       ],
     },
     {
@@ -162,30 +162,30 @@ export default defineMiddlewares({
       method: ["GET"],
       middlewares: [
         authenticate(["client", "developer"], ["session", "bearer"]),
-        validateAndTransformQuery(GetBugsSchema, {
-          isList: true,
-          defaults: [
-            "id",
-            "title",
-            "description",
-            "tech_stack",
-            "repo_link",
-            "bounty",
-            "difficulty",
-            "status",
-            "created_at",
-            "updated_at",
-            "claimed_at",
-            "developer.*", // retrieves all fields of linked developer record
-            "submissions.*", // retrieves all fields of linked submission records
-            "client.id",
-            "client.company_name",
-            "client.email",
-            "client.contact_first_name",
-            "client.contact_last_name",
-          ],
-          defaultLimit: 15,
-        }),
+        // validateAndTransformQuery(GetBugsSchema, {
+        //   isList: true,
+        //   defaults: [
+        //     "id",
+        //     "title",
+        //     "description",
+        //     "tech_stack",
+        //     "repo_link",
+        //     "bounty",
+        //     "difficulty",
+        //     "status",
+        //     "created_at",
+        //     "updated_at",
+        //     "claimed_at",
+        //     "developer.*", // retrieves all fields of linked developer record
+        //     "submissions.*", // retrieves all fields of linked submission records
+        //     "client.id",
+        //     "client.company_name",
+        //     "client.email",
+        //     "client.contact_first_name",
+        //     "client.contact_last_name",
+        //   ],
+        //   defaultLimit: 15,
+        // }),
       ],
     },
     {
@@ -197,22 +197,22 @@ export default defineMiddlewares({
       method: ["GET"],
       middlewares: [
         authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
-        validateAndTransformQuery(GetSubmissionsSchema, {
-          isList: true,
-          defaults: [
-            "id",
-            "notes",
-            "file_url",
-            "status",
-            "created_at",
-            "updated_at",
-            "client_notes",
-            "bug.*",
-            "bug.developer.*", // retrieves all fields of linked developer record for the bug
-            "bug.client.*",
-          ],
-          defaultLimit: 15,
-        }),
+        // validateAndTransformQuery(GetSubmissionsSchema, {
+        //   isList: true,
+        //   defaults: [
+        //     "id",
+        //     "notes",
+        //     "file_url",
+        //     "status",
+        //     "created_at",
+        //     "updated_at",
+        //     "client_notes",
+        //     "bug.*",
+        //     "bug.developer.*", // retrieves all fields of linked developer record for the bug
+        //     "bug.client.*",
+        //   ],
+        //   defaultLimit: 15,
+        // }),
       ],
     },
     {
@@ -220,7 +220,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
       authenticate("client", ["session", "bearer"]),
-      validateAndTransformBody(PostCreateSubmissionSchema),
+      // validateAndTransformBody(PostCreateSubmissionSchema),
       ],
     },
     {
@@ -243,14 +243,14 @@ export default defineMiddlewares({
       matcher: "/submissions/:id/messages",
       method: "POST",
       middlewares: [
-        validateAndTransformBody(PostMessageSchema),
+        // validateAndTransformBody(PostMessageSchema),
       ],
     },
     {
       matcher: "/submissions/:id/messages/mark-read",
       method: "POST",
       middlewares: [
-        validateAndTransformBody(MarkMessagesReadSchema),
+        // validateAndTransformBody(MarkMessagesReadSchema),
       ],
     },
     {
@@ -264,7 +264,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
-        validateAndTransformBody(PostApproveSubmissionSchema),
+        // validateAndTransformBody(PostApproveSubmissionSchema),
       ],
     },
     {
@@ -272,7 +272,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
-        validateAndTransformBody(PostCaptureSubmissionSchema),
+        // validateAndTransformBody(PostCaptureSubmissionSchema),
       ],
     },    
     {
@@ -280,7 +280,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         authenticate(["client"], ["session", "bearer"]),
-        validateAndTransformBody(PostRejectSubmissionSchema),
+        // validateAndTransformBody(PostRejectSubmissionSchema),
       ],
     },
     // Only clients can create bugs
@@ -289,7 +289,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
       authenticate("client", ["session", "bearer"]),
-      validateAndTransformBody(PostCreateBugSchema),
+      // validateAndTransformBody(PostCreateBugSchema),
       ],
     },
     {
@@ -348,21 +348,21 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         authenticate(["developer"], ["session", "bearer"]),
-        validateAndTransformBody(SubmitBugFixSchema),
+        // validateAndTransformBody(SubmitBugFixSchema),
       ],
     },
     {
       matcher: "/bugs/:id/messages",
       method: "POST",
       middlewares: [
-        validateAndTransformBody(PostMessageSchema),
+        // validateAndTransformBody(PostMessageSchema),
       ],
     },
     {
       matcher: "/bugs/:id/messages/mark-read",
       method: "POST",
       middlewares: [
-        validateAndTransformBody(MarkMessagesReadSchema),
+        // validateAndTransformBody(MarkMessagesReadSchema),
       ],
     },
     {
@@ -404,7 +404,7 @@ export default defineMiddlewares({
       matcher: "/developer-reviews",
       middlewares: [
         authenticate(["client", "user"], ["session", "bearer"]),
-        validateAndTransformBody(PostDeveloperReviewSchema),
+        // validateAndTransformBody(PostDeveloperReviewSchema),
       ],
     },
     {
@@ -416,10 +416,10 @@ export default defineMiddlewares({
       matcher: "/marketplace/bugs",
       method: ["GET"],
       middlewares: [
-        validateAndTransformQuery(GetMarketplaceBugsSchema, {
-          isList: true,
-          defaults: ["id", "title", "description", "tech_stack", "bounty", "difficulty", "created_at"],
-        }),
+        // validateAndTransformQuery(GetMarketplaceBugsSchema, {
+        //   isList: true,
+        //   defaults: ["id", "title", "description", "tech_stack", "bounty", "difficulty", "created_at"],
+        // }),
       ],
     },
     {

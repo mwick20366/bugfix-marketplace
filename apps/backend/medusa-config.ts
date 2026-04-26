@@ -4,6 +4,11 @@ import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
+const isTest = process.env.NODE_ENV === "test";
+
+console.log("NODE_ENV is:", process.env.NODE_ENV)
+console.log("isTest is:", process.env.NODE_ENV === "test")
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -36,76 +41,82 @@ module.exports = defineConfig({
   },
   modules: [
     // Register your custom modules
-    {
-      resolve: "./src/modules/bugtracker",
-    },
-    {
-      resolve: "./src/modules/in-app-notification",
-    },
-    {
-      resolve: "./src/modules/messaging",
-    },
-    // Configure the Auth Module to include the emailpass provider
-    {
-      resolve: "@medusajs/medusa/auth",
-      dependencies: [Modules.CACHE, ContainerRegistrationKeys.LOGGER],
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/auth-emailpass",
-            id: "emailpass",
-          },
-        ],
-      },
-    },
-    // Configure the Payment Module with Stripe
-    {
-      resolve: "@medusajs/medusa/payment",
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/payment-stripe",
-            id: "stripe",
-            options: {
-              apiKey: process.env.STRIPE_API_KEY,
-            },
-          },
-        ],
-      },
-    },
-    {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/notification-local",
-            id: "local",
-            options: {
-              channels: [
-                process.env.NODE_ENV === "development" ? "email" : "feed",
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      resolve: "@medusajs/medusa/file",
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/file-s3",
-            id: "s3",
-            options: {
-              file_url: process.env.S3_URL,
-              access_key_id: process.env.S3_ACCESS_KEY_ID,
-              secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-              region: process.env.S3_REGION,
-              bucket: process.env.S3_BUCKET,
-            },
-          },
-        ],
-      },
-    },
+    // {
+    //   resolve: "./src/modules/bugtracker",
+    // },
+    // {
+    //   resolve: "./src/modules/in-app-notification",
+    // },
+    // {
+    //   resolve: "./src/modules/messaging",
+    // },
+    // // Configure the Auth Module to include the emailpass provider
+    // {
+    //   resolve: "@medusajs/medusa/auth",
+    //   dependencies: [Modules.CACHE, ContainerRegistrationKeys.LOGGER],
+    //   options: {
+    //     providers: [
+    //       {
+    //         resolve: "@medusajs/medusa/auth-emailpass",
+    //         id: "emailpass",
+    //       },
+    //     ],
+    //   },
+    // },
+    // // Configure the Payment Module with Stripe
+    // {
+    //   resolve: "@medusajs/medusa/payment",
+    //   options: {
+    //     providers: [
+    //       {
+    //         resolve: "@medusajs/medusa/payment-stripe",
+    //         id: "stripe",
+    //         options: {
+    //           apiKey: process.env.STRIPE_API_KEY,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   resolve: "@medusajs/medusa/notification",
+    //   options: {
+    //     providers: [
+    //       {
+    //         resolve: "@medusajs/medusa/notification-local",
+    //         id: "local",
+    //         options: {
+    //           channels: [
+    //             process.env.NODE_ENV === "development" ? "email" : "feed",
+    //           ],
+    //         },
+    //       },
+    //     ],
+    //   },
+    // },
+    // {
+    //   resolve: "@medusajs/medusa/file",
+    //   options: {
+    //     providers: [
+    //       isTest
+    //         ? {
+    //             resolve: "@medusajs/medusa/file-local",
+    //             id: "local",
+    //           }
+    //         : {
+    //             resolve: "@medusajs/medusa/file-s3",
+    //             id: "s3",
+    //             options: {
+    //               file_url: process.env.S3_URL,
+    //               access_key_id: process.env.S3_ACCESS_KEY_ID,
+    //               secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+    //               region: process.env.S3_REGION,
+    //               bucket: process.env.S3_BUCKET,
+    //               endpoint: process.env.S3_ENDPOINT,
+    //             },
+    //           },
+    //     ],
+    //   },
+    // },
   ],
 });

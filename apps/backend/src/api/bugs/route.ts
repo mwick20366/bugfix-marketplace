@@ -3,12 +3,9 @@ import type {
   MedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http";
-import { z } from "@medusajs/framework/zod";
 import { PostCreateBugSchema } from "./validators";
 import { createBugWorkflow } from "../../workflows/bug";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-
-type CreateBugBody = z.infer<typeof PostCreateBugSchema>;
 
 // GET /bugs
 export const GET = async (
@@ -106,12 +103,12 @@ export const GET = async (
 
 // POST /bugs
 export const POST = async (
-  req: AuthenticatedMedusaRequest<CreateBugBody>,
+  req: AuthenticatedMedusaRequest<typeof PostCreateBugSchema>,
   res: MedusaResponse,
 ) => {
   const { result } = await createBugWorkflow(req.scope).run({
     input: {
-      bug: req.validatedBody,
+      bug: req.validatedBody as any,
     },
   });
 
