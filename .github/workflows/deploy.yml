@@ -4,13 +4,12 @@ on:
   push:
     branches: [ aws-integration-1 ]
     paths:
-      - 'apps/backend/**' # Only deploy if the backend code changes
+      - 'apps/backend/**'
       - '.github/workflows/deploy.yml'
       - 'dockerfile'
       - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'pnpm-workspace.yaml' # Add this
-      - 'package.json'        # Add this
+      - 'package-lock.json'    # Changed from pnpm-lock.yaml
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
