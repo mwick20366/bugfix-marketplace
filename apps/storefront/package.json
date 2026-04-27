@@ -8,7 +8,7 @@
     "medusa-storefront"
   ],
   "scripts": {
-    "dev": "next dev --turbopack -p 8000",
+    "dev": "next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "next lint",
@@ -27,7 +27,7 @@
     "@tanstack/react-query": "^5.95.2",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
-    "next": "15.3.9",
+    "next": "^15.3.9",
     "pg": "^8.11.3",
     "qs": "^6.12.1",
     "react": "19.0.4",
