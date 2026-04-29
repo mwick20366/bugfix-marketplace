@@ -6,22 +6,14 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 const isTest = process.env.NODE_ENV === "test";
 
-console.log("NODE_ENV is:", process.env.NODE_ENV)
-console.log("isTest is:", process.env.NODE_ENV === "test")
-
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    databaseDriverOptions:
-      process.env.NODE_ENV === "development"
-        ? {}
-        : {
-            connection: {
-              ssl: {
-                rejectUnauthorized: false,
-              },
-            },
-          },
+    databaseDriverOptions: {
+      connection: {
+        ssl: { rejectUnauthorized: false }
+      }
+    },
     redisUrl: process.env.REDIS_URL,
     workerMode:
       (process.env.MEDUSA_WORKER_MODE as "shared" | "worker" | "server") ||

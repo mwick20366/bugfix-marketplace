@@ -112,7 +112,6 @@ export default async function Footer() {
             )}
             {actorType && (
               <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus text-ui-fg-base">Account</span>
                 <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                   <li>
                     <LocalizedClientLink
