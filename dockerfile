@@ -9,7 +9,7 @@ COPY apps/storefront/package.json ./apps/storefront/
 
 # 3. THE FIX: Use --legacy-peer-deps to ignore React 19 conflicts
 # Use 'npm ci' for a clean, frozen install, but we still need the peer-deps flag
-RUN npm ci --legacy-peer-deps
+RUN npm install --legacy-peer-deps
 
 # 4. Copy the rest of the source code
 COPY . .
