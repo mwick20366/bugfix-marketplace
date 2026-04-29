@@ -1,4 +1,3 @@
-// src/modules/developer/components/my-submissions/index.tsx
 "use client"
 
 import {
