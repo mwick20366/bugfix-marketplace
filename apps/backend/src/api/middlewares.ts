@@ -40,6 +40,10 @@ export default defineMiddlewares({
       middlewares: [corsMiddleware],
     },
     {
+      matcher: "/submissions/*",
+      middlewares: [authenticate(["client", "developer"], ["session", "bearer"])],
+    },
+    {
       matcher: "/clients",
       method: "POST",
       middlewares: [
