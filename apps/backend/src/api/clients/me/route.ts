@@ -87,7 +87,7 @@ export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaRespons
     throw new MedusaError(MedusaError.Types.UNAUTHORIZED, "Not authenticated.")
   }
 
-  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
+  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE) as any
 
   await notificationModuleService.deleteInAppNotifications({
     recipient_id: recipientId,

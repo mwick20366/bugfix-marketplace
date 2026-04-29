@@ -11,18 +11,18 @@ export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse)
 
   res.json({ success: true })
 }
-""
+
 export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const recipientId = req.auth_context?.actor_id
   const { id } = req.params
 
-  const notificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
+  const notificationModuleService: InAppNotificationModuleService = req.scope.resolve(IN_APP_NOTIFICATION_MODULE)
 
   await notificationModuleService.deleteInAppNotifications({
     id,
     recipient_id: recipientId,
     recipient_type: "client",
-  })
+  }) as any
 
   res.json({ id, deleted: true })
 }

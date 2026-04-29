@@ -77,7 +77,7 @@ export const CreateBug = ({ client, onCreate, isOpen: isOpenProp, onClose }: Cre
   })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setPendingFiles((prev) => [...prev, ...acceptedFiles])
+    setPendingFiles((prev: any) => [...prev, ...acceptedFiles])
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -102,12 +102,9 @@ export const CreateBug = ({ client, onCreate, isOpen: isOpenProp, onClose }: Cre
 
   return (
     <div>
-      {/* Only show the trigger button when not externally controlled */}
-      {/* {!isControlled && ( */}
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-          Create Bug
-        </Button>
-      {/* )} */}
+      <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+        Create Bug
+      </Button>
       <Modal isOpen={isModalOpen} close={handleClose}>
         <Modal.Title>Create a New Bug</Modal.Title>
         <FormProvider {...form}>
@@ -162,7 +159,7 @@ export const CreateBug = ({ client, onCreate, isOpen: isOpenProp, onClose }: Cre
                       type="number"
                       label={"Bounty"}
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      onChange={(e: { target: { value: string } }) => field.onChange(parseFloat(e.target.value))}
                     />
                     {error && <span className="text-red-500 text-sm">{error.message}</span>}
                   </div>
@@ -212,13 +209,13 @@ export const CreateBug = ({ client, onCreate, isOpen: isOpenProp, onClose }: Cre
 
                 {pendingFiles.length > 0 && (
                   <ul className="mt-2 flex flex-col gap-y-1">
-                    {pendingFiles.map((file, i) => (
+                    {pendingFiles.map((file: File, i: number) => (
                       <li key={i} className="flex items-center justify-between">
                         <span className="text-xs text-ui-fg-muted">{file.name}</span>
                         <button
                           type="button"
                           onClick={() =>
-                            setPendingFiles((prev) => prev.filter((_, idx) => idx !== i))
+                            setPendingFiles((prev: any[]) => prev.filter((_, idx) => idx !== i))
                           }
                           className="text-xs text-ui-fg-muted hover:text-ui-fg-base ml-2"
                         >

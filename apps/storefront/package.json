@@ -1,5 +1,5 @@
 {
-  "name": "medusa-next",
+  "name": "bugixa-storefront",
   "version": "1.0.3",
   "private": true,
   "author": "Kasper Fabricius Kristensen <kasper@medusajs.com> & Victor Gerbrands <victor@medusajs.com> (https://www.medusajs.com)",
@@ -8,7 +8,7 @@
     "medusa-storefront"
   ],
   "scripts": {
-    "dev": "next dev --turbopack -p 8000",
+    "dev": "next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "next lint",
@@ -20,14 +20,14 @@
     "@hookform/resolvers": "^5.2.2",
     "@medusajs/icons": "latest",
     "@medusajs/js-sdk": "latest",
-    "@medusajs/ui": "latest",
+    "@medusajs/ui": "^4.1.8",
     "@radix-ui/react-accordion": "^1.2.1",
     "@stripe/react-stripe-js": "^5.3.0",
     "@stripe/stripe-js": "^8.2.0",
     "@tanstack/react-query": "^5.95.2",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
-    "next": "15.3.9",
+    "next": "^15.3.9",
     "pg": "^8.11.3",
     "qs": "^6.12.1",
     "react": "19.0.4",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@medusajs/types": "latest",
-    "@medusajs/ui-preset": "latest",
+    "@medusajs/ui-preset": "^2.14.1",
     "@types/lodash": "^4.14.195",
     "@types/node": "17.0.21",
     "@types/pg": "^8.11.0",
@@ -64,10 +64,6 @@
     "tailwindcss": "^3.0.23",
     "typescript": "^5.3.2"
   },
-  "resolutions": {
-    "@types/react": "19.0.4",
-    "@types/react-dom": "19.0.4"
-  },
   "overrides": {
     "react": "19.0.4",
     "react-dom": "19.0.4",
@@ -75,6 +71,5 @@
       "react": "19.0.4",
       "react-dom": "19.0.4"
     }
-  },
-  "packageManager": "pnpm@10.32.1"
+  }
 }

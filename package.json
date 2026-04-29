@@ -1,9 +1,25 @@
 {
+  "name": "bugfix-marketplace",
+  "private": true,
+  "packageManager": "npm@11.13.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "overrides": {
     "react": "19.0.4",
-    "react-dom": "19.0.4"
+    "react-dom": "19.0.4",
+    "ajv": "^8.0.0",
+    "@medusajs/icons": {
+      "react": "19.0.4",
+      "react-dom": "19.0.4"
+    }
   },
   "scripts": {
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "dev:storefront": "npm run dev --workspace=apps/storefront",
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down"
   }
 }
