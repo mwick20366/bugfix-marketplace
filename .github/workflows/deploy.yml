@@ -2,7 +2,7 @@ name: Deploy Medusa Backend to AWS
 
 on:
   push:
-    branches: [ aws-integration-1 ]
+    branches: [ main ]
     paths:
       - 'apps/backend/**'
       - '.github/workflows/deploy.yml'
