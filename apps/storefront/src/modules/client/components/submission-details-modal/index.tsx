@@ -1,6 +1,6 @@
 "use client";
 
-import { Submission } from "@lib/data/submissions";
+import { Submission, retrieveSubmission } from "@lib/data/submissions";
 import { Button, Heading } from "@medusajs/ui";
 import Modal from "@modules/common/components/modal";
 import { useQuery } from "@tanstack/react-query";
@@ -30,10 +30,11 @@ export default function SubmissionDetailsModal({
   messageSectionHeight,
 }: SubmissionDetailsModalProps) {
   const { data: fetchedSubmissionData, isLoading } = useQuery<{ submission: Submission }>({
-    queryFn: () =>
-      sdk.client.fetch(`/submissions/${submissionId}`, {
-        method: "GET",
-      }),
+    queryFn: async () => {
+      const result = await retrieveSubmission(submissionId || "");
+      if (!result) throw new Error("Submission not found");
+      return { submission: result };
+    },
     queryKey: ["submission", submissionId],
     enabled: !!submissionId && !submissionProp,
   });

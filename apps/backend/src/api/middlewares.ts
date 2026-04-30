@@ -149,11 +149,12 @@ export default defineMiddlewares({
     /**
      * SUBMISSIONS
      */
+    { matcher: "/submissions*", middlewares: [authenticate(["client", "developer"], ["session", "bearer"])] },
     {
       matcher: "/submissions",
       method: ["GET"],
       middlewares: [
-        authenticate(["client", "developer", "user"], ["session", "bearer", "api-key"]),
+        authenticate(["client", "developer", "user"], ["session", "bearer"]),
         validateAndTransformQuery(GetSubmissionsSchema, {
           isList: true,
           defaults: ["id", "notes", "file_url", "status", "created_at", "updated_at", "client_notes", "bug.*", "bug.developer.*", "bug.client.*"],

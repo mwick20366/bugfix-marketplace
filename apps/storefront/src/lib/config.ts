@@ -2,7 +2,7 @@ import { getLocaleHeader } from "@lib/util/get-locale-header"
 import Bugixa, { FetchArgs, FetchInput } from "@medusajs/js-sdk"
 
 // Defaults to standard port for Bugixa server
-let MEDUSA_BACKEND_URL = "https://api.bugixa.com"
+let MEDUSA_BACKEND_URL = "http://localhost:9000"
 
 if (process.env.MEDUSA_BACKEND_URL) {
   MEDUSA_BACKEND_URL = process.env.MEDUSA_BACKEND_URL
