@@ -123,6 +123,7 @@ export default function DeveloperSubmissions() {
   }
 
   const handleCloseModal = () => {
+    setIsPaymentModalOpen(false)
     setIsDetailsModalOpen(false)
     setSelectedSubmissionId(null)
 
@@ -164,8 +165,6 @@ export default function DeveloperSubmissions() {
             developerId={selectedSubmissionId ? data?.response?.submissions.find(sub => sub.id === selectedSubmissionId)?.bug?.developer?.id || "" : ""}
             isOpen={isPaymentModalOpen}
             close={handleCloseModal}
-            // clientSecret={clientSecret!}
-            // paymentSession={paymentSession}
             onApprovalFinalized={handleApprovalFinalized}
           />
         </>
