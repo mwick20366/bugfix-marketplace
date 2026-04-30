@@ -169,11 +169,12 @@ export default defineMiddlewares({
         validateAndTransformBody(PostCreateSubmissionSchema),
       ],
     },
-    { matcher: "/submissions/attachments", method: ["POST"], bodyParser: { sizeLimit: "50mb" }, middlewares: [upload.array("files")] },
+    { matcher: "/submissions/:id", method: ["POST", "DELETE"], middlewares: [authenticate(["client", "developer"], ["session", "bearer"])] },
     { matcher: "/submissions/:id/initiate-approval", method: ["POST"], middlewares: [authenticate("client", ["session", "bearer"]), validateAndTransformBody(PostApproveSubmissionSchema)] },
     { matcher: "/submissions/:id/finalize-approval", method: ["POST"], middlewares: [authenticate("client", ["session", "bearer"]), validateAndTransformBody(PostCaptureSubmissionSchema)] },
     { matcher: "/submissions/:id/reject", method: ["POST"], middlewares: [authenticate("client", ["session", "bearer"]), validateAndTransformBody(PostRejectSubmissionSchema)] },
-    
+    { matcher: "/submissions/attachments", method: ["POST"], bodyParser: { sizeLimit: "50mb" }, middlewares: [upload.array("files")] },
+        
     // Submission Messaging
     { matcher: "/submissions/:id/messages*", middlewares: [authenticate(["client", "developer"], ["session", "bearer"])] },
     { matcher: "/submissions/:id/messages", method: "POST", middlewares: [validateAndTransformBody(PostMessageSchema)] },
