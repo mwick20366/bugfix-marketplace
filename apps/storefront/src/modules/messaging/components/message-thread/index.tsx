@@ -54,6 +54,7 @@ export default function MessageThread({
         const res = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
           signal: controller.signal,
+          credentials: "include",
         })
         const reader = res.body?.getReader()
         // read chunks...
