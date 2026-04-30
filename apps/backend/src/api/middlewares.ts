@@ -49,7 +49,10 @@ export default defineMiddlewares({
     { matcher: "/marketplace*", middlewares: [corsMiddleware] },
     { matcher: "/profile*", middlewares: [corsMiddleware] },
     { matcher: "/messages*", middlewares: [corsMiddleware] },
-
+    {
+      matcher: "/hooks*",
+      middlewares: [], // Explicitly leave this empty to bypass all auth/cors for webhooks
+    },
     /**
      * CLIENTS
      */
