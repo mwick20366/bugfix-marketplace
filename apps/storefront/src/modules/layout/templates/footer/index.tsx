@@ -158,11 +158,11 @@ export default async function Footer() {
                     About
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="/customer-service" className="text-white">
                     Customer Service
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a href="/privacy-policy" className="text-white">
                     Privacy Policy
