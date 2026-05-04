@@ -6,7 +6,7 @@ export const initiateSubmissionApprovalSchema = z.object({
 
 export const finalizeSubmissionApprovalSchema = z.object({
   client_notes: z.string().optional(),
-  payment_collection_id: z.string().optional(),
+  payment_method_id: z.string().optional(),
 })
 
 export const rejectSubmissionSchema = z.object({

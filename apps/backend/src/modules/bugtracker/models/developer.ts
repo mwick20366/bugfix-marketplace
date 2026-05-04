@@ -10,6 +10,8 @@ const Developer = model.define("developer", {
   email: model.text(),
   tech_stack: model.text().nullable(),
   avatar_url: model.text().nullable(),
+  stripe_account_id: model.text().nullable(),
+  is_payout_ready: model.boolean().default(false),
   bugs: model.hasMany(() => Bug, {
     mappedBy: "developer",
   }),

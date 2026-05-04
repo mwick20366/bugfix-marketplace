@@ -101,6 +101,7 @@ export default defineMiddlewares({
       ],
     },
     { matcher: "/developers/me/notifications*", middlewares: [authenticate("developer", ["session", "bearer"])] },
+    { matcher: "/developers/me/onboarding", method: "POST", middlewares: [authenticate("developer", ["session", "bearer"])] },
     { matcher: "/developers/*", middlewares: [authenticate("developer", ["session", "bearer"])] },
 
     /**

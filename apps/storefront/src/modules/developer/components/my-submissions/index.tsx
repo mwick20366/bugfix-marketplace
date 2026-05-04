@@ -1,14 +1,11 @@
 "use client"
 
-import {
-  Submission,
-  listSubmissions
-} from "@lib/data/submissions"
+import { Submission, listSubmissions, payForSubmission } from "@lib/data/submissions"
 import { Developer } from "@lib/data/developer"
 import {
   DataTablePaginationState,
   DataTableSortingState,
-  DataTableColumnDef,
+  toast,
 } from "@medusajs/ui"
 import SubmissionsListTemplate from "@modules/submissions/components/list-template"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
@@ -33,8 +30,11 @@ export default function MySubmissions(props: MySubmissionsProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null)
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<
+    string | null
+  >(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isPaying, setIsPaying] = useState(false)
 
   const { developer, statusFilter } = props
 
@@ -82,16 +82,19 @@ export default function MySubmissions(props: MySubmissionsProps) {
   }, [offset, search, sorting?.id, sorting?.desc, statusFilter])
 
   const { data, isLoading, refetch } = useQuery({
-    queryFn: () => listSubmissions({
-      queryParams: {
-        ...queryParams,
-        limit,
-        offset,
-        order: sorting ? `${sorting.desc ? "-" : ""}${sorting.id}` : undefined,
-        q: search,
-        status: statusFilter?.length ? statusFilter : undefined,
-      },
-    }),
+    queryFn: () =>
+      listSubmissions({
+        queryParams: {
+          ...queryParams,
+          limit,
+          offset,
+          order: sorting
+            ? `${sorting.desc ? "-" : ""}${sorting.id}`
+            : undefined,
+          q: search,
+          status: statusFilter?.length ? statusFilter : undefined,
+        },
+      }),
     queryKey,
     placeholderData: keepPreviousData,
   })
@@ -115,8 +118,36 @@ export default function MySubmissions(props: MySubmissionsProps) {
 
     const params = new URLSearchParams(searchParams.toString())
     params.delete("submissionId")
-    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    const newUrl = params.toString()
+      ? `${pathname}?${params.toString()}`
+      : pathname
     router.replace(newUrl)
+  }
+
+  const handleConfirm = async () => {
+    if (!selectedSubmissionId) return
+    setIsPaying(true)
+
+    try {
+      // 1. Hit your AWS backend route
+      const response = await payForSubmission(selectedSubmissionId)
+
+      if (!response.ok) {
+        throw new Error(response.message || "Payment failed")
+      }
+
+      // 2. Success! Notify the dev and close the modal
+      toast.success("Bounty successfully transferred to your bank account!")
+      handleCloseModal()
+
+      // 3. Refresh the table data to show the updated status
+      refetch()
+    } catch (err: any) {
+      console.error("Payout Error:", err)
+      toast.error(err.message || "An unexpected error occurred during payout.")
+    } finally {
+      setIsPaying(false)
+    }
   }
 
   return (
@@ -139,7 +170,10 @@ export default function MySubmissions(props: MySubmissionsProps) {
       <SubmissionDetailsModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onConfirm={handleConfirm}
+        developer={developer}
         submissionId={selectedSubmissionId || undefined}
+        isConfirming={isPaying}
       />
     </div>
   )

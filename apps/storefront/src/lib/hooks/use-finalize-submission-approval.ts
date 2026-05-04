@@ -6,8 +6,8 @@ import { FinalizeSubmissionApprovalSchema } from "@modules/client/components/sub
 export const useFinalizeSubmissionApproval = 
   (submissionId: string, options?: UseMutationOptions<any, any, FinalizeSubmissionApprovalSchema>) => {
   return useMutation({
-    mutationFn: ({ client_notes, payment_collection_id }: FinalizeSubmissionApprovalSchema) => {
-      return finalizeSubmissionApproval(submissionId, client_notes, payment_collection_id)
+    mutationFn: ({ client_notes, payment_method_id }: FinalizeSubmissionApprovalSchema) => {
+      return finalizeSubmissionApproval(submissionId, client_notes, payment_method_id)
     },
     onSuccess: (data: any, variables: any, context: any, meta: any) => {
       options?.onSuccess?.(data, variables, context, meta)

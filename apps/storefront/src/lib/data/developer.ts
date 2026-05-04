@@ -23,6 +23,8 @@ export type Developer = {
   avatar_url?: string
   bugs?: Bug[]
   submissions?: Submission[]
+  stripe_account_id?: string | null
+  is_payout_ready?: boolean
 }
 
 export type DeveloperData = {
@@ -58,30 +60,28 @@ export type DeveloperReviewResponse = {
   reviews: DeveloperReview[]
 }
 
-export const retrieveDeveloper =
-  async (): Promise<DeveloperData | null> => {
-    const authHeaders = await getAuthHeaders()
+export const retrieveDeveloper = async (): Promise<DeveloperData | null> => {
+  const authHeaders = await getAuthHeaders()
 
-    if (!authHeaders) return null
+  if (!authHeaders) return null
 
-    const headers = {
-      ...authHeaders,
-    }
-
-    const next = {
-      ...(await getCacheOptions("developers")),
-    }
-
-    const result = await sdk.client
-      .fetch(`/developers/me`, {
-        method: "GET",
-        headers,
-        next,
-        cache: "no-store",
-      })
-
-      return result as DeveloperData
+  const headers = {
+    ...authHeaders,
   }
+
+  const next = {
+    ...(await getCacheOptions("developers")),
+  }
+
+  const result = await sdk.client.fetch(`/developers/me`, {
+    method: "GET",
+    headers,
+    next,
+    cache: "no-store",
+  })
+
+  return result as DeveloperData
+}
 
 export const retrieveDeveloperReviews =
   async (): Promise<DeveloperReviewResponse | null> => {
@@ -99,13 +99,12 @@ export const retrieveDeveloperReviews =
       ...(await getCacheOptions("developer-reviews")),
     }
 
-    const result = await sdk.client
-      .fetch(`/developers/me/reviews`, {
-        method: "GET",
-        headers,
-        next,
-        cache: "no-store",
-      })
+    const result = await sdk.client.fetch(`/developers/me/reviews`, {
+      method: "GET",
+      headers,
+      next,
+      cache: "no-store",
+    })
 
     return result as DeveloperReviewResponse
   }
@@ -128,8 +127,7 @@ export const updateDeveloper = async (body: {
       },
       body: JSON.stringify(body),
     }
-  )
-  .finally(async () => {
+  ).finally(async () => {
     const developerCacheTag = getCacheTag("developers")
     revalidateTag(await developerCacheTag)
   })
@@ -137,7 +135,10 @@ export const updateDeveloper = async (body: {
   return response.json()
 }
 
-export async function signupDeveloper(_currentState: unknown, formData: FormData) {
+export async function signupDeveloper(
+  _currentState: unknown,
+  formData: FormData
+) {
   const password = formData.get("password") as string
   const avatarUrl = formData.get("avatar_url") as string | null
 
@@ -164,7 +165,7 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
     await sdk.client.fetch("/developers", {
       method: "POST",
       body: { ...developerForm },
-      headers
+      headers,
     })
 
     const loginToken = await sdk.auth.login("developer", "emailpass", {
@@ -183,7 +184,30 @@ export async function signupDeveloper(_currentState: unknown, formData: FormData
   }
 }
 
-export async function loginDeveloper(_currentState: unknown, formData: FormData) {
+export async function initiateDeveloperOnboarding() {
+  const token = await getAuthToken()
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/developers/me/onboarding`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    }
+  ).finally(async () => {
+    const developerCacheTag = getCacheTag("developers")
+    revalidateTag(await developerCacheTag)
+  })
+
+  return response.json()
+}
+
+export async function loginDeveloper(
+  _currentState: unknown,
+  formData: FormData
+) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 

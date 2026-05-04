@@ -189,20 +189,42 @@ export const initiateSubmissionApproval = async (
 export const finalizeSubmissionApproval = async (
   submissionId: string,
   client_notes?: string,
-  payment_collection_id?: string
+  payment_method_id?: string
 ): Promise<any> => {
   const headers = { ...(await getAuthHeaders()) }
 
   // Let the SDK's FetchError propagate naturally
   const result = await sdk.client.fetch<{
     submission: Submission,
-    payment_collection_id: string
+    payment_method_id: string
   }>(`/submissions/${submissionId}/finalize-approval`, {
     method: "POST",
     body: {
       client_notes,
-      payment_collection_id,
+      payment_method_id,
     },
+    headers,
+  })
+
+  const developerCacheTag = await getCacheTag("developer-submissions")
+  revalidateTag(developerCacheTag)
+
+  const cacheTag = await getCacheTag("my-submissions")
+  revalidateTag(cacheTag)
+
+  return result
+}
+
+export const payForSubmission = async (
+  submissionId: string,
+): Promise<any> => {
+  const headers = { ...(await getAuthHeaders()) }
+
+  // Let the SDK's FetchError propagate naturally
+  const result = await sdk.client.fetch<{
+    submission: Submission
+  }>(`/submissions/${submissionId}/pay`, {
+    method: "POST",
     headers,
   })
 

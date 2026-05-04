@@ -13,6 +13,7 @@ import {
 } from "@lib/data/submission-attachments"
 import { useMarkMessagesRead } from "@lib/hooks/use-messages"
 import MessageThread from "@modules/messaging/components/message-thread"
+import { Developer } from "@lib/data/developer"
 
 type Attachment = {
   id: string
@@ -25,16 +26,20 @@ interface SubmissionDetailsModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm?: () => void
+  isConfirming?: boolean
   submission?: Submission
   submissionId?: string
+  developer: Developer
 }
 
 export default function SubmissionDetailsModal({
   isOpen,
   onClose = () => {},
   onConfirm = () => {},
+  isConfirming = false,
   submission: submissionProp,
   submissionId,
+  developer,
 }: SubmissionDetailsModalProps) {
   const queryClient = useQueryClient()
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
@@ -143,6 +148,10 @@ export default function SubmissionDetailsModal({
       markRead()
     }
   }, [isOpen, submission?.id, submission?.status])
+
+  const handleStartOnboarding = () => {
+    // window.location.href = "/developer/onboarding"
+  }
 
   return (
     <Modal isOpen={isOpen && !!submission} close={onClose}>
@@ -319,7 +328,7 @@ export default function SubmissionDetailsModal({
           </div>
         )}
       </Modal.Body>
-      <Modal.Footer showCancel={false}>
+      <Modal.Footer showCancel={true}>
         <div className="flex items-center justify-between w-full">
           <div>
             {!isApproved && hasAttachmentChanges && (
@@ -334,8 +343,18 @@ export default function SubmissionDetailsModal({
           </div>
           <div>
             {isApproved && (
-              <Button variant="primary" onClick={onConfirm}>
-                Get Paid! (${submission?.bug?.bounty})
+              <Button
+                variant="primary"
+                isLoading={isConfirming}
+                onClick={
+                  developer?.stripe_account_id
+                    ? onConfirm
+                    : handleStartOnboarding
+                }
+              >
+                {developer?.stripe_account_id
+                  ? `Get Paid! ($${submission?.bug?.bounty})`
+                  : "Set Up Bank to Get Paid"}
               </Button>
             )}
           </div>

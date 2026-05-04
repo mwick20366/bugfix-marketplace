@@ -9,6 +9,7 @@ const Submission = model.define("submission", {
   file_url: model.text().nullable(),
   status: model.text().nullable(),
   client_notes: model.text().nullable(),
+  payment_method_id: model.text().nullable(),
   bug: model.belongsTo(() => Bug, { mappedBy: "submissions" }),
   developer: model.belongsTo(() => Developer, { mappedBy: "submissions" }).nullable(),
   attachments: model.hasMany(() => SubmissionAttachment, {

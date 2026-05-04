@@ -164,7 +164,7 @@ export default async function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="/privacy" className="text-white">
+                  <a href="/privacy-policy" className="text-white">
                     Privacy Policy
                   </a>
                 </li>

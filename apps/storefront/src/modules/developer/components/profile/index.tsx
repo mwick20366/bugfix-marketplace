@@ -8,9 +8,14 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import { Button, Label, toast } from "@medusajs/ui"
 import { useDropzone } from "react-dropzone"
 import { useUploadAvatar } from "@lib/hooks/use-upload-avatar"
-import { Developer, updateDeveloper } from "@lib/data/developer"
+import {
+  Developer,
+  initiateDeveloperOnboarding,
+  updateDeveloper,
+} from "@lib/data/developer"
 import { useQueryClient } from "@tanstack/react-query"
 import StockAvatarModal from "@modules/common/components/stock-avatar-modal"
+import PayoutSetup from "../payout-setup"
 
 type Props = {
   developer: Developer
@@ -30,6 +35,7 @@ export default function DeveloperProfile({ developer }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isStockModalOpen, setIsStockModalOpen] = useState(false)
+  const [onboardingSecret, setOnboardingSecret] = useState<string | null>(null)
 
   const queryClient = useQueryClient()
   const { mutateAsync: uploadAvatar } = useUploadAvatar()
@@ -58,6 +64,35 @@ export default function DeveloperProfile({ developer }: Props) {
   const handleSelectStockAvatar = (url: string) => {
     setAvatarFile(null) // clear any uploaded file
     setAvatarPreview(url)
+  }
+
+  const handleStartOnboarding = async () => {
+    // Call https://bugixa.com to get the secret we discussed earlier
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/developers/me/onboarding`,
+      {
+        method: "POST",
+      }
+    )
+    const { client_secret } = await res.json()
+    setOnboardingSecret(client_secret)
+  }
+
+  const handleSetupPayouts = async () => {
+    try {
+      // 1. Call your AWS backend at https://api.bugixa.com
+      const response = await initiateDeveloperOnboarding()
+
+      // 2. We now expect client_secret for the embedded component
+      const { client_secret } = response
+
+      if (client_secret) {
+        setOnboardingSecret(client_secret) // This triggers the PayoutSetup component to show
+      }
+    } catch (err) {
+      console.error("Error initiating payout setup:", err)
+      toast.error("Could not initiate payout setup.")
+    }
   }
 
   const handleSubmit = form.handleSubmit(async (data) => {
@@ -160,6 +195,7 @@ export default function DeveloperProfile({ developer }: Props) {
           {...form.register("tech_stack", { required: true })}
           autoComplete="tech-stack"
         />
+
         <ErrorMessage error={error} />
         <Button
           type="submit"
@@ -169,6 +205,49 @@ export default function DeveloperProfile({ developer }: Props) {
         >
           Save Changes
         </Button>
+        {/* Payout Settings Section */}
+        <div className="mt-8 pt-8 border-t border-ui-border-base flex flex-col gap-y-4">
+          <h2 className="text-base-semi uppercase">Payout Settings</h2>
+
+          {onboardingSecret ? (
+            <PayoutSetup clientSecret={onboardingSecret} />
+          ) : (
+            <>
+              {/* 
+                Check if they are ACTUALLY verified. 
+                If they have an ID but aren't verified, we still show the "Set Up" button 
+              */}
+              {developer.is_payout_ready ? (
+                <div className="bg-ui-bg-subtle border border-ui-border-base rounded-lg p-4 flex items-center justify-between">
+                  <div>
+                    <span className="text-ui-fg-base text-small-semi">
+                      Bank Account Linked ✅
+                    </span>
+                  </div>
+                  <Button variant="secondary" onClick={handleSetupPayouts}>
+                    Manage Payouts
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-small-regular text-ui-fg-muted">
+                    To receive bounties, you need to securely link your bank
+                    account via Stripe.
+                  </p>
+                  <Button
+                    variant="primary"
+                    className="w-full"
+                    onClick={handleSetupPayouts}
+                  >
+                    {developer.stripe_account_id
+                      ? "Complete Bank Setup"
+                      : "Set Up Payouts"}
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+        </div>
       </form>
       {/* Stock Avatar Modal */}
       <StockAvatarModal

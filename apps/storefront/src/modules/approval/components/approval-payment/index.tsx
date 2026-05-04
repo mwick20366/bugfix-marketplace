@@ -49,64 +49,65 @@ export function PaymentForm({
     mode: "onChange",
   })
 
-  const { formState: { isValid } } = form
+  const {
+    formState: { isValid },
+  } = form
 
   const queryClient = useQueryClient()
 
-  const { mutate: finalizeApproval, isPending: isFinalizing } = useFinalizeSubmissionApproval(submissionId, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
-      setIsConfirming(false)
-      onSuccess()
-    },
-    onError: (err: any) => {
-      setIsConfirming(false)
-      onError(err.message || "Failed to finalize approval. Please contact support.")
-    },
-  })
+  const { mutate: finalizeApproval, isPending: isFinalizing } =
+    useFinalizeSubmissionApproval(submissionId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["developer-submissions"] })
+        setIsConfirming(false)
+        onSuccess()
+      },
+      onError: (err: any) => {
+        setIsConfirming(false)
+        onError(
+          err.message || "Failed to finalize approval. Please contact support."
+        )
+      },
+    })
 
   const formattedBounty = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   }).format(bounty)
 
-  const handleConfirmAndPay = form.handleSubmit(async ({ firstName, last_name, email, phone }) => {
-    const card = elements?.getElement(CardElement)
+  const handleConfirmAndPay = form.handleSubmit(
+    async ({ firstName, last_name, email, phone }) => {
+      const card = elements?.getElement(CardElement)
+      if (!stripe || !elements || !card) return
 
-    if (!stripe || !elements || !card || !clientSecret) {
-      return
-    }
+      setIsConfirming(true)
 
-    setIsConfirming(true)
-
-    stripe
-      .confirmCardPayment(clientSecret, {
-        payment_method: {
-          card,
-          billing_details: {
-            name: `${firstName} ${last_name}`,
-            email,
-            phone: phone || undefined,
-          },
+      // 1. Instead of 'confirmCardPayment', we 'createPaymentMethod'
+      // This turns the card details into a re-usable 'pm_...' ID
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+        billing_details: {
+          name: `${firstName} ${last_name}`,
+          email,
+          phone: phone || undefined,
         },
       })
-      .then(({ error }) => {
-        if (error) {
-          onError(error.message || "Payment failed.")
-          setIsConfirming(false)
-          return
-        }
 
-        finalizeApproval({
-          client_notes: clientNotes,
-          payment_collection_id: paymentSession?.payment_collection_id,
-        })
-      })
-      .catch(() => {
-        onError("An unexpected error occurred during payment.")
+      if (error) {
+        onError(error.message || "Failed to secure card details.")
         setIsConfirming(false)
+        return
+      }
+
+      // 2. Send the payment_method_id to your backend
+      // We remove 'payment_collection_id' because we aren't using the standard Medusa checkout
+      finalizeApproval({
+        client_notes: clientNotes,
+        payment_method_id: paymentMethod.id, // This is the 'pm_...' token
       })
-  })
+    }
+  )
 
   const isLoading = isConfirming || isFinalizing
 
@@ -115,7 +116,9 @@ export function PaymentForm({
       <form onSubmit={handleConfirmAndPay} className="flex flex-col gap-4">
         <div className="p-3 bg-ui-bg-subtle rounded-md">
           <p className="text-sm text-ui-fg-muted">Amount to be charged</p>
-          <p className="text-lg font-semibold text-ui-fg-base">{formattedBounty}</p>
+          <p className="text-lg font-semibold text-ui-fg-base">
+            {formattedBounty}
+          </p>
         </div>
 
         <div className="border rounded px-3 py-3">
@@ -135,7 +138,9 @@ export function PaymentForm({
                   className="border rounded px-3 py-2 text-sm w-full"
                 />
                 {fieldState.error && (
-                  <p className="text-red-500 text-xs">{fieldState.error.message}</p>
+                  <p className="text-red-500 text-xs">
+                    {fieldState.error.message}
+                  </p>
                 )}
               </div>
             )}
@@ -152,7 +157,9 @@ export function PaymentForm({
                   className="border rounded px-3 py-2 text-sm w-full"
                 />
                 {fieldState.error && (
-                  <p className="text-red-500 text-xs">{fieldState.error.message}</p>
+                  <p className="text-red-500 text-xs">
+                    {fieldState.error.message}
+                  </p>
                 )}
               </div>
             )}
@@ -171,7 +178,9 @@ export function PaymentForm({
                 className="border rounded px-3 py-2 text-sm w-full"
               />
               {fieldState.error && (
-                <p className="text-red-500 text-xs">{fieldState.error.message}</p>
+                <p className="text-red-500 text-xs">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -201,5 +210,4 @@ export function PaymentForm({
       </form>
     </FormProvider>
   )
-
 }
